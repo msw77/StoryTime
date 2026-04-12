@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito, Baloo_2 } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -26,8 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${nunito.variable} ${baloo2.variable}`}>
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={`${nunito.variable} ${baloo2.variable}`}>
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }

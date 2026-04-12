@@ -1,17 +1,39 @@
 "use client";
 
 import { useState } from "react";
+import { UserButton } from "@clerk/nextjs";
 import { Story } from "@/types/story";
 import { GENRES, AGE_GROUPS } from "@/data/genres";
+import { PaywallCard } from "@/components/shared/PaywallCard";
+
+interface ChildProfile {
+  id: string;
+  name: string;
+  age: number | null;
+  avatar_emoji: string;
+}
 
 interface LibraryScreenProps {
   stories: Story[];
   onSelect: (story: Story) => void;
   onCreateNew: () => void;
   setShowVoice: (show: boolean) => void;
+  isPremium?: boolean;
+  freeStoryLimit?: number;
+  activeProfile?: ChildProfile | null;
+  onSwitchProfile?: () => void;
 }
 
-export function LibraryScreen({ stories, onSelect, onCreateNew, setShowVoice }: LibraryScreenProps) {
+export function LibraryScreen({
+  stories,
+  onSelect,
+  onCreateNew,
+  setShowVoice,
+  isPremium = false,
+  freeStoryLimit = 5,
+  activeProfile,
+  onSwitchProfile,
+}: LibraryScreenProps) {
   const [gf, setGf] = useState("all");
   const [af, setAf] = useState<string | null>(null);
 
@@ -21,16 +43,44 @@ export function LibraryScreen({ stories, onSelect, onCreateNew, setShowVoice }: 
     return true;
   });
 
+  // For free users, only show the first N stories
+  const visibleStories = isPremium ? filtered : filtered.slice(0, freeStoryLimit);
+  const lockedCount = isPremium ? 0 : Math.max(0, filtered.length - freeStoryLimit);
+
   return (
     <>
       <div className="header">
         <h1>📚 StoryTime</h1>
         <div className="header-btns">
+          {activeProfile && onSwitchProfile && (
+            <button
+              className="icon-btn"
+              onClick={onSwitchProfile}
+              title="Switch child profile"
+              style={{ fontSize: 22 }}
+            >
+              {activeProfile.avatar_emoji}
+            </button>
+          )}
           <button className="icon-btn" onClick={() => setShowVoice(true)}>
             🎙️
           </button>
+          <UserButton />
         </div>
       </div>
+
+      {activeProfile && (
+        <div style={{
+          padding: "0 20px 12px",
+          fontSize: 14,
+          fontWeight: 700,
+          color: "var(--muted)",
+        }}>
+          Reading as <span style={{ color: "var(--accent)" }}>{activeProfile.name}</span>
+          {activeProfile.age && ` · Age ${activeProfile.age}`}
+        </div>
+      )}
+
       <div className="genre-tabs">
         {GENRES.map((g) => (
           <button
@@ -59,11 +109,13 @@ export function LibraryScreen({ stories, onSelect, onCreateNew, setShowVoice }: 
         ))}
       </div>
       <div className="story-grid">
-        <div className="story-card create-card" onClick={onCreateNew}>
-          <div className="emoji">✨</div>
-          <div className="title">Create a New Story</div>
-        </div>
-        {filtered.map((s) => (
+        {isPremium && (
+          <div className="story-card create-card" onClick={onCreateNew}>
+            <div className="emoji">✨</div>
+            <div className="title">Create a New Story</div>
+          </div>
+        )}
+        {visibleStories.map((s) => (
           <div key={s.id} className="story-card" onClick={() => onSelect(s)}>
             {s.generated && <div className="my-badge">MY STORY</div>}
             <div className="emoji">{s.emoji}</div>
@@ -78,6 +130,9 @@ export function LibraryScreen({ stories, onSelect, onCreateNew, setShowVoice }: 
             </div>
           </div>
         ))}
+        {!isPremium && lockedCount > 0 && (
+          <PaywallCard storiesRemaining={freeStoryLimit} />
+        )}
       </div>
     </>
   );
