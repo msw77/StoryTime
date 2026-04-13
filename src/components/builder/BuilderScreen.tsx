@@ -38,32 +38,74 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
     }
     setError("");
     setLoading(true);
+
+    const finalLesson = lesson === "Write my own…" ? customLesson : lesson;
+    const heroTypeClean = heroType.split(" ").slice(1).join(" ");
+    const gc = GENRES.find((g) => g.id === genre);
+
     try {
-      const result = generateStoryOffline({
-        heroName: heroName.trim(),
-        heroType: heroType.split(" ").slice(1).join(" "),
-        obstacle,
-        genre,
-        age,
-        lesson: lesson === "Write my own…" ? customLesson : lesson,
-        duration,
+      // Try AI generation first
+      const res = await fetch("/api/generate-story", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          heroName: heroName.trim(),
+          heroType: heroTypeClean,
+          genre,
+          age,
+          obstacle,
+          lesson: finalLesson,
+          extras,
+          duration,
+        }),
       });
-      const gc = GENRES.find((g) => g.id === genre);
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "AI generation failed");
+      }
+
+      const data = await res.json();
       const story: Story = {
-        id: "gen_" + Date.now(),
-        title: result.title,
-        emoji: result.emoji || "✨",
+        id: "ai_" + Date.now(),
+        title: data.title,
+        emoji: data.emoji || "✨",
         color: gc?.color || "#6366f1",
         genre,
         age,
-        pages: result.pages,
+        pages: data.pages,
         generated: true,
         duration,
       };
-      await new Promise((r) => setTimeout(r, 800));
       onStoryCreated(story);
-    } catch (e) {
-      setError("Failed: " + (e as Error).message);
+    } catch (aiError) {
+      console.warn("AI generation failed, falling back to offline engine:", aiError);
+      // Fall back to offline story engine
+      try {
+        const result = generateStoryOffline({
+          heroName: heroName.trim(),
+          heroType: heroTypeClean,
+          obstacle,
+          genre,
+          age,
+          lesson: finalLesson,
+          duration,
+        });
+        const story: Story = {
+          id: "gen_" + Date.now(),
+          title: result.title,
+          emoji: result.emoji || "✨",
+          color: gc?.color || "#6366f1",
+          genre,
+          age,
+          pages: result.pages,
+          generated: true,
+          duration,
+        };
+        onStoryCreated(story);
+      } catch (offlineError) {
+        setError("Failed: " + (offlineError as Error).message);
+      }
     } finally {
       setLoading(false);
     }

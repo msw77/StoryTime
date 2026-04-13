@@ -30,7 +30,7 @@ export default function Home() {
   const [loaded, setLoaded] = useState(false);
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<ChildProfile | null>(null);
-  const [isPremium, setIsPremium] = useState(false);
+  const [isPremium, setIsPremium] = useState(true); // TODO: remove dev override — temporarily true to test builder
   const speech = useSpeech();
 
   // Load saved stories from local storage
@@ -51,7 +51,8 @@ export default function Home() {
         const userRes = await fetch("/api/user");
         if (userRes.ok) {
           const userData = await userRes.json();
-          setIsPremium(userData.subscription_status === "premium" || userData.subscription_status === "family");
+          // TODO: remove dev override — temporarily always premium to test builder
+          setIsPremium(true || userData.subscription_status === "premium" || userData.subscription_status === "family");
         }
 
         // Load child profiles via our API
