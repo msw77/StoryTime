@@ -1,3 +1,9 @@
+export interface StoryPage {
+  scene?: string;
+  mood?: string;
+  sounds?: string[];
+}
+
 export interface Story {
   id: string;
   title: string;
@@ -6,6 +12,7 @@ export interface Story {
   genre: string;
   age: string;
   pages: [string, string][];
+  fullPages?: StoryPage[];
   generated?: boolean;
   duration?: string;
 }

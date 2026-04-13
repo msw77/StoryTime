@@ -237,6 +237,35 @@ body,
   line-height: 1;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
+.ai-illustration {
+  width: 100%;
+  height: 240px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.ai-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.img-loading-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
 .page-title {
   font-family: var(--font-baloo2), "Baloo 2", cursive;
   font-size: 16px;

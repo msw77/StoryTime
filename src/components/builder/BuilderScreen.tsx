@@ -74,6 +74,7 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
         genre,
         age,
         pages: data.pages,
+        fullPages: data.fullPages,
         generated: true,
         duration,
       };

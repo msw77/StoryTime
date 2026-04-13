@@ -17,9 +17,58 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
   const [finished, setFinished] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showLeavePrompt, setShowLeavePrompt] = useState(false);
+  const [aiImages, setAiImages] = useState<(string | null)[]>([]);
+  const [imagesLoading, setImagesLoading] = useState(false);
   const pages = story.pages;
   const page = pages[pageIdx];
   const canSave = !!story.generated && !!onSave;
+
+  // Load AI illustrations — pre-generated for built-in stories, on-demand for AI stories
+  useEffect(() => {
+    let cancelled = false;
+
+    // For built-in stories, check pre-generated images
+    if (!story.generated) {
+      import("@/data/storyImages.json")
+        .then((mod) => {
+          const imageMap = mod.default as Record<string, (string | null)[]>;
+          if (!cancelled && imageMap[story.id]) {
+            setAiImages(imageMap[story.id]);
+          }
+        })
+        .catch(() => {}); // File may not exist yet
+      return () => { cancelled = true; };
+    }
+
+    // For AI-generated stories, generate on-demand
+    if (!story.fullPages || story.fullPages.length === 0) return;
+    const scenesExist = story.fullPages.some((p) => p.scene);
+    if (!scenesExist) return;
+
+    setImagesLoading(true);
+
+    fetch("/api/generate-images", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        pages: story.fullPages.map((p) => ({
+          scene: p.scene || "",
+          mood: p.mood || "warm",
+        })),
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && data.images) {
+          setAiImages(data.images);
+        }
+      })
+      .catch((err) => console.warn("Failed to load AI illustrations:", err))
+      .finally(() => { if (!cancelled) setImagesLoading(false); });
+
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [story.id]);
 
   const handleSave = () => {
     if (onSave) onSave();
@@ -140,7 +189,15 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
         </h2>
       </div>
       <div className="reader-content">
-        <SceneIllustration genre={story.genre} pageIdx={pageIdx} />
+        {aiImages[pageIdx] ? (
+          <div className="ai-illustration">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={aiImages[pageIdx]!} alt={`Illustration for ${page[0]}`} />
+            {imagesLoading && <div className="img-loading-dot" />}
+          </div>
+        ) : (
+          <SceneIllustration genre={story.genre} pageIdx={pageIdx} />
+        )}
         <div className="page-title">{page[0]}</div>
         <div className="story-text">
           {tw.map((w, i) => (

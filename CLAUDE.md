@@ -50,6 +50,7 @@ I'm a non-technical founder building this app. I'm business-minded and smart but
 - **Test after every change.** Run the dev server and tell me to check my browser.
 - **Keep it simple.** If there's a simpler way to do something that works, prefer that over the clever way.
 - **Security matters extra here.** This is a children's app. Flag anything that could be a security or privacy concern.
+- **A senior dev or Codex will audit this.** Write clean, well-structured code that holds up to review.
 
 ## Things I'll Need Help With
 
