@@ -8,14 +8,32 @@ interface ReaderScreenProps {
   story: Story;
   onBack: () => void;
   speech: SpeechControls;
+  onSave?: () => void;
 }
 
-export function ReaderScreen({ story, onBack, speech }: ReaderScreenProps) {
+export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProps) {
   const [pageIdx, setPageIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [showLeavePrompt, setShowLeavePrompt] = useState(false);
   const pages = story.pages;
   const page = pages[pageIdx];
+  const canSave = !!story.generated && !!onSave;
+
+  const handleSave = () => {
+    if (onSave) onSave();
+    setSaved(true);
+  };
+
+  const handleBackClick = () => {
+    speech.stop();
+    if (canSave && !saved) {
+      setShowLeavePrompt(true);
+    } else {
+      onBack();
+    }
+  };
 
   const readPage = () => {
     speech.speak(page[1], () => {
@@ -29,6 +47,34 @@ export function ReaderScreen({ story, onBack, speech }: ReaderScreenProps) {
   }, [pageIdx]);
 
   useEffect(() => () => speech.stop(), []);
+
+  // "Save before leaving?" prompt
+  if (showLeavePrompt) {
+    return (
+      <div className="reader">
+        <div className="end-screen">
+          <div className="big-emoji">💾</div>
+          <h2>Save this story?</h2>
+          <p style={{ color: "var(--muted)", fontWeight: 600 }}>
+            Do you want to keep this story in your library?
+          </p>
+          <button className="pill-btn primary" onClick={() => { handleSave(); onBack(); }}>
+            Save & Leave
+          </button>
+          <button className="pill-btn secondary" onClick={onBack}>
+            Leave Without Saving
+          </button>
+          <button
+            className="pill-btn secondary"
+            onClick={() => setShowLeavePrompt(false)}
+            style={{ opacity: 0.7 }}
+          >
+            Keep Reading
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (finished) {
     return (
@@ -50,6 +96,16 @@ export function ReaderScreen({ story, onBack, speech }: ReaderScreenProps) {
               </span>
             ))}
           </div>
+          {canSave && (
+            <button
+              className="pill-btn primary"
+              onClick={handleSave}
+              disabled={saved}
+              style={saved ? { opacity: 0.6 } : {}}
+            >
+              {saved ? "Saved!" : "Save to My Library"}
+            </button>
+          )}
           <button
             className="pill-btn primary"
             onClick={() => {
@@ -58,10 +114,10 @@ export function ReaderScreen({ story, onBack, speech }: ReaderScreenProps) {
               setRating(0);
             }}
           >
-            📖 Read Again
+            Read Again
           </button>
           <button className="pill-btn secondary" onClick={onBack}>
-            ← Back to Library
+            Back to Library
           </button>
         </div>
       </div>
@@ -75,10 +131,7 @@ export function ReaderScreen({ story, onBack, speech }: ReaderScreenProps) {
       <div className="reader-header">
         <button
           className="icon-btn"
-          onClick={() => {
-            speech.stop();
-            onBack();
-          }}
+          onClick={handleBackClick}
         >
           ←
         </button>
@@ -129,10 +182,10 @@ export function ReaderScreen({ story, onBack, speech }: ReaderScreenProps) {
           </button>
           <button
             className="ctrl-btn"
-            disabled={pageIdx >= pages.length - 1}
             onClick={() => {
               speech.stop();
-              setPageIdx((p) => p + 1);
+              if (pageIdx >= pages.length - 1) setFinished(true);
+              else setPageIdx((p) => p + 1);
             }}
           >
             ⏭

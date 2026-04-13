@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { Story } from "@/types/story";
 import { ALL_STORIES } from "@/data/stories";
+import { GENRES } from "@/data/genres";
 import { useSpeech } from "@/hooks/useSpeech";
-import { loadSaved, saveToDisk } from "@/lib/storage";
 import { LibraryScreen } from "@/components/library/LibraryScreen";
 import { ReaderScreen } from "@/components/reader/ReaderScreen";
 import { BuilderScreen } from "@/components/builder/BuilderScreen";
@@ -33,12 +33,9 @@ export default function Home() {
   const [isPremium, setIsPremium] = useState(true); // TODO: remove dev override — temporarily true to test builder
   const speech = useSpeech();
 
-  // Load saved stories from local storage
+  // Mark as loaded (saved stories now come from database, loaded after sign-in)
   useEffect(() => {
-    loadSaved().then((saved) => {
-      if (saved.length) setStories([...saved, ...ALL_STORIES]);
-      setLoaded(true);
-    });
+    setLoaded(true);
   }, []);
 
   // When signed in, fetch user + profiles from our API routes
@@ -65,6 +62,28 @@ export default function Home() {
           if (profilesData.length === 1) {
             setActiveProfile(profilesData[0]);
             setScreen("library");
+          }
+        }
+
+        // Load saved AI stories from database
+        const storiesRes = await fetch("/api/stories");
+        if (storiesRes.ok) {
+          const savedStories = await storiesRes.json();
+          if (Array.isArray(savedStories) && savedStories.length > 0) {
+            const mapped: Story[] = savedStories.map((s: { id: string; title: string; emoji: string; genre: string; age_group: string; pages: string | [string, string][]; page_count: number }) => {
+              const gc = GENRES.find((g) => g.id === s.genre);
+              return {
+                id: s.id,
+                title: s.title,
+                emoji: s.emoji || "✨",
+                color: gc?.color || "#6366f1",
+                genre: s.genre,
+                age: s.age_group,
+                pages: typeof s.pages === "string" ? JSON.parse(s.pages) : s.pages,
+                generated: true,
+              };
+            });
+            setStories((prev) => [...mapped, ...prev]);
           }
         }
       } catch (err) {
@@ -115,13 +134,31 @@ export default function Home() {
   };
 
   const handleCreated = async (s: Story) => {
-    setStories((prev) => {
-      const next = [s, ...prev];
-      saveToDisk(next.filter((x) => x.generated));
-      return next;
-    });
     setCur(s);
     setScreen("reader");
+  };
+
+  const handleSaveStory = async () => {
+    if (!cur) return;
+    try {
+      await fetch("/api/stories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: cur.title,
+          emoji: cur.emoji,
+          genre: cur.genre,
+          age: cur.age,
+          pages: cur.pages,
+          duration: cur.duration,
+          childProfileId: activeProfile?.id,
+        }),
+      });
+      // Add to local stories list so it shows up right away
+      setStories((prev) => [{ ...cur, generated: true }, ...prev]);
+    } catch (err) {
+      console.error("Failed to save story:", err);
+    }
   };
 
   // Show loading spinner while Clerk and local data load
@@ -191,7 +228,7 @@ export default function Home() {
         />
       )}
       {screen === "reader" && cur && (
-        <ReaderScreen story={cur} onBack={handleBack} speech={speech} />
+        <ReaderScreen story={cur} onBack={handleBack} speech={speech} onSave={cur.generated ? handleSaveStory : undefined} />
       )}
       {screen === "builder" && (
         <BuilderScreen onBack={() => setScreen("library")} onStoryCreated={handleCreated} />
