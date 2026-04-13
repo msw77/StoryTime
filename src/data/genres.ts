@@ -10,6 +10,7 @@ export const GENRES: Genre[] = [
   { id: "science", label: "Science", emoji: "🔬", color: "#06b6d4" },
   { id: "animals", label: "Animals", emoji: "🐾", color: "#f97316" },
   { id: "sports", label: "Sports", emoji: "⚽", color: "#14b8a6" },
+  { id: "history", label: "History", emoji: "🏛️", color: "#92400e" },
 ];
 
 export const AGE_GROUPS: AgeGroup[] = [

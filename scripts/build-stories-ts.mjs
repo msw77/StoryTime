@@ -21,10 +21,11 @@ const GENRE_COLORS = {
   science: "#06b6d4",
   animals: "#f97316",
   sports: "#14b8a6",
+  history: "#92400e",
 };
 
 // Group stories by genre for nice ordering
-const genreOrder = ["adventure", "fantasy", "friendship", "silly", "mystery", "science", "animals", "sports"];
+const genreOrder = ["adventure", "fantasy", "friendship", "silly", "mystery", "science", "animals", "sports", "history"];
 
 let output = `import { Story } from "@/types/story";
 
