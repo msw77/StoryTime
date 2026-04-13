@@ -19,6 +19,18 @@ interface ChildProfile {
   avatar_emoji: string;
 }
 
+interface ReadingHistoryEntry {
+  id: string;
+  story_id: string;
+  story_title: string;
+  story_emoji: string;
+  story_genre: string;
+  story_age: string;
+  story_color: string;
+  is_generated: boolean;
+  started_at: string;
+}
+
 const FREE_STORY_LIMIT = 5;
 
 export default function Home() {
@@ -31,6 +43,7 @@ export default function Home() {
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<ChildProfile | null>(null);
   const [isPremium, setIsPremium] = useState(true); // TODO: remove dev override — temporarily true to test builder
+  const [readingHistory, setReadingHistory] = useState<ReadingHistoryEntry[]>([]);
   const speech = useSpeech();
 
   // Mark as loaded (saved stories now come from database, loaded after sign-in)
@@ -62,6 +75,15 @@ export default function Home() {
           if (profilesData.length === 1) {
             setActiveProfile(profilesData[0]);
             setScreen("library");
+          }
+        }
+
+        // Load reading history
+        const historyRes = await fetch("/api/reading-history");
+        if (historyRes.ok) {
+          const historyData = await historyRes.json();
+          if (Array.isArray(historyData)) {
+            setReadingHistory(historyData);
           }
         }
 
@@ -121,11 +143,43 @@ export default function Home() {
   const handleSelect = (s: Story) => {
     setCur(s);
     setScreen("reader");
+
+    // Log to reading history (fire and forget — don't block the reader)
+    fetch("/api/reading-history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        storyId: s.id,
+        storyTitle: s.title,
+        storyEmoji: s.emoji,
+        storyGenre: s.genre,
+        storyAge: s.age,
+        storyColor: s.color,
+        isGenerated: s.generated || false,
+        totalPages: s.pages.length,
+        childProfileId: activeProfile?.id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((entry) => {
+        if (entry?.id) {
+          setReadingHistory((prev) => [entry, ...prev].slice(0, 20));
+        }
+      })
+      .catch(() => {}); // Don't block if logging fails
   };
 
   const handleBack = () => {
     setScreen("library");
     setCur(null);
+
+    // Refresh reading history when returning to library
+    fetch("/api/reading-history")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setReadingHistory(data);
+      })
+      .catch(() => {});
   };
 
   const handleBackToProfiles = () => {
@@ -136,6 +190,17 @@ export default function Home() {
   const handleCreated = async (s: Story) => {
     setCur(s);
     setScreen("reader");
+  };
+
+  const handleDeleteStory = async (storyId: string) => {
+    try {
+      const res = await fetch(`/api/stories?id=${storyId}`, { method: "DELETE" });
+      if (res.ok) {
+        setStories((prev) => prev.filter((s) => s.id !== storyId));
+      }
+    } catch (err) {
+      console.error("Failed to delete story:", err);
+    }
   };
 
   const handleSaveStory = async () => {
@@ -214,12 +279,14 @@ export default function Home() {
   }
 
   return (
-    <div className="app">
+    <div className={`app ${screen === "reader" ? "app-reading" : ""}`}>
       {screen === "library" && (
         <LibraryScreen
           stories={stories}
+          readingHistory={readingHistory}
           onSelect={handleSelect}
           onCreateNew={() => setScreen("builder")}
+          onDeleteStory={handleDeleteStory}
           setShowVoice={setShowVoice}
           isPremium={isPremium}
           freeStoryLimit={FREE_STORY_LIMIT}
@@ -236,6 +303,12 @@ export default function Home() {
       <VoiceModal
         show={showVoice}
         onClose={() => setShowVoice(false)}
+        voiceMode={speech.voiceMode}
+        setVoiceMode={speech.setVoiceMode}
+        aiVoice={speech.aiVoice}
+        setAiVoice={speech.setAiVoice}
+        aiSpeed={speech.aiSpeed}
+        setAiSpeed={speech.setAiSpeed}
         allVoices={speech.allVoices}
         voice={speech.voice}
         setVoice={speech.setVoice}

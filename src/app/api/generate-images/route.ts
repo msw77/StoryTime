@@ -10,31 +10,31 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { pages } = body;
+    const { pages, characterDescription } = body;
 
-    // pages should be an array of { scene, mood } objects
+    // pages should be an array of { scene, mood, index } objects
     if (!pages || !Array.isArray(pages) || pages.length === 0) {
       return NextResponse.json({ error: "No pages provided" }, { status: 400 });
     }
 
-    // Generate all images in parallel
+    // Generate all requested images in parallel
     const results = await Promise.allSettled(
-      pages.map((page: { scene: string; mood: string }, index: number) =>
-        generatePageImage(page.scene, page.mood || "warm", index)
+      pages.map((page: { scene: string; mood: string; index?: number }, i: number) =>
+        generatePageImage(page.scene, page.mood || "warm", page.index ?? i, characterDescription)
       )
     );
 
-    // Build array of image URLs (null for any that failed)
-    const images: (string | null)[] = results.map((r) => {
+    // Build array of results with page indices
+    const images: { index: number; url: string | null }[] = results.map((r, i) => {
       if (r.status === "fulfilled") {
-        return r.value.url;
+        return { index: r.value.pageIndex, url: r.value.url };
       } else {
-        console.error("Image generation failed for a page:", r.reason);
-        return null;
+        console.error("Image generation failed for page:", r.reason);
+        return { index: pages[i].index ?? i, url: null };
       }
     });
 
-    console.log(`Generated ${images.filter(Boolean).length}/${images.length} images`);
+    console.log(`Generated ${images.filter((img) => img.url).length}/${images.length} images`);
     return NextResponse.json({ images });
   } catch (err) {
     console.error("Image generation error:", err);

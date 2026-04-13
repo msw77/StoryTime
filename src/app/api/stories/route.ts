@@ -43,6 +43,53 @@ export async function GET() {
   }
 }
 
+// DELETE /api/stories — delete a saved story
+export async function DELETE(req: Request) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+    }
+
+    const supabase = createServiceClient();
+
+    // Find the user by Clerk ID
+    const { data: user } = await supabase
+      .from("users")
+      .select("id")
+      .eq("clerk_id", userId)
+      .single();
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const storyId = searchParams.get("id");
+
+    if (!storyId) {
+      return NextResponse.json({ error: "Missing story id" }, { status: 400 });
+    }
+
+    // Only allow deleting their own stories
+    const { error } = await supabase
+      .from("stories")
+      .delete()
+      .eq("id", storyId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      console.error("Failed to delete story:", error);
+      return NextResponse.json({ error: "Failed to delete story" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Stories DELETE error:", err);
+    return NextResponse.json({ error: "Failed to delete story" }, { status: 500 });
+  }
+}
+
 // POST /api/stories — save a generated story
 export async function POST(req: Request) {
   try {

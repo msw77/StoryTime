@@ -1,7 +1,7 @@
 import { Genre, AgeGroup, Duration } from "@/types/story";
 
 export const GENRES: Genre[] = [
-  { id: "all", label: "All", emoji: "📖", color: "#6366f1" },
+  { id: "all", label: "All Genres", emoji: "📖", color: "#6366f1" },
   { id: "adventure", label: "Adventure", emoji: "🗺️", color: "#ef4444" },
   { id: "fantasy", label: "Fantasy", emoji: "🧙", color: "#a855f7" },
   { id: "friendship", label: "Friendship", emoji: "🤝", color: "#f59e0b" },

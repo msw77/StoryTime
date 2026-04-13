@@ -17,13 +17,39 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
   const [finished, setFinished] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showLeavePrompt, setShowLeavePrompt] = useState(false);
-  const [aiImages, setAiImages] = useState<(string | null)[]>([]);
+  const [aiImages, setAiImages] = useState<(string | null)[]>(
+    () => story.preloadedImages || []
+  );
   const [imagesLoading, setImagesLoading] = useState(false);
+  const [autoplay, setAutoplay] = useState(false);
   const pages = story.pages;
   const page = pages[pageIdx];
   const canSave = !!story.generated && !!onSave;
 
-  // Load AI illustrations — pre-generated for built-in stories, on-demand for AI stories
+  // Helper: fetch images for specific page indices
+  const fetchImages = async (
+    pageIndices: number[],
+    fullPages: NonNullable<typeof story.fullPages>,
+    charDesc: string,
+  ) => {
+    const res = await fetch("/api/generate-images", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        pages: pageIndices.map((i) => ({
+          scene: fullPages[i]?.scene || "",
+          mood: fullPages[i]?.mood || "warm",
+          index: i,
+        })),
+        characterDescription: charDesc,
+      }),
+    });
+    if (!res.ok) throw new Error(`API returned ${res.status}`);
+    const data = await res.json();
+    return data.images as { index: number; url: string | null }[];
+  };
+
+  // Load AI illustrations — pre-generated for built-in, progressive for AI stories
   useEffect(() => {
     let cancelled = false;
 
@@ -36,36 +62,65 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
             setAiImages(imageMap[story.id]);
           }
         })
-        .catch(() => {}); // File may not exist yet
+        .catch(() => {});
       return () => { cancelled = true; };
     }
 
-    // For AI-generated stories, generate on-demand
+    // For AI-generated stories, generate progressively
     if (!story.fullPages || story.fullPages.length === 0) return;
     const scenesExist = story.fullPages.some((p) => p.scene);
     if (!scenesExist) return;
 
+    const totalPages = story.fullPages.length;
+    const charDesc = story.characterDescription || "";
+    const preloaded = story.preloadedImages || [];
+
+    // Initialize with any pre-loaded images from the builder
+    if (preloaded.length > 0) {
+      setAiImages((prev) => {
+        const next = new Array(totalPages).fill(null);
+        for (let i = 0; i < Math.min(preloaded.length, totalPages); i++) {
+          next[i] = preloaded[i] || prev[i] || null;
+        }
+        return next;
+      });
+    } else {
+      setAiImages(new Array(totalPages).fill(null));
+    }
+
+    // Figure out which pages still need images
+    const needsImage = Array.from({ length: totalPages }, (_, i) => i)
+      .filter((i) => !preloaded[i]);
+
+    if (needsImage.length === 0) return; // All pre-loaded!
+
     setImagesLoading(true);
 
-    fetch("/api/generate-images", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        pages: story.fullPages.map((p) => ({
-          scene: p.scene || "",
-          mood: p.mood || "warm",
-        })),
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!cancelled && data.images) {
-          setAiImages(data.images);
-        }
-      })
-      .catch((err) => console.warn("Failed to load AI illustrations:", err))
-      .finally(() => { if (!cancelled) setImagesLoading(false); });
+    const run = async () => {
+      try {
+        // Load remaining pages in batches of 3
+        for (let i = 0; i < needsImage.length; i += 3) {
+          if (cancelled) return;
+          const batch = needsImage.slice(i, i + 3);
+          const results = await fetchImages(batch, story.fullPages!, charDesc);
+          if (cancelled) return;
 
+          setAiImages((prev) => {
+            const next = [...prev];
+            for (const img of results) {
+              if (img.url) next[img.index] = img.url;
+            }
+            return next;
+          });
+        }
+      } catch (err) {
+        console.warn("Image generation error:", err);
+      } finally {
+        if (!cancelled) setImagesLoading(false);
+      }
+    };
+
+    run();
     return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [story.id]);
@@ -85,15 +140,37 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
   };
 
   const readPage = () => {
+    // Set story context so the speech hook knows which story/page for built-in audio
+    speech.setStoryContext(story.generated ? undefined : story.id, pageIdx);
     speech.speak(page[1], () => {
       if (pageIdx < pages.length - 1) setPageIdx((p) => p + 1);
       else setFinished(true);
     });
   };
 
+  // Pre-fetch audio for the current page (and next page) as soon as the page displays
+  useEffect(() => {
+    const sid = story.generated ? undefined : story.id;
+    // Update story context for current page
+    speech.setStoryContext(sid, pageIdx);
+    // Prefetch current page
+    speech.prefetch(page[1], sid, pageIdx);
+    // Also prefetch the next page so it's ready when they advance
+    if (pageIdx < pages.length - 1) {
+      speech.prefetch(pages[pageIdx + 1][1], sid, pageIdx + 1);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIdx]);
+
+  // When page changes, stop current speech. If autoplay is on, start reading after a brief pause.
   useEffect(() => {
     speech.stop();
-  }, [pageIdx]);
+    if (autoplay && !finished) {
+      const timer = setTimeout(() => readPage(), 800);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIdx, autoplay]);
 
   useEffect(() => () => speech.stop(), []);
 
@@ -175,6 +252,14 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
 
   const tw = page[1].split(/\s+/);
 
+  // Auto-size text: smaller font for longer pages so text + image fit without scrolling
+  const wordCount = tw.length;
+  const textSizeClass =
+    wordCount > 100 ? "text-xs" :
+    wordCount > 60 ? "text-sm" :
+    wordCount > 40 ? "text-md" : "text-lg";
+  const isLongText = wordCount > 55;
+
   return (
     <div className="reader">
       <div className="reader-header">
@@ -188,18 +273,21 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
           {story.emoji} {story.title}
         </h2>
       </div>
-      <div className="reader-content">
+      <div className={`reader-content ${isLongText ? "long-text" : ""}`}>
         {aiImages[pageIdx] ? (
           <div className="ai-illustration">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={aiImages[pageIdx]!} alt={`Illustration for ${page[0]}`} />
-            {imagesLoading && <div className="img-loading-dot" />}
+          </div>
+        ) : imagesLoading && story.generated ? (
+          <div className="ai-illustration img-shimmer">
+            <div className="shimmer-text">🎨 Painting this scene…</div>
           </div>
         ) : (
           <SceneIllustration genre={story.genre} pageIdx={pageIdx} />
         )}
         <div className="page-title">{page[0]}</div>
-        <div className="story-text">
+        <div className={`story-text ${textSizeClass}`}>
           {tw.map((w, i) => (
             <span
               key={i}
@@ -230,12 +318,13 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
           </button>
           <button
             className="ctrl-btn play"
+            disabled={speech.loading}
             onClick={() => {
               if (speech.speaking) speech.stop();
               else readPage();
             }}
           >
-            {speech.speaking ? "⏸" : "▶️"}
+            {speech.loading ? "⏳" : speech.speaking ? "⏸" : "▶️"}
           </button>
           <button
             className="ctrl-btn"
@@ -246,6 +335,13 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
             }}
           >
             ⏭
+          </button>
+          <button
+            className={`ctrl-btn autoplay-btn ${autoplay ? "active" : ""}`}
+            onClick={() => setAutoplay((a) => !a)}
+            title={autoplay ? "Autoplay on" : "Autoplay off"}
+          >
+            {autoplay ? "🔁" : "➡️"}
           </button>
         </div>
       </div>

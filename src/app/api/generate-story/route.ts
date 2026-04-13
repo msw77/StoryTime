@@ -36,6 +36,8 @@ export async function POST(req: Request) {
       pages,
       // Store full page data for future use (illustrations, sound effects)
       fullPages: story.pages,
+      // Character description for consistent illustrations
+      characterDescription: story.characterDescription || "",
     });
   } catch (err) {
     console.error("Story generation error:", err);

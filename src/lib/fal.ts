@@ -15,8 +15,13 @@ export async function generatePageImage(
   sceneDescription: string,
   mood: string,
   pageIndex: number,
+  characterDescription?: string,
 ): Promise<GenerateImageResult> {
-  const prompt = `${STYLE_PREFIX}\n\nScene: ${sceneDescription}\nMood: ${mood}`;
+  // Build prompt with character description for consistency across pages
+  const charBlock = characterDescription
+    ? `\n\nMain character (MUST match this description exactly on every page): ${characterDescription}`
+    : "";
+  const prompt = `${STYLE_PREFIX}${charBlock}\n\nScene: ${sceneDescription}\nMood: ${mood}`;
 
   const result = await fal.subscribe("fal-ai/nano-banana-2", {
     input: {

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Sentence, SpeechControls } from "@/types/story";
+import { Sentence, SpeechControls, VoiceMode, AIVoiceName } from "@/types/story";
+
+// ─── Browser voice helpers ───────────────────────────────────────────
 
 const PRIORITY_VOICES = [
   "daniel (enhanced)", "samantha (enhanced)", "karen (enhanced)", "moira (enhanced)",
@@ -55,16 +57,228 @@ function rateForSentence(text: string, idx: number, total: number, baseRate: num
   return baseRate;
 }
 
+// ─── AI TTS audio cache ──────────────────────────────────────────────
+
+interface WordTiming {
+  word: string;
+  start: number;
+  end: number;
+}
+
+interface CachedAudio {
+  audio: HTMLAudioElement;
+  wordTimings: WordTiming[];
+  ready: boolean;
+}
+
+// Cache TTS audio so re-reads don't re-fetch
+const audioCache = new Map<string, CachedAudio>();
+// Track in-flight fetches to avoid duplicate requests
+const fetchingKeys = new Map<string, Promise<CachedAudio | null>>();
+
+// Pre-generated audio data for built-in stories (loaded lazily)
+let builtinAudioData: Record<string, { file: string; duration: number; wordTimings: WordTiming[] }[]> | null | undefined = null;
+let builtinAudioLoading = false;
+
+async function loadBuiltinAudioData() {
+  if (builtinAudioData !== null || builtinAudioLoading) return;
+  builtinAudioLoading = true;
+  try {
+    const mod = await import("@/data/storyAudio.json");
+    builtinAudioData = mod.default as Record<string, { file: string; duration: number; wordTimings: WordTiming[] }[]>;
+  } catch {
+    builtinAudioData = {} as Record<string, { file: string; duration: number; wordTimings: WordTiming[] }[]>;
+  }
+  builtinAudioLoading = false;
+}
+
+function getCacheKey(storyId: string | undefined, pageIdx: number | undefined, text: string, voice: AIVoiceName, speed: number): string {
+  // For built-in stories with pre-generated audio at default settings, use story+page key
+  if (storyId && pageIdx !== undefined && voice === "nova" && Math.abs(speed - 1.0) < 0.05) {
+    return `builtin:${storyId}:${pageIdx}`;
+  }
+  return `${voice}:${speed.toFixed(1)}:${text.slice(0, 120)}`;
+}
+
+// Try to load pre-generated audio for a built-in story page
+async function loadBuiltinAudio(storyId: string, pageIdx: number): Promise<CachedAudio | null> {
+  await loadBuiltinAudioData();
+  if (!builtinAudioData || !builtinAudioData[storyId]) return null;
+
+  const pageData = builtinAudioData[storyId][pageIdx];
+  if (!pageData || !pageData.file || !pageData.wordTimings?.length) return null;
+
+  return new Promise((resolve) => {
+    const audio = new Audio();
+    audio.preload = "auto";
+
+    const entry: CachedAudio = {
+      audio,
+      wordTimings: pageData.wordTimings,
+      ready: false,
+    };
+
+    let resolved = false;
+    const done = (success: boolean) => {
+      if (resolved) return;
+      resolved = true;
+      if (success) {
+        entry.ready = true;
+        resolve(entry);
+      } else {
+        resolve(null);
+      }
+    };
+
+    audio.oncanplaythrough = () => done(true);
+    audio.onloadedmetadata = () => done(true);
+    audio.onerror = () => done(false);
+
+    // Set source last to trigger loading
+    audio.src = pageData.file;
+
+    // Handle instant cache hit (browser already has this file)
+    if (audio.readyState >= 2) {
+      done(true);
+    }
+
+    // Timeout — don't wait forever for a pre-built file
+    setTimeout(() => {
+      if (!resolved) {
+        // If metadata loaded but not fully buffered, still usable
+        if (audio.readyState >= 1) {
+          done(true);
+        } else {
+          console.warn(`Builtin audio timeout: ${pageData.file}`);
+          done(false);
+        }
+      }
+    }, 8000);
+  });
+}
+
+// Fetch TTS audio from API (for custom stories or non-default voice)
+async function fetchTTSFromAPI(
+  text: string, aiVoice: AIVoiceName, aiSpeed: number
+): Promise<CachedAudio | null> {
+  try {
+    const res = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, voice: aiVoice, speed: aiSpeed }),
+    });
+
+    if (!res.ok) {
+      console.warn("TTS API error:", res.status);
+      return null;
+    }
+
+    const data = await res.json();
+
+    // Convert base64 audio to a blob URL
+    const audioBytes = Uint8Array.from(atob(data.audio), (c) => c.charCodeAt(0));
+    const blob = new Blob([audioBytes], { type: data.contentType });
+    const audioUrl = URL.createObjectURL(blob);
+
+    const audio = new Audio(audioUrl);
+
+    const entry: CachedAudio = {
+      audio,
+      wordTimings: data.wordTimings || [],
+      ready: false,
+    };
+
+    await new Promise<void>((resolve) => {
+      audio.onloadedmetadata = () => {
+        entry.ready = true;
+        resolve();
+      };
+      audio.onerror = () => resolve();
+      if (audio.readyState >= 1) {
+        entry.ready = true;
+        resolve();
+      }
+    });
+
+    return entry;
+  } catch (err) {
+    console.warn("TTS fetch failed:", err);
+    return null;
+  }
+}
+
+// Main fetch function: tries built-in first, then API
+async function fetchAudio(
+  text: string, aiVoice: AIVoiceName, aiSpeed: number,
+  storyId?: string, pageIdx?: number
+): Promise<CachedAudio | null> {
+  const cacheKey = getCacheKey(storyId, pageIdx, text, aiVoice, aiSpeed);
+
+  // Already cached
+  const existing = audioCache.get(cacheKey);
+  if (existing) return existing;
+
+  // Already fetching
+  const inflight = fetchingKeys.get(cacheKey);
+  if (inflight) return inflight;
+
+  const promise = (async (): Promise<CachedAudio | null> => {
+    try {
+      // For built-in stories with default voice, try pre-generated audio first
+      if (storyId && pageIdx !== undefined && aiVoice === "nova" && Math.abs(aiSpeed - 1.0) < 0.05) {
+        const builtin = await loadBuiltinAudio(storyId, pageIdx);
+        if (builtin) {
+          audioCache.set(cacheKey, builtin);
+          return builtin;
+        }
+      }
+
+      // Fall back to API
+      const result = await fetchTTSFromAPI(text, aiVoice, aiSpeed);
+      if (result) {
+        audioCache.set(cacheKey, result);
+      }
+      return result;
+    } finally {
+      fetchingKeys.delete(cacheKey);
+    }
+  })();
+
+  fetchingKeys.set(cacheKey, promise);
+  return promise;
+}
+
+// ─── Main hook ───────────────────────────────────────────────────────
+
 export function useSpeech(): SpeechControls {
+  // Shared state
   const [speaking, setSpeaking] = useState(false);
   const [wordIndex, setWordIndex] = useState(-1);
   const [words, setWords] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Voice mode: AI or browser
+  const [voiceMode, setVoiceMode] = useState<VoiceMode>("ai");
+
+  // AI voice settings
+  const [aiVoice, setAiVoice] = useState<AIVoiceName>("nova");
+  const [aiSpeed, setAiSpeed] = useState(1.0);
+
+  // Browser voice settings
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [rate, setRate] = useState(0.82);
   const [allVoices, setAllVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  // Current story context for built-in audio lookup
+  const storyContextRef = useRef<{ storyId?: string; pageIdx?: number }>({});
+
+  // Refs
   const cancelledRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const animFrameRef = useRef<number | null>(null);
 
+  // Load browser voices
   useEffect(() => {
     const l = () => {
       const ev = getEnglishVoices();
@@ -76,17 +290,179 @@ export function useSpeech(): SpeechControls {
     return () => { window.speechSynthesis.onvoiceschanged = null; };
   }, []);
 
+  // Eagerly start loading the built-in audio index
+  useEffect(() => { loadBuiltinAudioData(); }, []);
+
+  // ─── Stop ─────────────────────────────────────────────────────────
+
   const stop = useCallback(() => {
     cancelledRef.current = true;
+
     window.speechSynthesis.cancel();
     if (timerRef.current) clearInterval(timerRef.current);
+
+    if (audioRef.current) {
+      // Clear event handlers before pausing to prevent stale callbacks
+      audioRef.current.onended = null;
+      audioRef.current.onpause = null;
+      audioRef.current.onplay = null;
+      audioRef.current.onerror = null;
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+
     setSpeaking(false);
     setWordIndex(-1);
+    setLoading(false);
   }, []);
 
-  const speak = useCallback((text: string, onEnd?: () => void) => {
+  // ─── Set story context (called by ReaderScreen) ───────────────────
+
+  const setStoryContext = useCallback((storyId?: string, pageIdx?: number) => {
+    storyContextRef.current = { storyId, pageIdx };
+  }, []);
+
+  // ─── Prefetch ─────────────────────────────────────────────────────
+
+  const prefetch = useCallback((text: string, storyId?: string, pageIdx?: number) => {
+    if (voiceMode !== "ai") return;
+    fetchAudio(text, aiVoice, aiSpeed, storyId, pageIdx);
+  }, [voiceMode, aiVoice, aiSpeed]);
+
+  // ─── AI Voice speak ───────────────────────────────────────────────
+
+  const speakAI = useCallback(async (text: string, onEnd?: () => void) => {
     stop();
     cancelledRef.current = false;
+
+    const allWords = text.split(/\s+/).filter(Boolean);
+    setWords(allWords);
+    setWordIndex(0);
+    setSpeaking(true);
+    setLoading(true);
+
+    const { storyId, pageIdx } = storyContextRef.current;
+    const cached = await fetchAudio(text, aiVoice, aiSpeed, storyId, pageIdx);
+
+    if (cancelledRef.current) return;
+    setLoading(false);
+
+    if (!cached || !cached.ready) {
+      console.warn("AI audio not available, falling back to browser voice");
+      speakBrowser(text, onEnd);
+      return;
+    }
+
+    // Use the cached audio element directly (reset it for replay)
+    const audio = cached.audio;
+    // Clear any old event listeners by replacing with fresh ones below
+    audio.onplay = null;
+    audio.onended = null;
+    audio.onpause = null;
+    audio.onerror = null;
+    audio.currentTime = 0;
+    audio.playbackRate = aiSpeed;
+    audioRef.current = audio;
+
+    const timings = cached.wordTimings;
+    let endHandled = false;
+    let safetyTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const cleanup = () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+      if (safetyTimer) {
+        clearTimeout(safetyTimer);
+        safetyTimer = null;
+      }
+    };
+
+    const handleEnd = () => {
+      if (endHandled || cancelledRef.current) return;
+      endHandled = true;
+      cleanup();
+      setSpeaking(false);
+      setWordIndex(-1);
+      onEnd?.();
+    };
+
+    // Word highlighting with precise Whisper timestamps
+    const trackWords = () => {
+      if (cancelledRef.current || endHandled) return;
+
+      const currentTime = audio.currentTime;
+      let currentWordIdx = 0;
+      for (let i = 0; i < timings.length; i++) {
+        if (currentTime >= timings[i].start) {
+          currentWordIdx = i;
+        }
+      }
+      setWordIndex(Math.min(currentWordIdx, allWords.length - 1));
+
+      // Check if audio naturally ended (some browsers don't fire 'ended')
+      if (audio.ended || (audio.duration > 0 && currentTime >= audio.duration - 0.05)) {
+        handleEnd();
+        return;
+      }
+
+      if (!audio.paused) {
+        animFrameRef.current = requestAnimationFrame(trackWords);
+      }
+    };
+
+    audio.onplay = () => {
+      animFrameRef.current = requestAnimationFrame(trackWords);
+    };
+
+    audio.onended = handleEnd;
+
+    audio.onerror = () => {
+      cleanup();
+      if (!cancelledRef.current && !endHandled) {
+        endHandled = true;
+        setSpeaking(false);
+        console.warn("Audio error, falling back to browser voice");
+        speakBrowser(text, onEnd);
+      }
+    };
+
+    // Safety timeout — if audio should be done but events didn't fire
+    const dur = audio.duration || cached.audio.duration || 0;
+    if (dur > 0) {
+      const expectedMs = (dur / aiSpeed + 5) * 1000;
+      safetyTimer = setTimeout(() => {
+        if (!endHandled && !cancelledRef.current) {
+          console.warn("Audio safety timeout — forcing end");
+          handleEnd();
+        }
+      }, expectedMs);
+    }
+
+    try {
+      await audio.play();
+    } catch (err) {
+      console.warn("Audio play failed:", err);
+      cleanup();
+      if (!cancelledRef.current && !endHandled) {
+        endHandled = true;
+        setSpeaking(false);
+        speakBrowser(text, onEnd);
+      }
+    }
+  }, [aiVoice, aiSpeed, stop]);
+
+  // ─── Browser Voice speak ──────────────────────────────────────────
+
+  const speakBrowser = useCallback((text: string, onEnd?: () => void) => {
+    cancelledRef.current = false;
+
     const { allWords, sentences } = splitSentences(text);
     setWords(allWords);
     setWordIndex(0);
@@ -166,7 +542,34 @@ export function useSpeech(): SpeechControls {
     };
 
     speakNext();
-  }, [voice, rate, stop]);
+  }, [voice, rate]);
 
-  return { speaking, wordIndex, words, speak, stop, voice, setVoice, rate, setRate, allVoices };
+  // ─── Unified speak ────────────────────────────────────────────────
+
+  const speak = useCallback((text: string, onEnd?: () => void) => {
+    if (voiceMode === "ai") {
+      speakAI(text, onEnd);
+    } else {
+      stop();
+      cancelledRef.current = false;
+      speakBrowser(text, onEnd);
+    }
+  }, [voiceMode, speakAI, speakBrowser, stop]);
+
+  // Cleanup on unmount
+  useEffect(() => () => {
+    stop();
+    audioCache.forEach((c) => {
+      if (c.audio.src.startsWith("blob:")) URL.revokeObjectURL(c.audio.src);
+    });
+    audioCache.clear();
+  }, [stop]);
+
+  return {
+    speaking, wordIndex, words, speak, stop, loading, prefetch,
+    voiceMode, setVoiceMode,
+    aiVoice, setAiVoice, aiSpeed, setAiSpeed,
+    voice, setVoice, rate, setRate, allVoices,
+    setStoryContext,
+  };
 }

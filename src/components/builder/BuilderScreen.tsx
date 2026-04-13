@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Story } from "@/types/story";
 import { GENRES, BUILDER_GENRES, AGE_GROUPS, HERO_TYPES, LESSONS, DURATIONS } from "@/data/genres";
 import { generateStoryOffline } from "@/lib/storyEngine";
+import { LoadingScreen } from "./LoadingScreen";
 
 interface BuilderScreenProps {
   onBack: () => void;
@@ -21,6 +22,8 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
   const [customLesson, setCustomLesson] = useState("");
   const [extras, setExtras] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingPhase, setLoadingPhase] = useState<"story" | "illustrations">("story");
+  const [loadingProgress, setLoadingProgress] = useState(0); // 0-100
   const [error, setError] = useState("");
 
   const availableDurations =
@@ -38,6 +41,7 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
     }
     setError("");
     setLoading(true);
+    setLoadingPhase("story");
 
     const finalLesson = lesson === "Write my own…" ? customLesson : lesson;
     const heroTypeClean = heroType.split(" ").slice(1).join(" ");
@@ -66,6 +70,52 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
       }
 
       const data = await res.json();
+
+      // Switch loading screen to "painting" phase and pre-generate illustrations
+      setLoadingPhase("illustrations");
+      setLoadingProgress(50); // Story done = 50%
+
+      const totalPages = data.pages.length;
+      const preloadedImages: (string | null)[] = new Array(totalPages).fill(null);
+
+      if (data.fullPages && data.fullPages.length > 0) {
+        const charDesc = data.characterDescription || "";
+        // Pre-load pages in batches of 2, up to half the story (at least 4 pages)
+        const pagesToPreload = Math.min(totalPages, Math.max(4, Math.ceil(totalPages / 2)));
+        const allIndices = Array.from({ length: pagesToPreload }, (_, i) => i);
+        const batchSize = 2;
+        let loaded = 0;
+
+        for (let b = 0; b < allIndices.length; b += batchSize) {
+          const batch = allIndices.slice(b, b + batchSize);
+          try {
+            const imgRes = await fetch("/api/generate-images", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                pages: batch.map((i: number) => ({
+                  scene: data.fullPages[i]?.scene || "",
+                  mood: data.fullPages[i]?.mood || "warm",
+                  index: i,
+                })),
+                characterDescription: charDesc,
+              }),
+            });
+            if (imgRes.ok) {
+              const imgData = await imgRes.json();
+              for (const img of imgData.images) {
+                if (img.url) preloadedImages[img.index] = img.url;
+              }
+            }
+          } catch (imgErr) {
+            console.warn("Image batch failed:", imgErr);
+          }
+          loaded += batch.length;
+          // Progress: 50% for story + 50% spread across image batches
+          setLoadingProgress(50 + Math.round((loaded / pagesToPreload) * 50));
+        }
+      }
+
       const story: Story = {
         id: "ai_" + Date.now(),
         title: data.title,
@@ -77,6 +127,8 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
         fullPages: data.fullPages,
         generated: true,
         duration,
+        characterDescription: data.characterDescription || "",
+        preloadedImages,
       };
       onStoryCreated(story);
     } catch (aiError) {
@@ -113,17 +165,7 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
   };
 
   if (loading) {
-    return (
-      <div className="generating">
-        <div className="spinner" />
-        <h2 style={{ fontFamily: "'Baloo 2',cursive" }}>
-          Creating your story…
-        </h2>
-        <p style={{ color: "var(--muted)", fontWeight: 600 }}>
-          Mixing up something magical…
-        </p>
-      </div>
-    );
+    return <LoadingScreen genre={genre} heroName={heroName.trim() || undefined} phase={loadingPhase} progress={loadingProgress} />;
   }
 
   return (

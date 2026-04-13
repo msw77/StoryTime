@@ -30,6 +30,7 @@ interface GeneratedPage {
 interface GeneratedStory {
   title: string;
   emoji: string;
+  characterDescription: string;
   pages: GeneratedPage[];
 }
 
@@ -75,6 +76,13 @@ Special requests: ${request.extras || "none"}
 
 TARGET LENGTH: ${targetWords} words total (approximately ${durationLabel} of read-aloud time).
 
+IMPORTANT — CHARACTER DESCRIPTION:
+First, create a detailed visual description of the main character. This is CRITICAL for illustration consistency.
+- "${request.heroName}" is ONLY a name — do NOT interpret it literally (e.g. "Teddy" is a ${request.heroType} named Teddy, NOT a teddy bear; "Kitty" is a ${request.heroType} named Kitty, NOT a cat)
+- Describe specific physical features: hair color/style, skin tone, eye color, approximate height/build, clothing (specific colors and items), and any distinguishing features
+- Keep these details EXACTLY the same on every page
+- Include this character description at the start of every scene/illustration prompt so the illustrator draws the same character each time
+
 IMPORTANT RULES:
 - Write approximately ${targetWords} words total
 - Break the story into pages. Each page = one scene or moment (each page gets its own illustration)
@@ -89,17 +97,18 @@ IMPORTANT RULES:
 - For ages 4-7: richer vocabulary, 2-4 sentences per page
 - For ages 7-10: complex narrative, 3-6 sentences per page
 
-For each page, also provide an illustration prompt describing the visual scene.
+For each page, provide an illustration prompt in the "scene" field. EVERY scene prompt MUST start with the full character description so the character looks identical on every page. Then describe the setting, action, and details.
 
 Return valid JSON only, no other text:
 {
   "title": "...",
   "emoji": "...",
+  "characterDescription": "A detailed visual description of the main character (e.g. 'A 6-year-old boy with curly brown hair, light brown skin, big round hazel eyes, wearing a bright red hoodie, blue jeans, and green sneakers')",
   "pages": [
     {
       "label": "Page 1",
       "text": "story text for this page...",
-      "scene": "illustration prompt: what should the picture show",
+      "scene": "illustration prompt: [character description repeated here] + what the picture should show",
       "mood": "peaceful|exciting|funny|mysterious|warm|triumphant",
       "sounds": ["birds chirping", "wind rustling"]
     }
@@ -109,7 +118,7 @@ Return valid JSON only, no other text:
   const anthropic = getClient();
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 4096,
+    max_tokens: 8192,
     messages: [
       { role: "user", content: prompt },
     ],
