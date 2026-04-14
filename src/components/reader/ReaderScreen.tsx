@@ -269,8 +269,8 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
     // readers prefer a snappier pace. Manual nav is always quick since
     // the user just tapped next themselves.
     const autoAdvanceDelay =
-      story.age === "2-4" ? 1500 :
-      story.age === "4-7" ? 1100 :
+      story.age === "2-4" ? 1400 :
+      story.age === "4-7" ? 1000 :
       800;
     const delay = wasAutoAdvance ? autoAdvanceDelay : 800;
     const timer = setTimeout(() => readPage(), delay);

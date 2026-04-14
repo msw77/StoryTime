@@ -49,7 +49,9 @@ function playPageTurn() {
   lp.frequency.value = 7000;
 
   const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.04, ctx.currentTime);
+  // Halved from 0.04 — parent tester said the page-turn whoosh was a
+  // touch loud relative to narration. Keep it just audible as feedback.
+  gain.gain.setValueAtTime(0.02, ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
 
   source.connect(hp);
