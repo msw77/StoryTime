@@ -276,6 +276,19 @@ export default function Home() {
         }),
       });
 
+      // If the server didn't accept the save, we must roll back the
+      // optimistic insert — otherwise the user sees a "Saved ✓" state for
+      // a story that doesn't exist on the server, and a refresh silently
+      // deletes it. This was the original bug Codex flagged (#6).
+      if (!res.ok) {
+        let errMsg = `Save failed (${res.status})`;
+        try {
+          const errBody = await res.json();
+          if (errBody?.error) errMsg = String(errBody.error);
+        } catch { /* ignore parse errors — use status-only message */ }
+        throw new Error(errMsg);
+      }
+
       // Use the real DB UUID returned by the API as the canonical id. Without
       // this, the local Story kept its temporary "ai_<timestamp>" id, so when
       // the user re-opened it from the library the reader thought it was an
@@ -289,13 +302,14 @@ export default function Home() {
       let savedId: string | null = null;
       let savedAudioUrls: (string | null)[] | undefined;
       let savedWordTimings: (import("@/types/story").WordTiming[] | null)[] | undefined;
-      if (res.ok) {
-        try {
-          const saved = await res.json();
-          if (saved?.id) savedId = saved.id as string;
-          if (Array.isArray(saved?.audio_urls)) savedAudioUrls = saved.audio_urls;
-          if (Array.isArray(saved?.word_timings)) savedWordTimings = saved.word_timings;
-        } catch { /* ignore parse errors — fall through with savedId=null */ }
+      try {
+        const saved = await res.json();
+        if (saved?.id) savedId = saved.id as string;
+        if (Array.isArray(saved?.audio_urls)) savedAudioUrls = saved.audio_urls;
+        if (Array.isArray(saved?.word_timings)) savedWordTimings = saved.word_timings;
+      } catch {
+        // A 2xx with an unparseable body shouldn't happen, but if it does
+        // we keep the optimistic entry rather than rolling back.
       }
 
       const persisted: Story = {
@@ -315,9 +329,15 @@ export default function Home() {
     } catch (err) {
       console.error("Failed to save story:", err);
       // Roll back the optimistic insert so the user isn't left with a
-      // broken entry. Reader will reset its `saved` flag via its own catch.
+      // broken entry in "My Stories" pointing at a story the server never
+      // saved. We match by the temp id so a parallel save of a different
+      // story can't be affected.
       setStories((prev) => prev.filter((s) => s.id !== optimisticId));
       setCur((prev) => (prev && prev.id === optimisticId ? cur : prev));
+      // Re-throw so the reader's handleSave catch block runs and flips its
+      // "Saved ✓" state back to "Save to My Library". Without this, the UI
+      // would keep claiming the save succeeded even though we just undid it.
+      throw err;
     }
   };
 

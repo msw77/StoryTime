@@ -65,8 +65,15 @@ ALTER TABLE readings ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 
--- Users: anyone can read (needed for lookups), only own row can update
-CREATE POLICY users_select ON users FOR SELECT USING (true);
+-- Users: callers can only read + update their own row, matched by Clerk
+-- subject claim. Historically users_select was USING (true) which let any
+-- authenticated Supabase client read the entire users table via the public
+-- anon key. All app-side access goes through the service-role client from
+-- our /api routes, so no in-app path exploited it — but the anon key is in
+-- the browser bundle, so the wide-open policy was a defense-in-depth gap.
+CREATE POLICY users_select ON users FOR SELECT USING (
+  clerk_id = current_setting('request.jwt.claims', true)::jsonb->>'sub'
+);
 CREATE POLICY users_update ON users FOR UPDATE USING (
   clerk_id = current_setting('request.jwt.claims', true)::jsonb->>'sub'
 );

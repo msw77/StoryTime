@@ -3,6 +3,64 @@ import { createServiceClient } from "@/lib/supabase";
 import { generateTtsWithTimings, WordTiming } from "@/lib/tts";
 import { NextResponse } from "next/server";
 
+// Signed-URL TTL for story-audio objects. One hour covers a reading session
+// with plenty of slack; the client refetches the story list on each app open,
+// so expired URLs are automatically refreshed the next time the user comes
+// back. We deliberately keep this short to limit the blast radius if a URL
+// leaks via logs/history/referrer.
+const AUDIO_SIGNED_URL_TTL_SECONDS = 60 * 60;
+
+/**
+ * Hydrate the `audio_urls` field of a story row.
+ *
+ * Historically this column held public Supabase Storage URLs. For
+ * COPPA/privacy reasons we now store object *paths* (e.g. "<storyId>/page-0.mp3")
+ * and mint short-lived signed URLs on read. This helper handles both shapes
+ * so legacy rows still work during the transition: if an entry already looks
+ * like an http(s) URL we pass it through unchanged; otherwise we treat it as
+ * an object path and sign it.
+ */
+async function signAudioPaths(
+  supabase: ReturnType<typeof createServiceClient>,
+  entries: (string | null)[] | null,
+): Promise<(string | null)[] | null> {
+  if (!Array.isArray(entries)) return entries ?? null;
+
+  // Build the list of paths that actually need signing (skip nulls + legacy
+  // public URLs). We batch via createSignedUrls so we don't do N round trips.
+  const toSign: { idx: number; path: string }[] = [];
+  entries.forEach((entry, idx) => {
+    if (!entry || typeof entry !== "string") return;
+    if (entry.startsWith("http://") || entry.startsWith("https://")) return;
+    toSign.push({ idx, path: entry });
+  });
+
+  if (toSign.length === 0) return entries;
+
+  const { data: signed, error } = await supabase.storage
+    .from("story-audio")
+    .createSignedUrls(
+      toSign.map((t) => t.path),
+      AUDIO_SIGNED_URL_TTL_SECONDS,
+    );
+
+  if (error) {
+    console.warn("Failed to sign audio URLs:", error.message);
+    // Return nulls for the ones we couldn't sign so the reader falls back to
+    // on-demand /api/tts — better than handing back stale/bad URLs.
+    const copy = [...entries];
+    for (const t of toSign) copy[t.idx] = null;
+    return copy;
+  }
+
+  const copy = [...entries];
+  signed.forEach((result, i) => {
+    const targetIdx = toSign[i].idx;
+    copy[targetIdx] = result.signedUrl ?? null;
+  });
+  return copy;
+}
+
 // GET /api/stories — load user's saved AI stories
 export async function GET() {
   try {
@@ -37,7 +95,18 @@ export async function GET() {
       return NextResponse.json({ error: "Failed to load stories" }, { status: 500 });
     }
 
-    return NextResponse.json(stories || []);
+    // Swap stored object paths for short-lived signed URLs before returning.
+    // The client has no idea about the distinction — it just sees URLs it can
+    // fetch — but the bucket itself is private, so a leaked URL expires in an
+    // hour and can't be bulk-scraped.
+    const hydrated = await Promise.all(
+      (stories || []).map(async (s) => ({
+        ...s,
+        audio_urls: await signAudioPaths(supabase, s.audio_urls ?? null),
+      })),
+    );
+
+    return NextResponse.json(hydrated);
   } catch (err) {
     console.error("Stories GET error:", err);
     return NextResponse.json({ error: "Failed to load stories" }, { status: 500 });
@@ -70,6 +139,42 @@ export async function DELETE(req: Request) {
 
     if (!storyId) {
       return NextResponse.json({ error: "Missing story id" }, { status: 400 });
+    }
+
+    // Re-check ownership up front so we don't start deleting audio files
+    // that belong to someone else if `storyId` is tampered with.
+    const { data: owned } = await supabase
+      .from("stories")
+      .select("id")
+      .eq("id", storyId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!owned) {
+      return NextResponse.json({ error: "Story not found" }, { status: 404 });
+    }
+
+    // Wipe any stored audio objects for this story *before* dropping the row
+    // so we never orphan storage (which would both waste money and retain
+    // child-personalized audio the user expected to be deleted — a COPPA
+    // right-to-deletion issue).
+    try {
+      const { data: audioObjects } = await supabase.storage
+        .from("story-audio")
+        .list(storyId);
+      if (audioObjects && audioObjects.length > 0) {
+        const paths = audioObjects.map((o) => `${storyId}/${o.name}`);
+        const { error: removeErr } = await supabase.storage
+          .from("story-audio")
+          .remove(paths);
+        if (removeErr) {
+          // Log but continue — we'd rather leave orphaned audio than abort
+          // the DB delete, because leaving the row makes the UI inconsistent.
+          console.warn("Failed to clean up story audio on delete:", removeErr.message);
+        }
+      }
+    } catch (cleanupErr) {
+      console.warn("Audio cleanup threw:", (cleanupErr as Error).message);
     }
 
     // Only allow deleting their own stories
@@ -152,7 +257,11 @@ export async function POST(req: Request) {
     //
     // Parallelized with a concurrency cap so we don't hammer OpenAI or run
     // out of Vercel function memory on long stories.
-    const audioUrls: (string | null)[] = new Array(pages?.length || 0).fill(null);
+    // audioPaths stores the *object path* inside the private bucket (what we
+    // persist to the DB). audioSignedUrls stores the fresh signed URL for
+    // this single response back to the client so the reader can play
+    // immediately after save without an extra GET round trip.
+    const audioPaths: (string | null)[] = new Array(pages?.length || 0).fill(null);
     const wordTimingsAll: (WordTiming[] | null)[] = new Array(pages?.length || 0).fill(null);
 
     const CONCURRENCY = 3;
@@ -176,8 +285,10 @@ export async function POST(req: Request) {
           console.warn(`Audio upload failed for page ${pageIdx}:`, uploadErr.message);
           return;
         }
-        const { data: pub } = supabase.storage.from("story-audio").getPublicUrl(objectPath);
-        audioUrls[pageIdx] = pub?.publicUrl || null;
+        // Bucket is private — we store the object path, not a public URL.
+        // Signed URLs are minted per-read in GET /api/stories (and once
+        // below before returning this POST response).
+        audioPaths[pageIdx] = objectPath;
         wordTimingsAll[pageIdx] = wordTimings;
       } catch (e) {
         console.warn(`TTS/upload failed for page ${pageIdx}:`, (e as Error).message);
@@ -190,15 +301,15 @@ export async function POST(req: Request) {
       await Promise.all(batch.map(([idx, text]) => persistOnePage(idx, text)));
     }
 
-    // Update the row with the audio URLs + timings we collected. We tolerate
+    // Update the row with the audio paths + timings we collected. We tolerate
     // partial failures — rows may end up with some null entries, and the
     // reader will fall back to /api/tts for those pages only.
-    const gotAny = audioUrls.some((u) => u) || wordTimingsAll.some((w) => w);
+    const gotAny = audioPaths.some((u) => u) || wordTimingsAll.some((w) => w);
     if (gotAny) {
       const { data: updated, error: updateErr } = await supabase
         .from("stories")
         .update({
-          audio_urls: audioUrls,
+          audio_urls: audioPaths,
           word_timings: wordTimingsAll,
         })
         .eq("id", story.id)
@@ -208,7 +319,10 @@ export async function POST(req: Request) {
         console.warn("Failed to attach audio to story row:", updateErr.message);
         return NextResponse.json(story);
       }
-      return NextResponse.json(updated);
+      // Swap paths for fresh signed URLs so the client can play audio
+      // immediately without waiting for a follow-up GET /api/stories.
+      const signedAudioUrls = await signAudioPaths(supabase, updated.audio_urls ?? null);
+      return NextResponse.json({ ...updated, audio_urls: signedAudioUrls });
     }
 
     return NextResponse.json(story);

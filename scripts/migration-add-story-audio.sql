@@ -10,22 +10,17 @@ ALTER TABLE stories
   ADD COLUMN IF NOT EXISTS word_timings jsonb;
 
 -- 2) Storage bucket for the mp3 files ------------------------------------------
--- Public read so the browser can fetch audio directly via URL.
--- Writes are restricted to the service role key (server-side only).
+-- PRIVATE bucket: audio contains child-personalized narration content, which
+-- is COPPA-sensitive. We serve it via short-lived signed URLs minted in
+-- /api/stories, not via public URLs. Writes are restricted to the service
+-- role key (server-side only) by default.
+--
+-- If you ran an earlier version of this migration that created the bucket
+-- as public, run scripts/migration-security-hardening.sql to flip it to
+-- private and drop the public read policy.
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('story-audio', 'story-audio', true)
-ON CONFLICT (id) DO UPDATE SET public = true;
+VALUES ('story-audio', 'story-audio', false)
+ON CONFLICT (id) DO UPDATE SET public = false;
 
--- 3) Row-level policies for the storage bucket --------------------------------
--- Anyone can read (bucket is public).
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE schemaname = 'storage' AND tablename = 'objects' AND policyname = 'story-audio public read'
-  ) THEN
-    CREATE POLICY "story-audio public read"
-      ON storage.objects FOR SELECT
-      USING (bucket_id = 'story-audio');
-  END IF;
-END $$;
+-- No public-read policy is created here on purpose — the server (service
+-- role) has full access and mints signed URLs on demand for the owner.

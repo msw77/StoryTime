@@ -518,9 +518,53 @@ export function useSpeech(): SpeechControls {
       onEnd?.();
     };
 
-    // Word highlighting with Whisper timestamps, scaled to match display word count
+    // Word highlighting alignment.
+    //
+    // Whisper's word array and our display word array don't always count the
+    // same number of items — Whisper sometimes splits punctuation into its
+    // own token ("mat", "."), while the display splits the raw text on
+    // whitespace and gets a single "mat." token. Previously we compensated
+    // with linear scaling (Math.round(preciseIdx / timingsLen * displayLen))
+    // but that formula introduced a systematic ~1-word lag in the middle of
+    // sentences whenever Whisper had more tokens, producing the "audio ahead
+    // of highlighted words" bug.
+    //
+    // Fix: precompute a direct mapping from Whisper token index → display
+    // word index by aligning characters. We strip everything but letters and
+    // digits from both sides, then walk the concatenated streams and assign
+    // each Whisper token to whichever display word's character range it
+    // falls into. This is O(n) once at play-start, and the hot loop is then
+    // just an array lookup with no rounding — so whatever Whisper says, that
+    // word is what we highlight.
     const timingsLen = timings.length;
     const displayLen = allWords.length;
+    const timingToDisplay: number[] = new Array(timingsLen);
+    {
+      // Char-offset where each display word's "clean" letters begin.
+      const displayStarts: number[] = new Array(displayLen);
+      let pos = 0;
+      for (let i = 0; i < displayLen; i++) {
+        displayStarts[i] = pos;
+        pos += allWords[i].replace(/[^\p{L}\p{N}]/gu, "").length;
+      }
+      // Walk Whisper tokens accumulating chars; assign each to the display
+      // word whose range contains the cursor. Punctuation-only Whisper
+      // tokens contribute 0 chars and should *stay* on the previous display
+      // word (because visually the comma belongs with the word before it).
+      // To enforce that, we only advance `di` when the current token has
+      // real letter/digit content — otherwise a 0-char token sitting on an
+      // equality boundary would jump the highlight one word early.
+      let cursor = 0;
+      let di = 0;
+      for (let i = 0; i < timingsLen; i++) {
+        const cleanLen = (timings[i].word || "").replace(/[^\p{L}\p{N}]/gu, "").length;
+        if (cleanLen > 0) {
+          while (di + 1 < displayLen && displayStarts[di + 1] <= cursor) di++;
+        }
+        timingToDisplay[i] = di;
+        cursor += cleanLen;
+      }
+    }
 
     const trackWords = () => {
       if (cancelledRef.current || endHandled) return;
@@ -535,31 +579,20 @@ export function useSpeech(): SpeechControls {
       if (!audio.paused) {
         const currentTime = audio.currentTime;
 
-        // Find current position in Whisper's timing array
+        // Find the last Whisper token whose start has been reached. Note:
+        // audio.currentTime advances in the audio's own timeline regardless
+        // of playbackRate, and Whisper timings were computed at 1.0 speed,
+        // so this stays correct whether we're playing at 0.85, 0.92, or 1.0.
         let whisperIdx = 0;
         for (let i = 0; i < timingsLen; i++) {
           if (currentTime >= timings[i].start) {
             whisperIdx = i;
+          } else {
+            break;
           }
         }
 
-        // Scale Whisper index to display word index when counts differ
-        // e.g., if Whisper has 48 words and display has 52, scale proportionally
-        let displayIdx: number;
-        if (timingsLen === displayLen || timingsLen === 0) {
-          displayIdx = whisperIdx;
-        } else {
-          // Also factor in fractional position within the current word's time span
-          const wordStart = timings[whisperIdx].start;
-          const wordEnd = timings[whisperIdx].end ||
-            (whisperIdx + 1 < timingsLen ? timings[whisperIdx + 1].start : audio.duration);
-          const wordProgress = wordEnd > wordStart
-            ? Math.min((currentTime - wordStart) / (wordEnd - wordStart), 1)
-            : 0;
-          const preciseIdx = whisperIdx + wordProgress;
-          displayIdx = Math.round((preciseIdx / timingsLen) * displayLen);
-        }
-
+        const displayIdx = timingsLen === 0 ? 0 : timingToDisplay[whisperIdx];
         setWordIndex(Math.min(Math.max(displayIdx, 0), displayLen - 1));
       }
 
