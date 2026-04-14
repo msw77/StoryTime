@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Story, SpeechControls } from "@/types/story";
 import { SceneIllustration } from "./SceneIllustration";
 
@@ -25,6 +25,13 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
   const pages = story.pages;
   const page = pages[pageIdx];
   const canSave = !!story.generated && !!onSave;
+
+  // Set reading speed based on age group when story opens
+  useEffect(() => {
+    const ageSpeed = story.age === "2-4" ? 0.85 : story.age === "4-7" ? 0.92 : 1.0;
+    speech.setAiSpeed(ageSpeed);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [story.id]);
 
   // Helper: fetch images for specific page indices
   const fetchImages = async (
@@ -139,38 +146,57 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
     }
   };
 
+  // Track whether the page change was triggered by autoplay (audio ending)
+  const autoAdvancedRef = useRef(false);
+  const pageIdxRef = useRef(pageIdx);
+  pageIdxRef.current = pageIdx;
+
   const readPage = () => {
-    // Set story context so the speech hook knows which story/page for built-in audio
-    speech.setStoryContext(story.generated ? undefined : story.id, pageIdx);
-    speech.speak(page[1], () => {
-      if (pageIdx < pages.length - 1) setPageIdx((p) => p + 1);
-      else setFinished(true);
+    const sid = story.generated ? undefined : story.id;
+    const idx = pageIdxRef.current;
+    speech.setStoryContext(sid, idx);
+    speech.speak(pages[idx][1], () => {
+      // Audio finished — advance to next page
+      if (idx < pages.length - 1) {
+        autoAdvancedRef.current = true;
+        setPageIdx(idx + 1);
+      } else {
+        setFinished(true);
+      }
     });
   };
 
   // Pre-fetch audio for the current page (and next page) as soon as the page displays
   useEffect(() => {
     const sid = story.generated ? undefined : story.id;
-    // Update story context for current page
     speech.setStoryContext(sid, pageIdx);
-    // Prefetch current page
-    speech.prefetch(page[1], sid, pageIdx);
-    // Also prefetch the next page so it's ready when they advance
+    speech.prefetch(pages[pageIdx][1], sid, pageIdx);
     if (pageIdx < pages.length - 1) {
       speech.prefetch(pages[pageIdx + 1][1], sid, pageIdx + 1);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIdx]);
 
-  // When page changes, stop current speech. If autoplay is on, start reading after a brief pause.
+  // When page changes: if auto-advanced from audio ending, start next page.
+  // If manually navigated, stop current audio.
   useEffect(() => {
-    speech.stop();
-    if (autoplay && !finished) {
-      const timer = setTimeout(() => readPage(), 800);
-      return () => clearTimeout(timer);
+    if (autoAdvancedRef.current) {
+      // Page changed because audio finished — don't call stop(), just start next
+      autoAdvancedRef.current = false;
+      if (autoplay && !finished) {
+        const timer = setTimeout(() => readPage(), 600);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      // Manual page change (user tapped forward/back) — stop current audio
+      speech.stop();
+      if (autoplay && !finished) {
+        const timer = setTimeout(() => readPage(), 800);
+        return () => clearTimeout(timer);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIdx, autoplay]);
+  }, [pageIdx]);
 
   useEffect(() => () => speech.stop(), []);
 

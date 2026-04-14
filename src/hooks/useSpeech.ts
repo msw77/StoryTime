@@ -93,8 +93,9 @@ async function loadBuiltinAudioData() {
 }
 
 function getCacheKey(storyId: string | undefined, pageIdx: number | undefined, text: string, voice: AIVoiceName, speed: number): string {
-  // For built-in stories with pre-generated audio at default settings, use story+page key
-  if (storyId && pageIdx !== undefined && voice === "nova" && Math.abs(speed - 1.0) < 0.05) {
+  // For built-in stories with nova voice, always use the pre-generated audio
+  // (speed is handled via playbackRate, not re-generation)
+  if (storyId && pageIdx !== undefined && voice === "nova") {
     return `builtin:${storyId}:${pageIdx}`;
   }
   return `${voice}:${speed.toFixed(1)}:${text.slice(0, 120)}`;
@@ -130,22 +131,22 @@ async function loadBuiltinAudio(storyId: string, pageIdx: number): Promise<Cache
       }
     };
 
-    audio.oncanplaythrough = () => done(true);
+    // Use 'canplay' — enough data to start, don't wait for full buffer
+    audio.oncanplay = () => done(true);
     audio.onloadedmetadata = () => done(true);
     audio.onerror = () => done(false);
 
-    // Set source last to trigger loading
+    // Set source to trigger loading
     audio.src = pageData.file;
 
     // Handle instant cache hit (browser already has this file)
-    if (audio.readyState >= 2) {
+    if (audio.readyState >= 1) {
       done(true);
     }
 
-    // Timeout — don't wait forever for a pre-built file
+    // Short timeout — these are local files, should be fast
     setTimeout(() => {
       if (!resolved) {
-        // If metadata loaded but not fully buffered, still usable
         if (audio.readyState >= 1) {
           done(true);
         } else {
@@ -153,7 +154,7 @@ async function loadBuiltinAudio(storyId: string, pageIdx: number): Promise<Cache
           done(false);
         }
       }
-    }, 8000);
+    }, 3000);
   });
 }
 
@@ -224,8 +225,9 @@ async function fetchAudio(
 
   const promise = (async (): Promise<CachedAudio | null> => {
     try {
-      // For built-in stories with default voice, try pre-generated audio first
-      if (storyId && pageIdx !== undefined && aiVoice === "nova" && Math.abs(aiSpeed - 1.0) < 0.05) {
+      // For built-in stories with nova voice, try pre-generated audio first
+      // (speed is handled via playbackRate, not re-generation)
+      if (storyId && pageIdx !== undefined && aiVoice === "nova") {
         const builtin = await loadBuiltinAudio(storyId, pageIdx);
         if (builtin) {
           audioCache.set(cacheKey, builtin);
@@ -393,33 +395,57 @@ export function useSpeech(): SpeechControls {
       onEnd?.();
     };
 
-    // Word highlighting with precise Whisper timestamps
+    // Word highlighting with Whisper timestamps, scaled to match display word count
+    const timingsLen = timings.length;
+    const displayLen = allWords.length;
+
     const trackWords = () => {
       if (cancelledRef.current || endHandled) return;
 
-      const currentTime = audio.currentTime;
-      let currentWordIdx = 0;
-      for (let i = 0; i < timings.length; i++) {
-        if (currentTime >= timings[i].start) {
-          currentWordIdx = i;
-        }
-      }
-      setWordIndex(Math.min(currentWordIdx, allWords.length - 1));
-
       // Check if audio naturally ended (some browsers don't fire 'ended')
-      if (audio.ended || (audio.duration > 0 && currentTime >= audio.duration - 0.05)) {
+      if (audio.ended || (audio.duration > 0 && audio.currentTime >= audio.duration - 0.05)) {
         handleEnd();
         return;
       }
 
+      // Update word highlight if audio is playing
       if (!audio.paused) {
-        animFrameRef.current = requestAnimationFrame(trackWords);
-      }
-    };
+        const currentTime = audio.currentTime;
 
-    audio.onplay = () => {
+        // Find current position in Whisper's timing array
+        let whisperIdx = 0;
+        for (let i = 0; i < timingsLen; i++) {
+          if (currentTime >= timings[i].start) {
+            whisperIdx = i;
+          }
+        }
+
+        // Scale Whisper index to display word index when counts differ
+        // e.g., if Whisper has 48 words and display has 52, scale proportionally
+        let displayIdx: number;
+        if (timingsLen === displayLen || timingsLen === 0) {
+          displayIdx = whisperIdx;
+        } else {
+          // Also factor in fractional position within the current word's time span
+          const wordStart = timings[whisperIdx].start;
+          const wordEnd = timings[whisperIdx].end ||
+            (whisperIdx + 1 < timingsLen ? timings[whisperIdx + 1].start : audio.duration);
+          const wordProgress = wordEnd > wordStart
+            ? Math.min((currentTime - wordStart) / (wordEnd - wordStart), 1)
+            : 0;
+          const preciseIdx = whisperIdx + wordProgress;
+          displayIdx = Math.round((preciseIdx / timingsLen) * displayLen);
+        }
+
+        setWordIndex(Math.min(Math.max(displayIdx, 0), displayLen - 1));
+      }
+
+      // Always keep the loop running — don't stop on momentary pauses/buffering
       animFrameRef.current = requestAnimationFrame(trackWords);
     };
+
+    // Start the tracking loop
+    animFrameRef.current = requestAnimationFrame(trackWords);
 
     audio.onended = handleEnd;
 
