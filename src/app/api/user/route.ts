@@ -13,12 +13,13 @@ export async function GET() {
 
     const supabase = createServiceClient();
 
-    // Try to find existing user
-    const { data: existingUser, error: findError } = await supabase
+    // Try to find existing user. We intentionally ignore the "no rows"
+    // error here — the insert below handles the not-found case.
+    const { data: existingUser } = await supabase
       .from("users")
       .select("id, subscription_status")
       .eq("clerk_id", userId)
-      .single();
+      .maybeSingle();
 
     if (existingUser) {
       return NextResponse.json(existingUser);

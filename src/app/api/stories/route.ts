@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { createServiceClient } from "@/lib/supabase";
 import { generateTtsWithTimings, WordTiming } from "@/lib/tts";
 import {
@@ -71,29 +70,17 @@ async function signAudioPaths(
 // GET /api/stories — load user's saved AI stories
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-    }
+    const userResult = await requireDbUserId();
+    if (!userResult.ok) return userResult.response;
+    const dbUserId = userResult.value;
 
     const supabase = createServiceClient();
-
-    // Find the user by Clerk ID
-    const { data: user } = await supabase
-      .from("users")
-      .select("id")
-      .eq("clerk_id", userId)
-      .single();
-
-    if (!user) {
-      return NextResponse.json([]);
-    }
 
     // Get all their generated stories, newest first
     const { data: stories, error } = await supabase
       .from("stories")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", dbUserId)
       .eq("is_generated", true)
       .order("created_at", { ascending: false });
 
@@ -123,23 +110,9 @@ export async function GET() {
 // DELETE /api/stories — delete a saved story
 export async function DELETE(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-    }
-
-    const supabase = createServiceClient();
-
-    // Find the user by Clerk ID
-    const { data: user } = await supabase
-      .from("users")
-      .select("id")
-      .eq("clerk_id", userId)
-      .single();
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const userResult = await requireDbUserId();
+    if (!userResult.ok) return userResult.response;
+    const dbUserId = userResult.value;
 
     const { searchParams } = new URL(req.url);
     const storyId = searchParams.get("id");
@@ -148,13 +121,15 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Missing story id" }, { status: 400 });
     }
 
+    const supabase = createServiceClient();
+
     // Re-check ownership up front so we don't start deleting audio files
     // that belong to someone else if `storyId` is tampered with.
     const { data: owned } = await supabase
       .from("stories")
       .select("id")
       .eq("id", storyId)
-      .eq("user_id", user.id)
+      .eq("user_id", dbUserId)
       .maybeSingle();
 
     if (!owned) {
@@ -189,7 +164,7 @@ export async function DELETE(req: Request) {
       .from("stories")
       .delete()
       .eq("id", storyId)
-      .eq("user_id", user.id);
+      .eq("user_id", dbUserId);
 
     if (error) {
       console.error("Failed to delete story:", error);

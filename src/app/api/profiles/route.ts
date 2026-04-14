@@ -1,32 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
 import { createServiceClient } from "@/lib/supabase";
-import { parseJsonBody, requireClerkUser } from "@/lib/api-helpers";
+import { parseJsonBody, requireDbUserId } from "@/lib/api-helpers";
 import { createProfileSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
-
-// Helper: get the Supabase user ID from Clerk ID
-async function getDbUserId(clerkId: string) {
-  const supabase = createServiceClient();
-  const { data } = await supabase
-    .from("users")
-    .select("id")
-    .eq("clerk_id", clerkId)
-    .single();
-  return data?.id || null;
-}
 
 // GET /api/profiles — list child profiles for the current user
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json([], { status: 200 });
-    }
-
-    const dbUserId = await getDbUserId(userId);
-    if (!dbUserId) {
-      return NextResponse.json([]);
-    }
+    const userResult = await requireDbUserId();
+    if (!userResult.ok) return userResult.response;
+    const dbUserId = userResult.value;
 
     const supabase = createServiceClient();
     const { data: profiles } = await supabase
@@ -45,17 +27,13 @@ export async function GET() {
 // POST /api/profiles — create a new child profile
 export async function POST(req: Request) {
   try {
-    const clerk = await requireClerkUser();
-    if (!clerk.ok) return clerk.response;
+    const userResult = await requireDbUserId();
+    if (!userResult.ok) return userResult.response;
+    const dbUserId = userResult.value;
 
     const parsed = await parseJsonBody(req, createProfileSchema);
     if (!parsed.ok) return parsed.response;
     const { name, age, avatar_emoji } = parsed.value;
-
-    const dbUserId = await getDbUserId(clerk.value);
-    if (!dbUserId) {
-      return NextResponse.json({ error: "User not found in database" }, { status: 404 });
-    }
 
     const supabase = createServiceClient();
     const { data: profile, error } = await supabase
