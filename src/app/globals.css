@@ -8,35 +8,53 @@
 
 :root {
   /* ── Surfaces ──────────────────────────────────────────────
-     Cream background and warm-ink text were already close to the
-     Coterie/Huckleberry/Yoto family, so we keep them. The whole
-     aesthetic upgrade is really a palette desaturation + a type
-     change — structure stays put. */
-  --bg: #fbf6ea;             /* warmer, slightly deeper cream */
-  --card: #ffffff;
-  --surface: #f2ecdc;        /* subtle oatmeal layer */
-  --text: #2a2722;           /* warm near-black, not pure black */
+     Cream background, warm oatmeal surface, warm-ink text. The
+     reference target is "Montessori classroom meets small-press
+     library": natural light on linen and aged paper. */
+  --bg: #f9f3e3;             /* aged-paper cream */
+  --card: #fffdf7;           /* soft ivory, not pure white */
+  --surface: #f0e9d4;        /* oatmeal layer */
+  --text: #2a2722;           /* warm near-black */
   --text-body: #574f44;
   --muted: #8a8170;
   --hint: #b5ac98;
 
-  /* ── Accents (muted, editorial) ────────────────────────────
-     Old: #ff6b4a (loud coral) + #6c5ce7 (saturated purple).
-     New: warm terracotta + dusty sage. Still warm and inviting,
-     just dialed down ~30% in saturation so every surface isn't
-     shouting. This single change is probably 60% of why the
-     app now reads as "premium parent brand" vs "prototype". */
-  --accent: #b55a3c;         /* warm terracotta — primary brand */
-  --accent-soft: #d89478;    /* lighter terracotta for hover/tints */
-  --accent2: #7d9b82;        /* dusty sage — secondary brand */
+  /* ── Accents ───────────────────────────────────────────────
+     Old terracotta was muddy. Dialed back toward brighter
+     burnt-sienna so it reads as clay/rust instead of brown.
+     Sage secondary stays — user said the rest felt right. */
+  --accent: #c25e45;         /* burnt sienna — primary brand */
+  --accent-deep: #a44a33;    /* darker for hover/active */
+  --accent-soft: #e2a088;    /* lighter for tints/highlights */
+  --accent2: #7d9b82;        /* dusty sage — secondary */
   --accent2-soft: #a6bda8;
-  --success: #7ba888;        /* muted jade (was vivid mint) */
-  --highlight: #d4a055;      /* warm honey (was bright mustard) */
+  --success: #7ba888;
+  --highlight: #d4a055;      /* warm honey */
 
   --border: #e5dfce;
   --radius: 20px;
-  --shadow-card: 0 2px 16px rgba(45, 42, 36, 0.06), 0 0 0 1px rgba(45, 42, 36, 0.04);
-  --shadow-soft: 0 2px 12px rgba(45, 42, 36, 0.08);
+
+  /* ── Shadows ───────────────────────────────────────────────
+     Warm-tinted shadows instead of neutral gray. Small detail,
+     big perceptual difference — everything feels lit by a
+     tungsten lamp instead of an office fluorescent. */
+  --shadow-card:
+    0 1px 2px rgba(90, 60, 30, 0.04),
+    0 8px 24px rgba(90, 60, 30, 0.08),
+    0 0 0 1px rgba(90, 60, 30, 0.04);
+  --shadow-soft: 0 2px 12px rgba(90, 60, 30, 0.08);
+  --shadow-lift:
+    0 2px 4px rgba(90, 60, 30, 0.05),
+    0 16px 40px rgba(90, 60, 30, 0.12);
+
+  /* ── Paper grain ───────────────────────────────────────────
+     Inline SVG noise (feTurbulence). Applied as a low-opacity
+     overlay on the body background via a ::before pseudo-element
+     below. Gives the whole app a subtle tactile texture — the
+     single most effective "premium physical media" signal you
+     can add without any images. Zero network cost. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.28 0 0 0 0 0.15 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
   --font-head: var(--font-heading), 'Fraunces', Georgia, serif;
 }
 
@@ -47,6 +65,30 @@ body,
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Paper-grain overlay for the whole app. Sits above the background
+   but below content (via z-index), pointer-events:none so it never
+   eats clicks. Very low opacity — the goal is "barely perceptible
+   tactile texture" not "visible noise". Coterie and Yoto both use
+   this exact trick; it's ~80% of what separates their surfaces from
+   flat-color-rectangle apps. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 200px 200px;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Everything else stacks above the grain. */
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 .app {
@@ -339,12 +381,35 @@ body,
   padding: 18px 14px;
   box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.25s;
   display: flex;
   flex-direction: column;
   gap: 8px;
   position: relative;
   overflow: hidden;
+}
+/* Soft warm highlight in the top-left corner of every card. Mimics
+   the way a lamp falls across a page — gives the whole library a
+   subtle "open book under lamplight" feeling instead of "flat rectangles
+   on a screen". Very low opacity; most users won't consciously see it. */
+.story-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 18% 12%,
+    rgba(255, 238, 210, 0.55) 0%,
+    rgba(255, 238, 210, 0) 60%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+.story-card > * {
+  position: relative;
+  z-index: 1;
+}
+.story-card:hover {
+  box-shadow: var(--shadow-lift);
 }
 .story-card:active {
   transform: scale(0.96);
@@ -376,16 +441,27 @@ body,
   gap: 14px;
   padding: 0 20px 16px;
 }
-/* Home-screen action cards. Replaced the old rainbow gradients with
-   soft tonal surfaces. Each card gets its own muted hue so they still
-   read as distinct choices, but the palette stays unified and the
-   whole row feels calm instead of neon. */
+/* Home-screen action cards. Soft tonal solids in the brand palette,
+   with a warm radial highlight top-left so each card feels lit by
+   lamplight instead of being a flat rectangle. The ::before on
+   .story-card already provides that — these just need the new
+   accent hue, brighter and warmer than the Phase A attempt. */
 .create-card {
-  background: linear-gradient(160deg, #b55a3c 0%, #a04e33 100%);
+  background:
+    radial-gradient(ellipse 85% 70% at 20% 15%, rgba(255, 220, 190, 0.35) 0%, rgba(255, 220, 190, 0) 60%),
+    linear-gradient(160deg, #c25e45 0%, #a44a33 100%);
   color: #fff;
   text-align: center;
   justify-content: center;
   align-items: center;
+}
+/* The generic .story-card::before would double up the highlight on
+   action cards — suppress it since the card background already has
+   its own warm radial baked in. */
+.create-card::before,
+.storybook-card::before,
+.history-card::before {
+  display: none;
 }
 .create-card .emoji {
   font-size: 36px;
@@ -397,7 +473,9 @@ body,
   letter-spacing: 0.2px;
 }
 .storybook-card {
-  background: linear-gradient(160deg, #7d9b82 0%, #6a8770 100%);
+  background:
+    radial-gradient(ellipse 85% 70% at 20% 15%, rgba(255, 245, 220, 0.28) 0%, rgba(255, 245, 220, 0) 60%),
+    linear-gradient(160deg, #7d9b82 0%, #5f7a66 100%);
   color: #fff;
   text-align: center;
   justify-content: center;
@@ -416,7 +494,9 @@ body,
   grid-template-columns: 1fr 1fr 1fr;
 }
 .history-card {
-  background: linear-gradient(160deg, #6b85a3 0%, #5a7491 100%);
+  background:
+    radial-gradient(ellipse 85% 70% at 20% 15%, rgba(245, 250, 255, 0.3) 0%, rgba(245, 250, 255, 0) 60%),
+    linear-gradient(160deg, #6b85a3 0%, #4d6887 100%);
   color: #fff;
   text-align: center;
   justify-content: center;
@@ -622,7 +702,7 @@ body,
   height: 40px;
   font-size: 18px;
 }
-.hdr-btn.play:hover { background: #9b4a30; }
+.hdr-btn.play:hover { background: var(--accent-deep); }
 .hdr-btn.active {
   background: rgba(228, 147, 58, 0.15);
 }
@@ -830,7 +910,7 @@ body,
   color: #fff;
   transform: scale(1.05);
   border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(181, 90, 60, 0.3);
+  box-shadow: 0 2px 8px rgba(194, 94, 69, 0.3);
 }
 
 /* Page transition effects */
