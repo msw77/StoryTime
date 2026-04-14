@@ -319,6 +319,35 @@ export function LibraryScreen({
         />
       </div>
 
+      {/* Top action cards — Create + My Stories + Recently Read.
+          Emojis replaced with custom brand icons (fal.ai placeholders,
+          see public/brand/). If any image 404s, the card still renders
+          without crashing; alt text is the same as the title below.
+          Positioned above the genre/age filter row so the primary
+          actions are the first thing a parent sees under the hero. */}
+      {isPremium && (
+        <div className="action-cards three-col">
+          <div className="story-card create-card" onClick={onCreateNew}>
+            <img src="/brand/icon-create.png" alt="" className="action-icon" />
+            <div className="title">Create Story</div>
+          </div>
+          <div className="story-card storybook-card" onClick={() => setShowStorybook(true)}>
+            <img src="/brand/icon-library.png" alt="" className="action-icon" />
+            <div className="title">My Stories</div>
+            {myStories.length > 0 && (
+              <div className="storybook-count">{myStories.length}</div>
+            )}
+          </div>
+          <div className="story-card history-card" onClick={() => setShowHistory(true)}>
+            <img src="/brand/icon-history.png" alt="" className="action-icon" />
+            <div className="title">Recently Read</div>
+            {scopedReadingHistory.length > 0 && (
+              <div className="storybook-count">{new Set(scopedReadingHistory.map((h) => h.story_id)).size}</div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="filter-row">
         <div className="filter-select-wrap">
           <select
@@ -348,33 +377,6 @@ export function LibraryScreen({
           </select>
         </div>
       </div>
-
-      {/* Top action cards — Create + My Stories + Recently Read.
-          Emojis replaced with custom brand icons (fal.ai placeholders,
-          see public/brand/). If any image 404s, the card still renders
-          without crashing; alt text is the same as the title below. */}
-      {isPremium && (
-        <div className="action-cards three-col">
-          <div className="story-card create-card" onClick={onCreateNew}>
-            <img src="/brand/icon-create.png" alt="" className="action-icon" />
-            <div className="title">Create Story</div>
-          </div>
-          <div className="story-card storybook-card" onClick={() => setShowStorybook(true)}>
-            <img src="/brand/icon-library.png" alt="" className="action-icon" />
-            <div className="title">My Stories</div>
-            {myStories.length > 0 && (
-              <div className="storybook-count">{myStories.length}</div>
-            )}
-          </div>
-          <div className="story-card history-card" onClick={() => setShowHistory(true)}>
-            <img src="/brand/icon-history.png" alt="" className="action-icon" />
-            <div className="title">Recently Read</div>
-            {scopedReadingHistory.length > 0 && (
-              <div className="storybook-count">{new Set(scopedReadingHistory.map((h) => h.story_id)).size}</div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Built-in Story Library */}
       <div className="library-section">

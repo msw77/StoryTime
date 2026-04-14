@@ -4,7 +4,19 @@ fal.config({
   credentials: process.env.FAL_KEY,
 });
 
-const STYLE_PREFIX = `Warm, friendly children's book illustration in soft watercolor style. Simple shapes, rounded edges, warm natural lighting. Gentle color palette with soft blues, greens, and warm yellows. No text in the image. No scary or dark elements. Characters have large, expressive eyes and friendly expressions. Style is consistent with a modern children's picture book for ages 2-8.`;
+// IMPORTANT: the "ABSOLUTELY NO …" block at the end is load-bearing.
+// fal.ai models (both imagen4 and nano-banana) will cheerfully render
+// speech bubbles, comic-style text, handwritten signs, book titles,
+// and "letter-like" gibberish inside illustrations unless explicitly
+// told not to — and when they do, the letters are almost always
+// misspelled or garbled, which breaks the read-along illusion for
+// parents. The repeated phrasing is intentional: these models weight
+// the LAST instructions most heavily, so we restate the ban multiple
+// ways (text, words, letters, speech bubbles, signs, labels) to
+// maximize the chance it sticks.
+const STYLE_PREFIX = `Warm, friendly children's book illustration in soft watercolor style. Simple shapes, rounded edges, warm natural lighting. Gentle color palette with soft blues, greens, and warm yellows. No scary or dark elements. Characters have large, expressive eyes and friendly expressions. Style is consistent with a modern children's picture book for ages 2-8.
+
+ABSOLUTELY NO TEXT of any kind in the image: no words, no letters, no numbers, no writing, no captions, no titles, no labels, no signs, no book titles, no newspaper text, no handwritten notes, no chalkboards with writing, no alphabet blocks with letters on them. ABSOLUTELY NO speech bubbles, thought bubbles, word balloons, or comic-book dialogue boxes. The illustration must communicate the scene purely through visuals — if you were going to add text, add more visual detail instead.`;
 
 interface GenerateImageResult {
   url: string;

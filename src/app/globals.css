@@ -1553,7 +1553,7 @@ body > * {
    "Reading as …" line and the filter row — it's an accent strip, not
    a big display panel. */
 .library-hero {
-  padding: 2px 20px 4px;
+  padding: 2px 20px 16px;
   line-height: 0; /* kill the inline-image baseline gap */
 }
 .library-hero-img {
