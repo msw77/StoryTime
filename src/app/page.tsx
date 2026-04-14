@@ -6,6 +6,7 @@ import { Story } from "@/types/story";
 import { ALL_STORIES } from "@/data/stories";
 import { GENRES } from "@/data/genres";
 import { useSpeech } from "@/hooks/useSpeech";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LibraryScreen } from "@/components/library/LibraryScreen";
 import { ReaderScreen } from "@/components/reader/ReaderScreen";
 import { BuilderScreen } from "@/components/builder/BuilderScreen";
@@ -45,6 +46,7 @@ export default function Home() {
   const [isPremium, setIsPremium] = useState(true); // TODO: remove dev override — temporarily true to test builder
   const [readingHistory, setReadingHistory] = useState<ReadingHistoryEntry[]>([]);
   const speech = useSpeech();
+  const sfx = useSoundEffects();
 
   // Mark as loaded (saved stories now come from database, loaded after sign-in)
   useEffect(() => {
@@ -295,7 +297,7 @@ export default function Home() {
         />
       )}
       {screen === "reader" && cur && (
-        <ReaderScreen story={cur} onBack={handleBack} speech={speech} onSave={cur.generated ? handleSaveStory : undefined} />
+        <ReaderScreen story={cur} onBack={handleBack} speech={speech} sfx={sfx} onSave={cur.generated ? handleSaveStory : undefined} />
       )}
       {screen === "builder" && (
         <BuilderScreen onBack={() => setScreen("library")} onStoryCreated={handleCreated} />

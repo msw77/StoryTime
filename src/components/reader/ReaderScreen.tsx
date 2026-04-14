@@ -1,17 +1,19 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Story, SpeechControls } from "@/types/story";
+import { SoundEffects } from "@/hooks/useSoundEffects";
 import { SceneIllustration } from "./SceneIllustration";
 
 interface ReaderScreenProps {
   story: Story;
   onBack: () => void;
   speech: SpeechControls;
+  sfx: SoundEffects;
   onSave?: () => void;
 }
 
-export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProps) {
+export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScreenProps) {
   const [pageIdx, setPageIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [finished, setFinished] = useState(false);
@@ -22,9 +24,25 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
   );
   const [imagesLoading, setImagesLoading] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
+  const [pageTransition, setPageTransition] = useState<"in" | "out" | null>(null);
+  const pendingPageRef = useRef<number | null>(null);
   const pages = story.pages;
   const page = pages[pageIdx];
   const canSave = !!story.generated && !!onSave;
+
+  // Animated page change — fade out, switch, fade in
+  const goToPage = useCallback((newPage: number, isAutoAdvance = false) => {
+    if (newPage === pageIdx || newPage < 0 || newPage >= pages.length) return;
+    if (isAutoAdvance) autoAdvancedRef.current = true;
+    sfx.pageTurn();
+    pendingPageRef.current = newPage;
+    setPageTransition("out");
+    setTimeout(() => {
+      setPageIdx(newPage);
+      setPageTransition("in");
+      setTimeout(() => setPageTransition(null), 400);
+    }, 250);
+  }, [pageIdx, pages.length, sfx]);
 
   // Set reading speed based on age group when story opens
   useEffect(() => {
@@ -158,10 +176,9 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
     speech.speak(pages[idx][1], () => {
       // Audio finished — advance to next page
       if (idx < pages.length - 1) {
-        autoAdvancedRef.current = true;
-        setPageIdx(idx + 1);
+        goToPage(idx + 1, true);
       } else {
-        setFinished(true);
+        setFinished(true); sfx.celebration();
       }
     });
   };
@@ -196,6 +213,32 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIdx]);
+
+  // Auto-scroll to keep the highlighted word visible
+  useEffect(() => {
+    if (speech.wordIndex < 0 || !speech.speaking) return;
+    const activeEl = contentRef.current?.querySelector(".word.active") as HTMLElement | null;
+    if (!activeEl || !contentRef.current) return;
+
+    const container = contentRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const wordRect = activeEl.getBoundingClientRect();
+
+    // Word position relative to the visible container area
+    const wordTopInContainer = wordRect.top - containerRect.top;
+    const wordBottomInContainer = wordRect.bottom - containerRect.top;
+
+    // If word is below the visible area or above it, scroll to center it
+    if (wordBottomInContainer > containerRect.height - 30 || wordTopInContainer < 30) {
+      const scrollTarget = container.scrollTop + wordTopInContainer - containerRect.height * 0.5;
+      container.scrollTo({ top: Math.max(0, scrollTarget), behavior: "smooth" });
+    }
+  }, [speech.wordIndex, speech.speaking]);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pageIdx]);
 
   useEffect(() => () => speech.stop(), []);
@@ -242,7 +285,7 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
               <span
                 key={n}
                 className={`star ${n <= rating ? "filled" : ""}`}
-                onClick={() => setRating(n)}
+                onClick={() => { setRating(n); sfx.starTap(n - 1); }}
               >
                 ⭐
               </span>
@@ -277,29 +320,58 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
   }
 
   const tw = page[1].split(/\s+/);
-
-  // Auto-size text: smaller font for longer pages so text + image fit without scrolling
-  const wordCount = tw.length;
-  const textSizeClass =
-    wordCount > 100 ? "text-xs" :
-    wordCount > 60 ? "text-sm" :
-    wordCount > 40 ? "text-md" : "text-lg";
-  const isLongText = wordCount > 55;
+  const contentRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="reader">
       <div className="reader-header">
-        <button
-          className="icon-btn"
-          onClick={handleBackClick}
-        >
-          ←
-        </button>
-        <h2>
-          {story.emoji} {story.title}
-        </h2>
+        <button className="icon-btn" onClick={handleBackClick}>←</button>
+        <h2>{story.emoji} {story.title}</h2>
+        <span className="page-num">{pageIdx + 1}/{pages.length}</span>
+        <div className="header-controls">
+          <button
+            className="hdr-btn"
+            disabled={pageIdx === 0}
+            onClick={() => { speech.stop(); goToPage(pageIdx - 1); }}
+          >
+            ⏮
+          </button>
+          <button
+            className="hdr-btn play"
+            disabled={speech.loading}
+            onClick={() => {
+              if (speech.speaking) { sfx.tap(); speech.stop(); }
+              else { sfx.startReading(); readPage(); }
+            }}
+          >
+            {speech.loading ? "⏳" : speech.speaking ? "⏸" : "▶️"}
+          </button>
+          <button
+            className="hdr-btn"
+            onClick={() => {
+              speech.stop();
+              if (pageIdx >= pages.length - 1) { setFinished(true); sfx.celebration(); }
+              else goToPage(pageIdx + 1);
+            }}
+          >
+            ⏭
+          </button>
+          <button
+            className={`hdr-btn ${autoplay ? "active" : ""}`}
+            onClick={() => setAutoplay((a) => !a)}
+            title={autoplay ? "Autoplay on" : "Autoplay off"}
+          >
+            {autoplay ? "🔁" : "➡️"}
+          </button>
+        </div>
       </div>
-      <div className={`reader-content ${isLongText ? "long-text" : ""}`}>
+      <div className="reader-progress">
+        <div
+          className="progress-fill"
+          style={{ width: `${pages.length <= 1 ? 100 : (pageIdx / (pages.length - 1)) * 100}%` }}
+        />
+      </div>
+      <div ref={contentRef} className={`reader-content ${pageTransition === "out" ? "page-exit" : pageTransition === "in" ? "page-enter" : ""}`}>
         {aiImages[pageIdx] ? (
           <div className="ai-illustration">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -312,8 +384,7 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
         ) : (
           <SceneIllustration genre={story.genre} pageIdx={pageIdx} />
         )}
-        <div className="page-title">{page[0]}</div>
-        <div className={`story-text ${textSizeClass}`}>
+        <div className="story-text">
           {tw.map((w, i) => (
             <span
               key={i}
@@ -322,53 +393,6 @@ export function ReaderScreen({ story, onBack, speech, onSave }: ReaderScreenProp
               {w}{" "}
             </span>
           ))}
-        </div>
-      </div>
-      <div className="reader-controls">
-        <div className="progress-bar">
-          <div
-            className="progress-fill"
-            style={{ width: `${((pageIdx + 1) / pages.length) * 100}%` }}
-          />
-        </div>
-        <div className="controls-row">
-          <button
-            className="ctrl-btn"
-            disabled={pageIdx === 0}
-            onClick={() => {
-              speech.stop();
-              setPageIdx((p) => p - 1);
-            }}
-          >
-            ⏮
-          </button>
-          <button
-            className="ctrl-btn play"
-            disabled={speech.loading}
-            onClick={() => {
-              if (speech.speaking) speech.stop();
-              else readPage();
-            }}
-          >
-            {speech.loading ? "⏳" : speech.speaking ? "⏸" : "▶️"}
-          </button>
-          <button
-            className="ctrl-btn"
-            onClick={() => {
-              speech.stop();
-              if (pageIdx >= pages.length - 1) setFinished(true);
-              else setPageIdx((p) => p + 1);
-            }}
-          >
-            ⏭
-          </button>
-          <button
-            className={`ctrl-btn autoplay-btn ${autoplay ? "active" : ""}`}
-            onClick={() => setAutoplay((a) => !a)}
-            title={autoplay ? "Autoplay on" : "Autoplay off"}
-          >
-            {autoplay ? "🔁" : "➡️"}
-          </button>
         </div>
       </div>
     </div>

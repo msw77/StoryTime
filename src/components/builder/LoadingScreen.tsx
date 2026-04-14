@@ -226,20 +226,7 @@ export function LoadingScreen({ genre, heroName, phase = "story", progress = 0 }
   const currentJoke = shuffledJokes[jokeIdx];
   const currentFact = shuffledFacts[factIdx];
 
-  // Smooth animated progress (catches up to actual progress gradually)
-  const [displayProgress, setDisplayProgress] = useState(0);
-  useEffect(() => {
-    if (progress <= displayProgress) return;
-    const timer = setInterval(() => {
-      setDisplayProgress((prev) => {
-        if (prev >= progress) { clearInterval(timer); return prev; }
-        return prev + 1;
-      });
-    }, 40);
-    return () => clearInterval(timer);
-  }, [progress, displayProgress]);
-
-  // Slowly animate progress even during the story phase so it feels alive
+  // Slowly animate progress during the story phase so it feels alive
   const [fakeProgress, setFakeProgress] = useState(0);
   useEffect(() => {
     if (progress > 0) return; // Real progress has kicked in
@@ -249,7 +236,22 @@ export function LoadingScreen({ genre, heroName, phase = "story", progress = 0 }
     return () => clearInterval(timer);
   }, [progress]);
 
-  const shownProgress = progress > 0 ? displayProgress : fakeProgress;
+  // Smooth animated progress — never goes backwards
+  const [displayProgress, setDisplayProgress] = useState(0);
+  const targetProgress = progress > 0 ? Math.max(progress, fakeProgress) : fakeProgress;
+
+  useEffect(() => {
+    if (targetProgress <= displayProgress) return;
+    const timer = setInterval(() => {
+      setDisplayProgress((prev) => {
+        if (prev >= targetProgress) { clearInterval(timer); return prev; }
+        return prev + 1;
+      });
+    }, 40);
+    return () => clearInterval(timer);
+  }, [targetProgress, displayProgress]);
+
+  const shownProgress = displayProgress;
 
   const progressLabel =
     shownProgress < 25
