@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito, Baloo_2 } from "next/font/google";
+import { Nunito, Fredoka } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
@@ -9,10 +9,10 @@ const nunito = Nunito({
   weight: ["400", "600", "700", "800", "900"],
 });
 
-const baloo2 = Baloo_2({
-  variable: "--font-baloo2",
+const fredoka = Fredoka({
+  variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["700", "800"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${nunito.variable} ${baloo2.variable}`}>
+      <html lang="en" className={`${nunito.variable} ${fredoka.variable}`}>
         <body>{children}</body>
       </html>
     </ClerkProvider>

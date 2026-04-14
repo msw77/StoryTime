@@ -402,8 +402,8 @@ export function useSpeech(): SpeechControls {
     const trackWords = () => {
       if (cancelledRef.current || endHandled) return;
 
-      // Check if audio naturally ended (some browsers don't fire 'ended')
-      if (audio.ended || (audio.duration > 0 && audio.currentTime >= audio.duration - 0.05)) {
+      // Check if audio naturally ended (backup for browsers that miss 'ended' event)
+      if (audio.ended) {
         handleEnd();
         return;
       }
@@ -444,9 +444,6 @@ export function useSpeech(): SpeechControls {
       animFrameRef.current = requestAnimationFrame(trackWords);
     };
 
-    // Start the tracking loop
-    animFrameRef.current = requestAnimationFrame(trackWords);
-
     audio.onended = handleEnd;
 
     audio.onerror = () => {
@@ -459,18 +456,6 @@ export function useSpeech(): SpeechControls {
       }
     };
 
-    // Safety timeout — if audio should be done but events didn't fire
-    const dur = audio.duration || cached.audio.duration || 0;
-    if (dur > 0) {
-      const expectedMs = (dur / aiSpeed + 5) * 1000;
-      safetyTimer = setTimeout(() => {
-        if (!endHandled && !cancelledRef.current) {
-          console.warn("Audio safety timeout — forcing end");
-          handleEnd();
-        }
-      }, expectedMs);
-    }
-
     try {
       await audio.play();
     } catch (err) {
@@ -481,6 +466,24 @@ export function useSpeech(): SpeechControls {
         setSpeaking(false);
         speakBrowser(text, onEnd);
       }
+      return;
+    }
+
+    if (cancelledRef.current || endHandled) return;
+
+    // Start the tracking loop only after playback has begun
+    animFrameRef.current = requestAnimationFrame(trackWords);
+
+    // Safety timeout — if audio should be done but 'ended' event never fires
+    const dur = audio.duration || 0;
+    if (dur > 0) {
+      const expectedMs = (dur / aiSpeed + 8) * 1000;
+      safetyTimer = setTimeout(() => {
+        if (!endHandled && !cancelledRef.current) {
+          console.warn("Audio safety timeout — forcing end");
+          handleEnd();
+        }
+      }, expectedMs);
     }
   }, [aiVoice, aiSpeed, stop]);
 

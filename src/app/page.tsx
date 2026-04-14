@@ -94,7 +94,7 @@ export default function Home() {
         if (storiesRes.ok) {
           const savedStories = await storiesRes.json();
           if (Array.isArray(savedStories) && savedStories.length > 0) {
-            const mapped: Story[] = savedStories.map((s: { id: string; title: string; emoji: string; genre: string; age_group: string; pages: string | [string, string][]; page_count: number }) => {
+            const mapped: Story[] = savedStories.map((s: { id: string; title: string; emoji: string; genre: string; age_group: string; pages: string | [string, string][]; page_count: number; full_pages?: { scene: string; mood: string }[]; character_description?: string }) => {
               const gc = GENRES.find((g) => g.id === s.genre);
               return {
                 id: s.id,
@@ -105,6 +105,8 @@ export default function Home() {
                 age: s.age_group,
                 pages: typeof s.pages === "string" ? JSON.parse(s.pages) : s.pages,
                 generated: true,
+                fullPages: s.full_pages || undefined,
+                characterDescription: s.character_description || undefined,
               };
             });
             setStories((prev) => [...mapped, ...prev]);
@@ -219,6 +221,8 @@ export default function Home() {
           pages: cur.pages,
           duration: cur.duration,
           childProfileId: activeProfile?.id,
+          fullPages: cur.fullPages,
+          characterDescription: cur.characterDescription,
         }),
       });
       // Add to local stories list so it shows up right away

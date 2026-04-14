@@ -112,7 +112,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, emoji, genre, age, pages, duration, heroName, heroType, lesson, extras, childProfileId } = body;
+    const { title, emoji, genre, age, pages, duration, heroName, heroType, lesson, extras, childProfileId, fullPages, characterDescription } = body;
 
     const { data: story, error } = await supabase
       .from("stories")
@@ -128,6 +128,8 @@ export async function POST(req: Request) {
         hero_type: heroType || null,
         lesson: lesson || null,
         extras: extras || null,
+        full_pages: fullPages || null,
+        character_description: characterDescription || null,
         is_generated: true,
         is_built_in: false,
         page_count: pages?.length || 0,

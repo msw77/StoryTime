@@ -26,7 +26,7 @@ export async function generatePageImage(
   const result = await fal.subscribe("fal-ai/nano-banana-2", {
     input: {
       prompt,
-      aspect_ratio: "4:3",
+      aspect_ratio: "16:9",
       num_images: 1,
       output_format: "png",
       safety_tolerance: 1,

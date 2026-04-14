@@ -22,10 +22,12 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   const [aiImages, setAiImages] = useState<(string | null)[]>(
     () => story.preloadedImages || []
   );
+  const [imageIsWide, setImageIsWide] = useState<Record<number, boolean>>({});
   const [imagesLoading, setImagesLoading] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
   const [pageTransition, setPageTransition] = useState<"in" | "out" | null>(null);
-  const pendingPageRef = useRef<number | null>(null);
+  const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const pages = story.pages;
   const page = pages[pageIdx];
   const canSave = !!story.generated && !!onSave;
@@ -33,16 +35,28 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   // Animated page change — fade out, switch, fade in
   const goToPage = useCallback((newPage: number, isAutoAdvance = false) => {
     if (newPage === pageIdx || newPage < 0 || newPage >= pages.length) return;
-    if (isAutoAdvance) autoAdvancedRef.current = true;
+
+    // Cancel any in-flight transition
+    if (transitionTimerRef.current) {
+      clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+    }
+
+    // Always stop current audio immediately to prevent overlap
+    speech.stop();
+
+    // Set auto-advance flag — reset to false for manual nav so the effect
+    // takes the right path (manual nav that already had stop() called)
+    autoAdvancedRef.current = isAutoAdvance;
+
     sfx.pageTurn();
-    pendingPageRef.current = newPage;
     setPageTransition("out");
-    setTimeout(() => {
+    transitionTimerRef.current = setTimeout(() => {
       setPageIdx(newPage);
       setPageTransition("in");
-      setTimeout(() => setPageTransition(null), 400);
-    }, 250);
-  }, [pageIdx, pages.length, sfx]);
+      transitionTimerRef.current = setTimeout(() => setPageTransition(null), 400);
+    }, 200);
+  }, [pageIdx, pages.length, sfx, speech]);
 
   // Set reading speed based on age group when story opens
   useEffect(() => {
@@ -195,23 +209,18 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   }, [pageIdx]);
 
   // When page changes: if auto-advanced from audio ending, start next page.
-  // If manually navigated, stop current audio.
+  // If manually navigated, goToPage already called speech.stop().
   useEffect(() => {
-    if (autoAdvancedRef.current) {
-      // Page changed because audio finished — don't call stop(), just start next
-      autoAdvancedRef.current = false;
-      if (autoplay && !finished) {
-        const timer = setTimeout(() => readPage(), 600);
-        return () => clearTimeout(timer);
-      }
-    } else {
-      // Manual page change (user tapped forward/back) — stop current audio
-      speech.stop();
-      if (autoplay && !finished) {
-        const timer = setTimeout(() => readPage(), 800);
-        return () => clearTimeout(timer);
-      }
-    }
+    const wasAutoAdvance = autoAdvancedRef.current;
+    autoAdvancedRef.current = false;
+
+    if (!autoplay || finished) return;
+
+    // Auto-advance: audio just finished, start next page after brief pause
+    // Manual nav: goToPage already stopped audio, start new page after longer pause
+    const delay = wasAutoAdvance ? 600 : 800;
+    const timer = setTimeout(() => readPage(), delay);
+    return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIdx]);
 
@@ -240,6 +249,19 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pageIdx]);
+
+  // Preload the next 1-2 page images into browser cache so the image swap
+  // is instant when turning the page.
+  useEffect(() => {
+    const toPreload = [pageIdx + 1, pageIdx + 2];
+    toPreload.forEach((i) => {
+      const url = aiImages[i];
+      if (url) {
+        const img = new Image();
+        img.src = url;
+      }
+    });
+  }, [pageIdx, aiImages]);
 
   useEffect(() => () => speech.stop(), []);
 
@@ -320,7 +342,6 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   }
 
   const tw = page[1].split(/\s+/);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="reader">
@@ -341,7 +362,7 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
             disabled={speech.loading}
             onClick={() => {
               if (speech.speaking) { sfx.tap(); speech.stop(); }
-              else { sfx.startReading(); readPage(); }
+              else { readPage(); }
             }}
           >
             {speech.loading ? "⏳" : speech.speaking ? "⏸" : "▶️"}
@@ -371,28 +392,44 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
           style={{ width: `${pages.length <= 1 ? 100 : (pageIdx / (pages.length - 1)) * 100}%` }}
         />
       </div>
-      <div ref={contentRef} className={`reader-content ${pageTransition === "out" ? "page-exit" : pageTransition === "in" ? "page-enter" : ""}`}>
-        {aiImages[pageIdx] ? (
-          <div className="ai-illustration">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={aiImages[pageIdx]!} alt={`Illustration for ${page[0]}`} />
+      <div className={`reader-body ${pageTransition === "out" ? "page-exit" : pageTransition === "in" ? "page-enter" : ""}`}>
+        <div className="reader-image-fixed">
+          {aiImages[pageIdx] ? (
+            <div className={`ai-illustration ${imageIsWide[pageIdx] ? "wide" : ""}`} key={pageIdx}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={aiImages[pageIdx]!}
+                alt={`Illustration for ${page[0]}`}
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  const ratio = img.naturalWidth / img.naturalHeight;
+                  // Wider than 3:2 (1.5) — e.g., 16:9 images get the wide treatment
+                  const isWide = ratio > 1.6;
+                  setImageIsWide((prev) =>
+                    prev[pageIdx] === isWide ? prev : { ...prev, [pageIdx]: isWide }
+                  );
+                }}
+              />
+            </div>
+          ) : imagesLoading && story.generated ? (
+            <div className="ai-illustration img-shimmer">
+              <div className="shimmer-text">🎨 Painting this scene…</div>
+            </div>
+          ) : (
+            <SceneIllustration genre={story.genre} pageIdx={pageIdx} />
+          )}
+        </div>
+        <div ref={contentRef} className="reader-text-scroll">
+          <div className="story-text">
+            {tw.map((w, i) => (
+              <span
+                key={i}
+                className={`word ${speech.speaking && i === speech.wordIndex ? "active" : ""}`}
+              >
+                {w}{" "}
+              </span>
+            ))}
           </div>
-        ) : imagesLoading && story.generated ? (
-          <div className="ai-illustration img-shimmer">
-            <div className="shimmer-text">🎨 Painting this scene…</div>
-          </div>
-        ) : (
-          <SceneIllustration genre={story.genre} pageIdx={pageIdx} />
-        )}
-        <div className="story-text">
-          {tw.map((w, i) => (
-            <span
-              key={i}
-              className={`word ${speech.speaking && i === speech.wordIndex ? "active" : ""}`}
-            >
-              {w}{" "}
-            </span>
-          ))}
         </div>
       </div>
     </div>
