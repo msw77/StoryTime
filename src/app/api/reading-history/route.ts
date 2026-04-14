@@ -1,5 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServiceClient } from "@/lib/supabase";
+import {
+  parseJsonBody,
+  requireDbUserId,
+  validateChildProfileOwnership,
+} from "@/lib/api-helpers";
+import { logReadingSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
 // GET /api/reading-history — fetch recent reading history
@@ -45,31 +51,30 @@ export async function GET() {
 // POST /api/reading-history — log that a story was opened/read
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-    }
+    const userResult = await requireDbUserId();
+    if (!userResult.ok) return userResult.response;
+    const dbUserId = userResult.value;
+
+    const parsed = await parseJsonBody(req, logReadingSchema);
+    if (!parsed.ok) return parsed.response;
+    const {
+      storyId, storyTitle, storyEmoji, storyGenre, storyAge, storyColor,
+      isGenerated, totalPages, childProfileId,
+    } = parsed.value;
+
+    // IDOR fix: same as /api/stories — verify the child_profile_id
+    // actually belongs to the caller before we tag this read with it.
+    const profileCheck = await validateChildProfileOwnership(dbUserId, childProfileId);
+    if (!profileCheck.ok) return profileCheck.response;
+    const verifiedChildProfileId = profileCheck.value;
 
     const supabase = createServiceClient();
-
-    const { data: user } = await supabase
-      .from("users")
-      .select("id")
-      .eq("clerk_id", userId)
-      .single();
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const body = await req.json();
-    const { storyId, storyTitle, storyEmoji, storyGenre, storyAge, storyColor, isGenerated, totalPages, childProfileId } = body;
 
     const { data: entry, error } = await supabase
       .from("reading_history")
       .insert({
-        user_id: user.id,
-        child_profile_id: childProfileId || null,
+        user_id: dbUserId,
+        child_profile_id: verifiedChildProfileId,
         story_id: storyId,
         story_title: storyTitle,
         story_emoji: storyEmoji || "📖",

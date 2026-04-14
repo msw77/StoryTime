@@ -1,20 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
 import { generateStoryWithAI } from "@/lib/anthropic";
+import { parseJsonBody, requireClerkUser } from "@/lib/api-helpers";
+import { generateStorySchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-    }
+    const clerk = await requireClerkUser();
+    if (!clerk.ok) return clerk.response;
 
-    const body = await req.json();
-    const { heroName, heroType, genre, age, obstacle, lesson, extras, duration } = body;
-
-    if (!heroName || !genre || !age) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const parsed = await parseJsonBody(req, generateStorySchema);
+    if (!parsed.ok) return parsed.response;
+    const { heroName, heroType, genre, age, obstacle, lesson, extras, duration } = parsed.value;
 
     const story = await generateStoryWithAI({
       heroName,

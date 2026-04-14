@@ -1,26 +1,25 @@
-import { auth } from "@clerk/nextjs/server";
 import { generatePageImage } from "@/lib/fal";
+import { parseJsonBody, requireClerkUser } from "@/lib/api-helpers";
+import { generateImagesSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-    }
+    const clerk = await requireClerkUser();
+    if (!clerk.ok) return clerk.response;
 
-    const body = await req.json();
-    const { pages, characterDescription } = body;
-
-    // pages should be an array of { scene, mood, index } objects
-    if (!pages || !Array.isArray(pages) || pages.length === 0) {
-      return NextResponse.json({ error: "No pages provided" }, { status: 400 });
-    }
+    // Schema enforces: 1..IMAGE_PAGES_MAX pages, scene is required and
+    // bounded, mood/index are bounded, characterDescription is bounded.
+    // This closes Codex finding #5 — before, a client could submit 500
+    // pages and fan out 500 paid fal calls in a single request.
+    const parsed = await parseJsonBody(req, generateImagesSchema);
+    if (!parsed.ok) return parsed.response;
+    const { pages, characterDescription } = parsed.value;
 
     // Generate all requested images in parallel
     const results = await Promise.allSettled(
-      pages.map((page: { scene: string; mood: string; index?: number }, i: number) =>
-        generatePageImage(page.scene, page.mood || "warm", page.index ?? i, characterDescription)
+      pages.map((page, i) =>
+        generatePageImage(page.scene, page.mood || "warm", page.index ?? i, characterDescription ?? undefined)
       )
     );
 

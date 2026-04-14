@@ -1,5 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServiceClient } from "@/lib/supabase";
+import { parseJsonBody, requireClerkUser } from "@/lib/api-helpers";
+import { createProfileSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
 // Helper: get the Supabase user ID from Clerk ID
@@ -43,18 +45,14 @@ export async function GET() {
 // POST /api/profiles — create a new child profile
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-    }
+    const clerk = await requireClerkUser();
+    if (!clerk.ok) return clerk.response;
 
-    const { name, age, avatar_emoji } = await req.json();
+    const parsed = await parseJsonBody(req, createProfileSchema);
+    if (!parsed.ok) return parsed.response;
+    const { name, age, avatar_emoji } = parsed.value;
 
-    if (!name || typeof name !== "string" || !name.trim()) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
-    }
-
-    const dbUserId = await getDbUserId(userId);
+    const dbUserId = await getDbUserId(clerk.value);
     if (!dbUserId) {
       return NextResponse.json({ error: "User not found in database" }, { status: 404 });
     }
@@ -64,8 +62,8 @@ export async function POST(req: Request) {
       .from("child_profiles")
       .insert({
         user_id: dbUserId,
-        name: name.trim(),
-        age: age || null,
+        name,
+        age: age ?? null,
         avatar_emoji: avatar_emoji || "🧒",
       })
       .select("id, name, age, avatar_emoji")

@@ -1,6 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServiceClient } from "@/lib/supabase";
 import { generateTtsWithTimings, WordTiming } from "@/lib/tts";
+import {
+  parseJsonBody,
+  requireDbUserId,
+  validateChildProfileOwnership,
+} from "@/lib/api-helpers";
+import { saveStorySchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
 // Signed-URL TTL for story-audio objects. One hour covers a reading session
@@ -199,32 +205,36 @@ export async function DELETE(req: Request) {
 // POST /api/stories — save a generated story
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
-    }
+    // Auth + user resolution are now in a shared helper so every route
+    // gets the same behaviour and we have one place to update if Clerk or
+    // Supabase changes.
+    const userResult = await requireDbUserId();
+    if (!userResult.ok) return userResult.response;
+    const dbUserId = userResult.value;
+
+    // Validate the request body up front. Rejects anything oversized,
+    // mistyped, or missing required fields before we spend compute on it.
+    const parsed = await parseJsonBody(req, saveStorySchema);
+    if (!parsed.ok) return parsed.response;
+    const {
+      title, emoji, genre, age, pages, heroName, heroType, lesson, extras,
+      childProfileId, fullPages, characterDescription, illustrationUrls,
+    } = parsed.value;
+
+    // IDOR fix: never trust a client-supplied child_profile_id. Require
+    // that the profile exists AND belongs to the signed-in user before we
+    // tag any row with it. Null is allowed (stories can be personal).
+    const profileCheck = await validateChildProfileOwnership(dbUserId, childProfileId);
+    if (!profileCheck.ok) return profileCheck.response;
+    const verifiedChildProfileId = profileCheck.value;
 
     const supabase = createServiceClient();
-
-    // Find the user by Clerk ID
-    const { data: user } = await supabase
-      .from("users")
-      .select("id")
-      .eq("clerk_id", userId)
-      .single();
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const body = await req.json();
-    const { title, emoji, genre, age, pages, duration, heroName, heroType, lesson, extras, childProfileId, fullPages, characterDescription, illustrationUrls } = body;
 
     const { data: story, error } = await supabase
       .from("stories")
       .insert({
-        user_id: user.id,
-        child_profile_id: childProfileId || null,
+        user_id: dbUserId,
+        child_profile_id: verifiedChildProfileId,
         title,
         emoji: emoji || "✨",
         genre,
