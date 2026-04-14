@@ -68,7 +68,7 @@ export function ProfileSelector({ profiles, onSelect, onCreate }: ProfileSelecto
                 placeholder="e.g. Emma, Max…"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                style={{ width: "100%", padding: "12px 16px", borderRadius: 14, border: "2px solid #e8e4dc", fontFamily: "var(--font-nunito), sans-serif", fontSize: 15, fontWeight: 600, background: "var(--card)", outline: "none" }}
+                style={{ width: "100%", padding: "12px 16px", borderRadius: 14, border: "2px solid #e8e4dc", fontFamily: "var(--font-nunito), Inter, sans-serif", fontSize: 15, fontWeight: 600, background: "var(--card)", outline: "none" }}
               />
             </div>
             <div className="builder-section">
@@ -76,7 +76,7 @@ export function ProfileSelector({ profiles, onSelect, onCreate }: ProfileSelecto
               <select
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-                style={{ width: "100%", padding: "12px 16px", borderRadius: 14, border: "2px solid #e8e4dc", fontFamily: "var(--font-nunito), sans-serif", fontSize: 15, fontWeight: 600, background: "var(--card)", outline: "none" }}
+                style={{ width: "100%", padding: "12px 16px", borderRadius: 14, border: "2px solid #e8e4dc", fontFamily: "var(--font-nunito), Inter, sans-serif", fontSize: 15, fontWeight: 600, background: "var(--card)", outline: "none" }}
               >
                 {Array.from({ length: 9 }, (_, i) => i + 2).map((a) => (
                   <option key={a} value={a}>

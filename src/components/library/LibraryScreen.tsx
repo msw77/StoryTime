@@ -191,7 +191,7 @@ export function LibraryScreen({
                   <span className="badge" style={{ background: s.color }}>
                     {GENRES.find((g) => g.id === s.genre)?.label}
                   </span>
-                  <span className="badge" style={{ background: "#6c5ce7" }}>
+                  <span className="badge" style={{ background: "var(--accent2)" }}>
                     {AGE_GROUPS.find((a) => a.id === s.age)?.label}
                   </span>
                 </div>
@@ -390,7 +390,7 @@ export function LibraryScreen({
                   <span className="badge" style={{ background: s.color }}>
                     {GENRES.find((g) => g.id === s.genre)?.label}
                   </span>
-                  <span className="badge" style={{ background: "#6c5ce7" }}>
+                  <span className="badge" style={{ background: "var(--accent2)" }}>
                     {AGE_GROUPS.find((a) => a.id === s.age)?.label}
                   </span>
                 </div>

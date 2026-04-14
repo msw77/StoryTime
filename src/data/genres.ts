@@ -1,20 +1,25 @@
 import { Genre, AgeGroup, Duration } from "@/types/story";
 
+// Genre colors are deliberately muted — think Coterie/Huckleberry, not
+// Crayola. Each hue is distinct enough to tell the genres apart at a
+// glance but none of them shout, so the library view reads as a calm
+// editorial grid rather than a toy-store wall. Same hue family as the
+// brand accents (warm terracotta + sage) so everything feels related.
 export const GENRES: Genre[] = [
-  { id: "all", label: "All Genres", emoji: "📖", color: "#6366f1" },
-  { id: "adventure", label: "Adventure", emoji: "🗺️", color: "#ef4444" },
-  { id: "fantasy", label: "Fantasy", emoji: "🧙", color: "#a855f7" },
-  { id: "friendship", label: "Friendship", emoji: "🤝", color: "#f59e0b" },
-  { id: "silly", label: "Silly", emoji: "🤪", color: "#22c55e" },
-  { id: "mystery", label: "Mystery", emoji: "🔍", color: "#6366f1" },
-  { id: "science", label: "Science", emoji: "🔬", color: "#06b6d4" },
-  { id: "animals", label: "Animals", emoji: "🐾", color: "#f97316" },
-  { id: "sports", label: "Sports", emoji: "⚽", color: "#14b8a6" },
-  { id: "history", label: "History", emoji: "🏛️", color: "#92400e" },
+  { id: "all", label: "All Genres", emoji: "📖", color: "#8a8170" },         // stone
+  { id: "adventure", label: "Adventure", emoji: "🗺️", color: "#b55a3c" },   // terracotta
+  { id: "fantasy", label: "Fantasy", emoji: "🧙", color: "#9584ad" },        // dusty lavender
+  { id: "friendship", label: "Friendship", emoji: "🤝", color: "#d4a055" }, // warm honey
+  { id: "silly", label: "Silly", emoji: "🤪", color: "#8ba478" },            // soft sage
+  { id: "mystery", label: "Mystery", emoji: "🔍", color: "#6b85a3" },        // dusty blue
+  { id: "science", label: "Science", emoji: "🔬", color: "#6fa39a" },        // muted teal
+  { id: "animals", label: "Animals", emoji: "🐾", color: "#c58a5a" },        // clay
+  { id: "sports", label: "Sports", emoji: "⚽", color: "#7a9e8f" },          // eucalyptus
+  { id: "history", label: "History", emoji: "🏛️", color: "#8a6a4c" },       // umber
   // "random" is builder-only — not a real genre; resolved to a random real
   // genre in BuilderScreen before sending to the API. Kept in GENRES so the
   // color lookup at save time still finds something sensible.
-  { id: "random", label: "Random", emoji: "🎲", color: "#6366f1" },
+  { id: "random", label: "Random", emoji: "🎲", color: "#8a8170" },          // stone
 ];
 
 export const AGE_GROUPS: AgeGroup[] = [

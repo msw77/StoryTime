@@ -7,27 +7,42 @@
 }
 
 :root {
-  --bg: #fef9f0;
+  /* ── Surfaces ──────────────────────────────────────────────
+     Cream background and warm-ink text were already close to the
+     Coterie/Huckleberry/Yoto family, so we keep them. The whole
+     aesthetic upgrade is really a palette desaturation + a type
+     change — structure stays put. */
+  --bg: #fbf6ea;             /* warmer, slightly deeper cream */
   --card: #ffffff;
-  --surface: #f5f1e8;
-  --text: #2d2a24;
-  --text-body: #5c5850;
-  --muted: #8a8578;
-  --hint: #b5b0a5;
-  --accent: #ff6b4a;
-  --accent2: #6c5ce7;
-  --success: #00b894;
-  --highlight: #fdcb6e;
-  --border: #e8e4dc;
+  --surface: #f2ecdc;        /* subtle oatmeal layer */
+  --text: #2a2722;           /* warm near-black, not pure black */
+  --text-body: #574f44;
+  --muted: #8a8170;
+  --hint: #b5ac98;
+
+  /* ── Accents (muted, editorial) ────────────────────────────
+     Old: #ff6b4a (loud coral) + #6c5ce7 (saturated purple).
+     New: warm terracotta + dusty sage. Still warm and inviting,
+     just dialed down ~30% in saturation so every surface isn't
+     shouting. This single change is probably 60% of why the
+     app now reads as "premium parent brand" vs "prototype". */
+  --accent: #b55a3c;         /* warm terracotta — primary brand */
+  --accent-soft: #d89478;    /* lighter terracotta for hover/tints */
+  --accent2: #7d9b82;        /* dusty sage — secondary brand */
+  --accent2-soft: #a6bda8;
+  --success: #7ba888;        /* muted jade (was vivid mint) */
+  --highlight: #d4a055;      /* warm honey (was bright mustard) */
+
+  --border: #e5dfce;
   --radius: 20px;
   --shadow-card: 0 2px 16px rgba(45, 42, 36, 0.06), 0 0 0 1px rgba(45, 42, 36, 0.04);
   --shadow-soft: 0 2px 12px rgba(45, 42, 36, 0.08);
-  --font-head: var(--font-heading), 'Fredoka', sans-serif;
+  --font-head: var(--font-heading), 'Fraunces', Georgia, serif;
 }
 
 body,
 #__next {
-  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-family: var(--font-nunito), "Inter", system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -57,9 +72,13 @@ body,
 }
 .header h1 {
   font-family: var(--font-head);
-  font-size: 28px;
+  font-size: 30px;
+  font-weight: 600;
   color: var(--accent);
-  letter-spacing: -0.5px;
+  /* Fraunces is a serif — wants slightly tighter but not as negative
+     as Fredoka's -0.5px. A hair of extra size and weight gives the
+     wordmark real editorial presence. */
+  letter-spacing: -0.4px;
 }
 .header-btns {
   display: flex;
@@ -102,7 +121,7 @@ body,
   border-radius: 14px;
   border: 2px solid var(--border);
   background: var(--card);
-  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-family: var(--font-nunito), "Inter", system-ui, sans-serif;
   font-weight: 700;
   font-size: 14px;
   color: var(--text);
@@ -118,7 +137,7 @@ body,
 .filter-select:focus {
   outline: none;
   border-color: var(--accent2);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(125, 155, 130, 0.22);
 }
 
 /* Library search — used in main library and My Stories views */
@@ -152,7 +171,7 @@ body,
 .library-search:focus {
   outline: none;
   border-color: var(--accent2);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(125, 155, 130, 0.22);
 }
 .library-search-clear {
   position: absolute;
@@ -277,7 +296,7 @@ body,
 .section-search:focus {
   outline: none;
   border-color: var(--accent2);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(125, 155, 130, 0.22);
 }
 .section-search-clear {
   position: absolute;
@@ -357,8 +376,12 @@ body,
   gap: 14px;
   padding: 0 20px 16px;
 }
+/* Home-screen action cards. Replaced the old rainbow gradients with
+   soft tonal surfaces. Each card gets its own muted hue so they still
+   read as distinct choices, but the palette stays unified and the
+   whole row feels calm instead of neon. */
 .create-card {
-  background: linear-gradient(135deg, #ff6b4a 0%, #ee5a6f 50%, #6c5ce7 100%);
+  background: linear-gradient(160deg, #b55a3c 0%, #a04e33 100%);
   color: #fff;
   text-align: center;
   justify-content: center;
@@ -369,11 +392,12 @@ body,
 }
 .create-card .title {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
   color: #fff;
+  letter-spacing: 0.2px;
 }
 .storybook-card {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 50%, #ec4899 100%);
+  background: linear-gradient(160deg, #7d9b82 0%, #6a8770 100%);
   color: #fff;
   text-align: center;
   justify-content: center;
@@ -384,14 +408,15 @@ body,
 }
 .storybook-card .title {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
   color: #fff;
+  letter-spacing: 0.2px;
 }
 .action-cards.three-col {
   grid-template-columns: 1fr 1fr 1fr;
 }
 .history-card {
-  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 50%, #6366f1 100%);
+  background: linear-gradient(160deg, #6b85a3 0%, #5a7491 100%);
   color: #fff;
   text-align: center;
   justify-content: center;
@@ -597,7 +622,7 @@ body,
   height: 40px;
   font-size: 18px;
 }
-.hdr-btn.play:hover { background: #e55a3a; }
+.hdr-btn.play:hover { background: #9b4a30; }
 .hdr-btn.active {
   background: rgba(228, 147, 58, 0.15);
 }
@@ -805,7 +830,7 @@ body,
   color: #fff;
   transform: scale(1.05);
   border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(255, 107, 74, 0.3);
+  box-shadow: 0 2px 8px rgba(181, 90, 60, 0.3);
 }
 
 /* Page transition effects */
@@ -875,7 +900,7 @@ body,
   opacity: 1;
   background: var(--accent2);
   color: #fff;
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 0 0 3px rgba(125, 155, 130, 0.35);
 }
 
 /* End screen */
@@ -936,7 +961,7 @@ body,
   padding: 14px 32px;
   border-radius: 100px;
   border: none;
-  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-family: var(--font-nunito), "Inter", system-ui, sans-serif;
   font-weight: 800;
   font-size: 16px;
   cursor: pointer;
@@ -980,7 +1005,7 @@ body,
   padding: 12px 16px;
   border-radius: 14px;
   border: 2px solid var(--border);
-  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-family: var(--font-nunito), "Inter", system-ui, sans-serif;
   font-size: 15px;
   font-weight: 600;
   background: var(--card);
@@ -1006,7 +1031,7 @@ body,
   border-radius: 100px;
   border: 2px solid var(--border);
   background: var(--card);
-  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-family: var(--font-nunito), "Inter", system-ui, sans-serif;
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
@@ -1156,7 +1181,7 @@ body,
   border: 2px dashed var(--accent);
   background: transparent;
   color: var(--accent);
-  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-family: var(--font-nunito), "Inter", system-ui, sans-serif;
   font-weight: 700;
   font-size: 14px;
   padding: 8px 20px;
@@ -1216,7 +1241,7 @@ body,
   border: none;
   border-radius: 10px;
   background: transparent;
-  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-family: var(--font-nunito), "Inter", system-ui, sans-serif;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
@@ -1241,7 +1266,7 @@ body,
   background: rgba(0, 0, 0, 0.04);
 }
 .voice-item.active {
-  background: rgba(108, 92, 231, 0.1);
+  background: rgba(125, 155, 130, 0.15);
 }
 .voice-name {
   flex: 1;
