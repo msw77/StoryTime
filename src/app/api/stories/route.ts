@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { createServiceClient } from "@/lib/supabase";
+import { generateTtsWithTimings, WordTiming } from "@/lib/tts";
 import { NextResponse } from "next/server";
 
 // GET /api/stories — load user's saved AI stories
@@ -112,7 +113,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, emoji, genre, age, pages, duration, heroName, heroType, lesson, extras, childProfileId, fullPages, characterDescription } = body;
+    const { title, emoji, genre, age, pages, duration, heroName, heroType, lesson, extras, childProfileId, fullPages, characterDescription, illustrationUrls } = body;
 
     const { data: story, error } = await supabase
       .from("stories")
@@ -130,6 +131,7 @@ export async function POST(req: Request) {
         extras: extras || null,
         full_pages: fullPages || null,
         character_description: characterDescription || null,
+        illustration_urls: Array.isArray(illustrationUrls) ? illustrationUrls : null,
         is_generated: true,
         is_built_in: false,
         page_count: pages?.length || 0,
@@ -140,6 +142,73 @@ export async function POST(req: Request) {
     if (error) {
       console.error("Failed to save story:", error);
       return NextResponse.json({ error: "Failed to save story" }, { status: 500 });
+    }
+
+    // ── Phase B: persist audio ────────────────────────────────────────────
+    // For each page, generate TTS+Whisper once and upload the mp3 to
+    // Supabase Storage. Record the public URL and word timings on the row.
+    // Next time the user opens this story, the reader plays straight from
+    // the stored URL — no /api/tts round trip, no OpenAI cost.
+    //
+    // Parallelized with a concurrency cap so we don't hammer OpenAI or run
+    // out of Vercel function memory on long stories.
+    const audioUrls: (string | null)[] = new Array(pages?.length || 0).fill(null);
+    const wordTimingsAll: (WordTiming[] | null)[] = new Array(pages?.length || 0).fill(null);
+
+    const CONCURRENCY = 3;
+    const pageEntries: [number, string][] = Array.isArray(pages)
+      ? (pages as [string, string][])
+          .map((p, i) => [i, p?.[1]] as [number, string])
+          .filter(([, text]) => typeof text === "string" && text.trim().length > 0)
+      : [];
+
+    async function persistOnePage(pageIdx: number, text: string): Promise<void> {
+      try {
+        const { audioBuffer, wordTimings } = await generateTtsWithTimings(text, "nova");
+        const objectPath = `${story.id}/page-${pageIdx}.mp3`;
+        const { error: uploadErr } = await supabase.storage
+          .from("story-audio")
+          .upload(objectPath, audioBuffer, {
+            contentType: "audio/mpeg",
+            upsert: true,
+          });
+        if (uploadErr) {
+          console.warn(`Audio upload failed for page ${pageIdx}:`, uploadErr.message);
+          return;
+        }
+        const { data: pub } = supabase.storage.from("story-audio").getPublicUrl(objectPath);
+        audioUrls[pageIdx] = pub?.publicUrl || null;
+        wordTimingsAll[pageIdx] = wordTimings;
+      } catch (e) {
+        console.warn(`TTS/upload failed for page ${pageIdx}:`, (e as Error).message);
+      }
+    }
+
+    // Simple concurrency-limited runner — batches of CONCURRENCY pages
+    for (let i = 0; i < pageEntries.length; i += CONCURRENCY) {
+      const batch = pageEntries.slice(i, i + CONCURRENCY);
+      await Promise.all(batch.map(([idx, text]) => persistOnePage(idx, text)));
+    }
+
+    // Update the row with the audio URLs + timings we collected. We tolerate
+    // partial failures — rows may end up with some null entries, and the
+    // reader will fall back to /api/tts for those pages only.
+    const gotAny = audioUrls.some((u) => u) || wordTimingsAll.some((w) => w);
+    if (gotAny) {
+      const { data: updated, error: updateErr } = await supabase
+        .from("stories")
+        .update({
+          audio_urls: audioUrls,
+          word_timings: wordTimingsAll,
+        })
+        .eq("id", story.id)
+        .select()
+        .single();
+      if (updateErr) {
+        console.warn("Failed to attach audio to story row:", updateErr.message);
+        return NextResponse.json(story);
+      }
+      return NextResponse.json(updated);
     }
 
     return NextResponse.json(story);

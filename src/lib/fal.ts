@@ -23,14 +23,15 @@ export async function generatePageImage(
     : "";
   const prompt = `${STYLE_PREFIX}${charBlock}\n\nScene: ${sceneDescription}\nMood: ${mood}`;
 
-  const result = await fal.subscribe("fal-ai/nano-banana-2", {
+  // Imagen 4 Fast: ~5s/image vs ~48s on nano-banana-2, better prompt adherence,
+  // and better character consistency across pages. Revert to "fal-ai/nano-banana-2"
+  // if we ever want the softer watercolor look back.
+  const result = await fal.subscribe("fal-ai/imagen4/preview/fast", {
     input: {
       prompt,
       aspect_ratio: "16:9",
       num_images: 1,
       output_format: "png",
-      safety_tolerance: 1,
-      resolution: "1K",
     },
   });
 

@@ -92,13 +92,17 @@ async function loadBuiltinAudioData() {
   builtinAudioLoading = false;
 }
 
-function getCacheKey(storyId: string | undefined, pageIdx: number | undefined, text: string, voice: AIVoiceName, speed: number): string {
+function getCacheKey(storyId: string | undefined, pageIdx: number | undefined, text: string, voice: AIVoiceName, _speed: number): string {
   // For built-in stories with nova voice, always use the pre-generated audio
   // (speed is handled via playbackRate, not re-generation)
   if (storyId && pageIdx !== undefined && voice === "nova") {
     return `builtin:${storyId}:${pageIdx}`;
   }
-  return `${voice}:${speed.toFixed(1)}:${text.slice(0, 120)}`;
+  // Speed is intentionally NOT part of the cache key. All TTS audio is
+  // generated at natural speed 1.0; playbackRate handles speed variations
+  // at the audio element level. This keeps cache hits stable across reading
+  // speed changes and avoids Whisper word-timing drift on stretched audio.
+  return `${voice}:${text.slice(0, 120)}`;
 }
 
 // Try to load pre-generated audio for a built-in story page
@@ -158,16 +162,24 @@ async function loadBuiltinAudio(storyId: string, pageIdx: number): Promise<Cache
   });
 }
 
-// Fetch TTS audio from API (for custom stories or non-default voice)
+// Fetch TTS audio from API (for custom stories or non-default voice).
+// Always requests speed=1.0 so Whisper word timings are accurate — playback
+// speed is applied via audio.playbackRate at play time. (Sending a non-1.0
+// speed to OpenAI TTS applies a post-processing stretch that confuses Whisper
+// and causes audio-to-text drift.)
 async function fetchTTSFromAPI(
-  text: string, aiVoice: AIVoiceName, aiSpeed: number
+  text: string, aiVoice: AIVoiceName, _aiSpeed: number
 ): Promise<CachedAudio | null> {
+  const t0 = performance.now();
+  const label = text.slice(0, 30).replace(/\s+/g, " ");
+  console.log(`[Audio] fetch start: "${label}..."`);
   try {
     const res = await fetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, voice: aiVoice, speed: aiSpeed }),
+      body: JSON.stringify({ text, voice: aiVoice, speed: 1.0 }),
     });
+    console.log(`[Audio] response received: ${((performance.now() - t0) / 1000).toFixed(1)}s`);
 
     if (!res.ok) {
       console.warn("TTS API error:", res.status);
@@ -182,6 +194,11 @@ async function fetchTTSFromAPI(
     const audioUrl = URL.createObjectURL(blob);
 
     const audio = new Audio(audioUrl);
+    // Force the browser to fully buffer the audio so play() is instant later.
+    // Without this (or with only 'loadedmetadata'), readyState stays at 1
+    // (HAVE_METADATA) and the first play() has to decode on-demand, adding
+    // ~2-3s of dead air before sound starts.
+    audio.preload = "auto";
 
     const entry: CachedAudio = {
       audio,
@@ -189,16 +206,27 @@ async function fetchTTSFromAPI(
       ready: false,
     };
 
+    // Wait until the browser has enough decoded data to start playing
+    // without buffering. 'canplay' = readyState >= 3 (HAVE_FUTURE_DATA).
+    // We also set a safety timeout — if for some reason canplay never fires,
+    // we still return after 4s so the call doesn't hang forever.
     await new Promise<void>((resolve) => {
-      audio.onloadedmetadata = () => {
-        entry.ready = true;
+      let settled = false;
+      const done = (ready: boolean, reason: string) => {
+        if (settled) return;
+        settled = true;
+        entry.ready = ready;
+        console.log(`[Audio] ready: ${ready} (${reason}) total: ${((performance.now() - t0) / 1000).toFixed(1)}s`);
         resolve();
       };
-      audio.onerror = () => resolve();
-      if (audio.readyState >= 1) {
-        entry.ready = true;
-        resolve();
-      }
+      audio.oncanplay = () => done(true, "canplay");
+      audio.oncanplaythrough = () => done(true, "canplaythrough");
+      audio.onerror = () => done(false, "error");
+      if (audio.readyState >= 3) done(true, "already-ready");
+      // Kick the browser to start loading
+      try { audio.load(); } catch { /* ignore */ }
+      // Safety net: if canplay never fires (rare), don't hang
+      setTimeout(() => done(audio.readyState >= 2, `timeout(readyState=${audio.readyState})`), 4000);
     });
 
     return entry;
@@ -248,6 +276,96 @@ async function fetchAudio(
 
   fetchingKeys.set(cacheKey, promise);
   return promise;
+}
+
+// ─── Hydrate stored audio ────────────────────────────────────────────
+// Seeds the module-level audioCache with CachedAudio entries that point at
+// already-persisted mp3 URLs (Supabase Storage) plus their Whisper word
+// timings. Called when a saved story opens in the reader. After this runs,
+// fetchAudio() / speakAI() will find cache hits on every page that has a
+// stored URL and skip /api/tts entirely.
+//
+// The returned Promise resolves once page 1's audio element has buffered
+// enough to play instantly — callers can ignore it for fire-and-forget or
+// await it to guarantee zero lag on first play.
+
+interface StoredAudioPage {
+  text: string;
+  url: string | null;
+  wordTimings: WordTiming[] | null;
+}
+
+function hydrateCachedAudioEntry(url: string, wordTimings: WordTiming[]): CachedAudio {
+  const audio = new Audio(url);
+  // Critical: force the browser to decode in the background so the first
+  // play() is instant. Without this, readyState stays at 1 (HAVE_METADATA)
+  // and play() has to decode on-demand → ~2-3s of dead air.
+  audio.preload = "auto";
+  audio.crossOrigin = "anonymous";
+
+  const entry: CachedAudio = { audio, wordTimings, ready: false };
+
+  // Start decoding; mark ready on canplay. Not awaited — runs in background.
+  const markReady = () => { entry.ready = true; };
+  audio.addEventListener("canplay", markReady, { once: true });
+  audio.addEventListener("canplaythrough", markReady, { once: true });
+  try { audio.load(); } catch { /* ignore */ }
+
+  return entry;
+}
+
+export function hydrateStoredAudio(
+  pages: StoredAudioPage[],
+  voice: AIVoiceName = "nova",
+): void {
+  for (const page of pages) {
+    if (!page.url || !page.wordTimings || page.wordTimings.length === 0) continue;
+    if (!page.text) continue;
+    // Use the same cache key shape as fetchAudio — speed is NOT part of the
+    // key (all audio is at natural 1.0; playbackRate handles variations).
+    const cacheKey = `${voice}:${page.text.slice(0, 120)}`;
+    // Don't clobber an in-flight or already-fetched entry.
+    if (audioCache.has(cacheKey)) continue;
+    const entry = hydrateCachedAudioEntry(page.url, page.wordTimings);
+    audioCache.set(cacheKey, entry);
+  }
+}
+
+// ─── Standalone prefetch helper ──────────────────────────────────────
+// Call this from outside the hook (e.g. BuilderScreen, library tap handler)
+// to warm the audio cache before the reader mounts.
+// Uses defaults (nova voice, 1.0 speed) which match the reader's defaults —
+// if the user has customized voice/speed in the reader, the reader's own
+// prefetch will fire on mount and catch it.
+//
+// Returns a Promise that resolves when **page 1** is cached (or failed).
+// Other pages keep warming in the background. Caller can await this to
+// guarantee the user has zero lag when they hit play on page 1, or ignore
+// the return value for pure fire-and-forget.
+export function prefetchStoryAudio(
+  pageTexts: string[],
+  storyId?: string,
+  options?: { voice?: AIVoiceName; speed?: number; maxPages?: number }
+): Promise<void> {
+  const voice = options?.voice ?? "nova";
+  const speed = options?.speed ?? 1.0;
+  // Only warm the first couple of pages — page 1 is the critical one.
+  // Warming more than that wastes API calls if the user doesn't finish the story.
+  const maxPages = options?.maxPages ?? 2;
+
+  const count = Math.min(pageTexts.length, maxPages);
+  let firstPagePromise: Promise<CachedAudio | null> = Promise.resolve(null);
+
+  for (let i = 0; i < count; i++) {
+    const text = pageTexts[i];
+    if (!text) continue;
+    const p = fetchAudio(text, voice, speed, storyId, i);
+    // Errors are already swallowed inside fetchAudio, but guard just in case
+    p.catch(() => {});
+    if (i === 0) firstPagePromise = p;
+  }
+
+  return firstPagePromise.then(() => undefined).catch(() => undefined);
 }
 
 // ─── Main hook ───────────────────────────────────────────────────────
@@ -349,7 +467,12 @@ export function useSpeech(): SpeechControls {
     setLoading(true);
 
     const { storyId, pageIdx } = storyContextRef.current;
+    const playStart = performance.now();
+    const cacheKeyDbg = `${aiVoice}:${text.slice(0, 30).replace(/\s+/g, " ")}`;
+    const wasCached = audioCache.has(getCacheKey(storyId, pageIdx, text, aiVoice, aiSpeed));
+    console.log(`[Audio] speak called, cache ${wasCached ? "HIT" : "MISS"} for: ${cacheKeyDbg}`);
     const cached = await fetchAudio(text, aiVoice, aiSpeed, storyId, pageIdx);
+    console.log(`[Audio] fetchAudio returned in ${((performance.now() - playStart) / 1000).toFixed(2)}s, ready=${cached?.ready}`);
 
     if (cancelledRef.current) return;
     setLoading(false);

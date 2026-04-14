@@ -137,3 +137,11 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Claude Code local settings + scratch
+.claude/
+
+# Local-only image model comparison experiments (huge PNGs, not shipped)
+model-comparison/
+scripts/test-image-gen.mjs
+scripts/compare-image-models.mjs

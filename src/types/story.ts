@@ -4,6 +4,13 @@ export interface StoryPage {
   sounds?: string[];
 }
 
+/** A single word's timing within a page's audio, from OpenAI Whisper */
+export interface WordTiming {
+  word: string;
+  start: number;
+  end: number;
+}
+
 export interface Story {
   id: string;
   title: string;
@@ -18,6 +25,11 @@ export interface Story {
   characterDescription?: string;
   /** Pre-loaded image URLs (indexed by page number, null = not yet loaded) */
   preloadedImages?: (string | null)[];
+  /** Persisted mp3 URLs from Supabase Storage, indexed by page number.
+   *  Null entries fall back to on-demand /api/tts generation. */
+  audioUrls?: (string | null)[];
+  /** Persisted Whisper word timings, indexed by page number. */
+  wordTimings?: (WordTiming[] | null)[];
 }
 
 export interface Genre {

@@ -11,6 +11,10 @@ export const GENRES: Genre[] = [
   { id: "animals", label: "Animals", emoji: "🐾", color: "#f97316" },
   { id: "sports", label: "Sports", emoji: "⚽", color: "#14b8a6" },
   { id: "history", label: "History", emoji: "🏛️", color: "#92400e" },
+  // "random" is builder-only — not a real genre; resolved to a random real
+  // genre in BuilderScreen before sending to the API. Kept in GENRES so the
+  // color lookup at save time still finds something sensible.
+  { id: "random", label: "Random", emoji: "🎲", color: "#6366f1" },
 ];
 
 export const AGE_GROUPS: AgeGroup[] = [
@@ -19,7 +23,10 @@ export const AGE_GROUPS: AgeGroup[] = [
   { id: "7-10", label: "📚 Ages 7–10" },
 ];
 
+// Builder screen shows every genre except the "all" library filter.
 export const BUILDER_GENRES = GENRES.filter((g) => g.id !== "all");
+// Real genres (exclude the synthetic "random" option) for randomization.
+export const REAL_GENRES = BUILDER_GENRES.filter((g) => g.id !== "random");
 
 export const LESSONS = [
   "Be brave",
@@ -46,6 +53,7 @@ export const HERO_TYPES = [
   "🤖 Robot",
   "🧚 Fairy",
   "🐉 Dragon",
+  "✏️ Other…",
 ];
 
 export const DURATIONS: Duration[] = [
@@ -53,5 +61,4 @@ export const DURATIONS: Duration[] = [
   { id: "5", label: "⭐ Short", desc: "~5 min", minutes: 5, targetWords: 650 },
   { id: "10", label: "📖 Medium", desc: "~10 min", minutes: 10, targetWords: 1300 },
   { id: "15", label: "🌟 Long", desc: "~15 min", minutes: 15, targetWords: 1950 },
-  { id: "20", label: "👑 Epic", desc: "~20 min", minutes: 20, targetWords: 2600 },
 ];

@@ -121,6 +121,63 @@ body,
   box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
 }
 
+/* Library search — used in main library and My Stories views */
+.library-search-wrap {
+  position: relative;
+  padding: 0 20px 12px;
+}
+.library-search {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fg);
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  /* Strip the default search-input clear button — we have our own */
+  -webkit-appearance: none;
+  appearance: none;
+}
+.library-search::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.library-search::placeholder {
+  color: var(--muted);
+  font-weight: 600;
+}
+.library-search:focus {
+  outline: none;
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+.library-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  margin-top: -6px; /* compensate for the padding-bottom on the wrapper */
+  border: none;
+  background: var(--border);
+  color: var(--fg);
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.library-search-clear:hover {
+  background: #cbd5e1;
+}
+
 /* Recently Read — horizontal scroll */
 .recent-scroll {
   display: flex;
@@ -184,6 +241,64 @@ body,
   font-size: 20px;
   color: var(--text);
   letter-spacing: -0.3px;
+}
+
+/* Compact right-aligned search inside a section header (e.g. Story Library) */
+.section-search-wrap {
+  position: relative;
+  margin-left: auto;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 200px;
+  width: 100%;
+}
+.section-search {
+  width: 100%;
+  padding: 7px 32px 7px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.section-search::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.section-search::placeholder {
+  color: var(--muted);
+  font-weight: 600;
+}
+.section-search:focus {
+  outline: none;
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+.section-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: var(--border);
+  color: var(--fg);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.section-search-clear:hover {
+  background: #cbd5e1;
 }
 .section-count {
   font-size: 12px;
@@ -486,6 +601,61 @@ body,
 .hdr-btn.active {
   background: rgba(228, 147, 58, 0.15);
 }
+
+/* Autoplay labeled toggle switch in the reader header.
+   Replaces the old cryptic 🔁 / ➡️ icon button with a clear on/off pill. */
+.autoplay-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 8px 4px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  user-select: none;
+  flex-shrink: 0;
+}
+.autoplay-toggle:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+.autoplay-toggle.on {
+  background: rgba(228, 147, 58, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.autoplay-toggle-track {
+  position: relative;
+  width: 26px;
+  height: 14px;
+  background: var(--border);
+  border-radius: 999px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.autoplay-toggle.on .autoplay-toggle-track {
+  background: var(--accent);
+}
+.autoplay-toggle-knob {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.18s ease;
+}
+.autoplay-toggle.on .autoplay-toggle-knob {
+  transform: translateX(12px);
+}
+
 .reader-progress {
   height: 4px;
   background: var(--border);

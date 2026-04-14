@@ -94,7 +94,21 @@ export default function Home() {
         if (storiesRes.ok) {
           const savedStories = await storiesRes.json();
           if (Array.isArray(savedStories) && savedStories.length > 0) {
-            const mapped: Story[] = savedStories.map((s: { id: string; title: string; emoji: string; genre: string; age_group: string; pages: string | [string, string][]; page_count: number; full_pages?: { scene: string; mood: string }[]; character_description?: string }) => {
+            interface DbStory {
+              id: string;
+              title: string;
+              emoji: string;
+              genre: string;
+              age_group: string;
+              pages: string | [string, string][];
+              page_count: number;
+              full_pages?: { scene: string; mood: string }[];
+              character_description?: string;
+              illustration_urls?: (string | null)[];
+              audio_urls?: (string | null)[];
+              word_timings?: (import("@/types/story").WordTiming[] | null)[];
+            }
+            const mapped: Story[] = (savedStories as DbStory[]).map((s) => {
               const gc = GENRES.find((g) => g.id === s.genre);
               return {
                 id: s.id,
@@ -107,6 +121,13 @@ export default function Home() {
                 generated: true,
                 fullPages: s.full_pages || undefined,
                 characterDescription: s.character_description || undefined,
+                // Hydrate saved image URLs so the reader skips regeneration.
+                // Missing/null entries will still lazy-generate on open.
+                preloadedImages: Array.isArray(s.illustration_urls) ? s.illustration_urls : undefined,
+                // Hydrate persisted audio URLs + word timings so the reader
+                // plays from Supabase Storage instead of re-calling /api/tts.
+                audioUrls: Array.isArray(s.audio_urls) ? s.audio_urls : undefined,
+                wordTimings: Array.isArray(s.word_timings) ? s.word_timings : undefined,
               };
             });
             setStories((prev) => [...mapped, ...prev]);
@@ -207,10 +228,35 @@ export default function Home() {
     }
   };
 
-  const handleSaveStory = async () => {
+  const handleSaveStory = async (imageUrls: (string | null)[]) => {
     if (!cur) return;
+
+    // ── Optimistic save ──────────────────────────────────────────────────
+    // The server takes 15-30s to generate + upload TTS audio for every page
+    // before it returns. Waiting for that made the save feel broken — the
+    // story wouldn't appear in "My Stories" until the upload finished.
+    //
+    // Instead, add the story to the local library right away using a fresh
+    // UUID (so the reader no longer sees it as an unsaved "ai_*" story and
+    // won't re-prompt), then replace it with the persisted DB row once the
+    // fetch resolves. If the user reopens the story before audio finishes
+    // uploading, the reader falls back to on-demand /api/tts — still works,
+    // just a bit slower on that one session.
+    const optimisticId =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `opt_${Date.now()}`;
+    const optimistic: Story = {
+      ...cur,
+      id: optimisticId,
+      generated: true,
+      preloadedImages: imageUrls,
+    };
+    setStories((prev) => [optimistic, ...prev]);
+    setCur(optimistic);
+
     try {
-      await fetch("/api/stories", {
+      const res = await fetch("/api/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -223,12 +269,55 @@ export default function Home() {
           childProfileId: activeProfile?.id,
           fullPages: cur.fullPages,
           characterDescription: cur.characterDescription,
+          // Persist the generated images so future opens don't regenerate them.
+          // Null entries are pages whose images haven't loaded yet — they'll
+          // regenerate on-demand next time (a partial save is better than none).
+          illustrationUrls: imageUrls,
         }),
       });
-      // Add to local stories list so it shows up right away
-      setStories((prev) => [{ ...cur, generated: true }, ...prev]);
+
+      // Use the real DB UUID returned by the API as the canonical id. Without
+      // this, the local Story kept its temporary "ai_<timestamp>" id, so when
+      // the user re-opened it from the library the reader thought it was an
+      // unsaved freshly-generated story → prompted to save again → duplicate
+      // row in Supabase. The reader checks `!story.id.startsWith("ai_")` to
+      // decide whether to prompt, so we MUST swap the id here.
+      //
+      // Also pull out the persisted audio_urls + word_timings the server
+      // generated during save, so the reader can immediately use them for
+      // future playback without re-hitting /api/tts.
+      let savedId: string | null = null;
+      let savedAudioUrls: (string | null)[] | undefined;
+      let savedWordTimings: (import("@/types/story").WordTiming[] | null)[] | undefined;
+      if (res.ok) {
+        try {
+          const saved = await res.json();
+          if (saved?.id) savedId = saved.id as string;
+          if (Array.isArray(saved?.audio_urls)) savedAudioUrls = saved.audio_urls;
+          if (Array.isArray(saved?.word_timings)) savedWordTimings = saved.word_timings;
+        } catch { /* ignore parse errors — fall through with savedId=null */ }
+      }
+
+      const persisted: Story = {
+        ...optimistic,
+        id: savedId ?? optimisticId,
+        audioUrls: savedAudioUrls ?? optimistic.audioUrls,
+        wordTimings: savedWordTimings ?? optimistic.wordTimings,
+      };
+
+      // Replace the optimistic entry (matched by temp id) with the real
+      // persisted row. This swaps in the DB UUID + server-generated audio
+      // URLs so future opens can play directly from Supabase Storage.
+      setStories((prev) => prev.map((s) => (s.id === optimisticId ? persisted : s)));
+      // Also update the reader's current story so if the user is still
+      // reading, the hydrated audio URLs take effect immediately.
+      setCur((prev) => (prev && prev.id === optimisticId ? persisted : prev));
     } catch (err) {
       console.error("Failed to save story:", err);
+      // Roll back the optimistic insert so the user isn't left with a
+      // broken entry. Reader will reset its `saved` flag via its own catch.
+      setStories((prev) => prev.filter((s) => s.id !== optimisticId));
+      setCur((prev) => (prev && prev.id === optimisticId ? cur : prev));
     }
   };
 

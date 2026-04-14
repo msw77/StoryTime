@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Story, SpeechControls } from "@/types/story";
 import { SoundEffects } from "@/hooks/useSoundEffects";
+import { hydrateStoredAudio } from "@/hooks/useSpeech";
 import { SceneIllustration } from "./SceneIllustration";
 
 interface ReaderScreenProps {
@@ -10,14 +11,23 @@ interface ReaderScreenProps {
   onBack: () => void;
   speech: SpeechControls;
   sfx: SoundEffects;
-  onSave?: () => void;
+  /** Called when the user saves this generated story to their library.
+   *  Receives the currently-loaded image URLs so they can be persisted
+   *  alongside the story text (so future opens don't regenerate images).
+   *  Returns a Promise — the server generates TTS audio for every page
+   *  during save, so callers should await this to show accurate UI state. */
+  onSave?: (imageUrls: (string | null)[]) => void | Promise<void>;
 }
 
 export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScreenProps) {
   const [pageIdx, setPageIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [saved, setSaved] = useState(false);
+  // A story loaded from the library already lives in the DB — its id is a
+  // DB UUID, not the "ai_<timestamp>" marker we assign to freshly-generated
+  // stories. Treat it as already saved so we don't prompt to save on close
+  // (which would create a duplicate row).
+  const [saved, setSaved] = useState(() => !story.id.startsWith("ai_"));
   const [showLeavePrompt, setShowLeavePrompt] = useState(false);
   const [aiImages, setAiImages] = useState<(string | null)[]>(
     () => story.preloadedImages || []
@@ -62,6 +72,21 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   useEffect(() => {
     const ageSpeed = story.age === "2-4" ? 0.85 : story.age === "4-7" ? 0.92 : 1.0;
     speech.setAiSpeed(ageSpeed);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [story.id]);
+
+  // Seed the audio cache with any persisted audio URLs + word timings saved
+  // for this story. After this runs, speech.speak() will find cache hits on
+  // every page that has stored audio and play directly from Supabase Storage
+  // without calling /api/tts. No-op if the story has no persisted audio.
+  useEffect(() => {
+    if (!story.audioUrls || !story.wordTimings) return;
+    const pagesPayload = story.pages.map((p, i) => ({
+      text: p[1],
+      url: story.audioUrls?.[i] ?? null,
+      wordTimings: story.wordTimings?.[i] ?? null,
+    }));
+    hydrateStoredAudio(pagesPayload);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [story.id]);
 
@@ -164,9 +189,26 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [story.id]);
 
-  const handleSave = () => {
-    if (onSave) onSave();
+  // `saving` here means "the background audio upload is still in flight".
+  // The story row itself is saved optimistically, so `saved` flips to true
+  // immediately and the user can leave right away without blocking on TTS.
+  const [saving, setSaving] = useState(false);
+  const handleSave = async () => {
+    if (!onSave || saved) return;
+    // Optimistic: mark saved right away so the button updates, the leave
+    // prompt disappears, and the parent adds this story to "My Stories"
+    // without waiting for the server-side audio generation to finish.
     setSaved(true);
+    setSaving(true);
+    try {
+      await Promise.resolve(onSave(aiImages));
+    } catch (err) {
+      console.error("Save failed:", err);
+      // Roll back if the save actually errored out
+      setSaved(false);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleBackClick = () => {
@@ -314,14 +356,21 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
             ))}
           </div>
           {canSave && (
-            <button
-              className="pill-btn primary"
-              onClick={handleSave}
-              disabled={saved}
-              style={saved ? { opacity: 0.6 } : {}}
-            >
-              {saved ? "Saved!" : "Save to My Library"}
-            </button>
+            <>
+              <button
+                className="pill-btn primary"
+                onClick={handleSave}
+                disabled={saved}
+                style={saved ? { opacity: 0.6 } : {}}
+              >
+                {saved ? (saving ? "Saved ✓" : "Saved!") : "Save to My Library"}
+              </button>
+              {saving && (
+                <p style={{ fontSize: 12, color: "var(--muted)", marginTop: -4, fontWeight: 600 }}>
+                  🎧 Audio uploading in background (~30s) — feel free to leave
+                </p>
+              )}
+            </>
           )}
           <button
             className="pill-btn primary"
@@ -378,11 +427,17 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
             ⏭
           </button>
           <button
-            className={`hdr-btn ${autoplay ? "active" : ""}`}
+            type="button"
+            role="switch"
+            aria-checked={autoplay}
+            className={`autoplay-toggle ${autoplay ? "on" : ""}`}
             onClick={() => setAutoplay((a) => !a)}
-            title={autoplay ? "Autoplay on" : "Autoplay off"}
+            title={autoplay ? "Autoplay is on — pages advance automatically" : "Autoplay is off — tap next to advance"}
           >
-            {autoplay ? "🔁" : "➡️"}
+            <span>AUTOPLAY</span>
+            <span className="autoplay-toggle-track" aria-hidden="true">
+              <span className="autoplay-toggle-knob" />
+            </span>
           </button>
         </div>
       </div>

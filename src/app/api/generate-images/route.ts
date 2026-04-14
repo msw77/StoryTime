@@ -29,7 +29,15 @@ export async function POST(req: Request) {
       if (r.status === "fulfilled") {
         return { index: r.value.pageIndex, url: r.value.url };
       } else {
-        console.error("Image generation failed for page:", r.reason);
+        // Surface the FULL error so we can diagnose failures. fal client errors
+        // carry a .body field with the real message from the server.
+        const reason = r.reason;
+        console.error("Image generation failed for page:", {
+          message: reason?.message,
+          status: reason?.status,
+          body: reason?.body,
+          name: reason?.name,
+        });
         return { index: pages[i].index ?? i, url: null };
       }
     });

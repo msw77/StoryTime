@@ -66,17 +66,38 @@ export function LibraryScreen({
 }: LibraryScreenProps) {
   const [gf, setGf] = useState("all");
   const [af, setAf] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const [showStorybook, setShowStorybook] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
 
+  // Case-insensitive search across title, genre label, AND story page text.
+  // Every story's pages are already in memory (as [pageTitle, bodyText] tuples),
+  // so scanning body text is just a string .includes call — no DB round-trip.
+  // Fast enough even with hundreds of stories; runs per-keystroke.
+  const searchMatches = (s: Story): boolean => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    if (s.title.toLowerCase().includes(q)) return true;
+    const genreLabel = GENRES.find((g) => g.id === s.genre)?.label.toLowerCase() || "";
+    if (genreLabel.includes(q)) return true;
+    // Scan body text of every page. pages is [pageTitle, bodyText][].
+    for (const page of s.pages) {
+      // page[0] is the page header/title, page[1] is the body text
+      if (page[0] && page[0].toLowerCase().includes(q)) return true;
+      if (page[1] && page[1].toLowerCase().includes(q)) return true;
+    }
+    return false;
+  };
+
   // Separate custom stories from built-in stories
-  const myStories = stories.filter((s) => s.generated);
+  const myStories = stories.filter((s) => s.generated).filter(searchMatches);
   const builtInStories = stories.filter((s) => !s.generated);
 
-  // Apply genre & age filters to built-in stories
+  // Apply genre & age filters, then search, to built-in stories
   const filteredBuiltIn = builtInStories.filter((s) => {
     if (gf !== "all" && s.genre !== gf) return false;
     if (af && s.age !== af) return false;
+    if (!searchMatches(s)) return false;
     return true;
   });
 
@@ -98,14 +119,36 @@ export function LibraryScreen({
           </div>
         </div>
 
+        <div className="library-search-wrap">
+          <input
+            type="search"
+            className="library-search"
+            placeholder="🔎  Search your stories…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          {search && (
+            <button
+              type="button"
+              className="library-search-clear"
+              onClick={() => setSearch("")}
+              aria-label="Clear search"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
         {myStories.length === 0 ? (
           <div className="storybook-empty">
             <div style={{ fontSize: 56 }}>📖</div>
-            <h2>No stories yet!</h2>
-            <p>Stories you create will appear here.</p>
-            <button className="pill-btn primary" onClick={() => { setShowStorybook(false); onCreateNew(); }}>
-              Create Your First Story
-            </button>
+            <h2>{search ? "No matches" : "No stories yet!"}</h2>
+            <p>{search ? `Nothing matched "${search}". Try a different search.` : "Stories you create will appear here."}</p>
+            {!search && (
+              <button className="pill-btn primary" onClick={() => { setShowStorybook(false); onCreateNew(); }}>
+                Create Your First Story
+              </button>
+            )}
           </div>
         ) : (
           <div className="story-grid" style={{ paddingTop: 8 }}>
@@ -294,26 +337,53 @@ export function LibraryScreen({
       <div className="library-section">
         <div className="section-header">
           <h2 className="section-title">Story Library</h2>
+          <div className="section-search-wrap">
+            <input
+              type="search"
+              className="section-search"
+              placeholder="🔎  Search…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <button
+                type="button"
+                className="section-search-clear"
+                onClick={() => setSearch("")}
+                aria-label="Clear search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
-        <div className="story-grid">
-          {visibleBuiltIn.map((s) => (
-            <div key={s.id} className="story-card" onClick={() => onSelect(s)}>
-              <div className="emoji">{s.emoji}</div>
-              <div className="title">{s.title}</div>
-              <div className="badges">
-                <span className="badge" style={{ background: s.color }}>
-                  {GENRES.find((g) => g.id === s.genre)?.label}
-                </span>
-                <span className="badge" style={{ background: "#6c5ce7" }}>
-                  {AGE_GROUPS.find((a) => a.id === s.age)?.label}
-                </span>
+        {visibleBuiltIn.length === 0 && search ? (
+          <div className="storybook-empty" style={{ padding: "24px 20px" }}>
+            <div style={{ fontSize: 40 }}>🔎</div>
+            <h2 style={{ fontSize: 18 }}>No stories match &ldquo;{search}&rdquo;</h2>
+            <p style={{ fontSize: 14 }}>Try a different search, or clear filters.</p>
+          </div>
+        ) : (
+          <div className="story-grid">
+            {visibleBuiltIn.map((s) => (
+              <div key={s.id} className="story-card" onClick={() => onSelect(s)}>
+                <div className="emoji">{s.emoji}</div>
+                <div className="title">{s.title}</div>
+                <div className="badges">
+                  <span className="badge" style={{ background: s.color }}>
+                    {GENRES.find((g) => g.id === s.genre)?.label}
+                  </span>
+                  <span className="badge" style={{ background: "#6c5ce7" }}>
+                    {AGE_GROUPS.find((a) => a.id === s.age)?.label}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-          {!isPremium && lockedCount > 0 && (
-            <PaywallCard storiesRemaining={freeStoryLimit} />
-          )}
-        </div>
+            ))}
+            {!isPremium && lockedCount > 0 && (
+              <PaywallCard storiesRemaining={freeStoryLimit} />
+            )}
+          </div>
+        )}
       </div>
     </>
   );
