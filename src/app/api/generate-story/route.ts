@@ -1,5 +1,6 @@
 import { generateStoryWithAI } from "@/lib/anthropic";
 import { parseJsonBody, requireClerkUser } from "@/lib/api-helpers";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { generateStorySchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
@@ -7,6 +8,11 @@ export async function POST(req: Request) {
   try {
     const clerk = await requireClerkUser();
     if (!clerk.ok) return clerk.response;
+
+    // Per-user cap on story generations (20/day). Covers real power users
+    // but stops scripted abuse of the Claude API from draining budget.
+    const rl = await enforceRateLimit("generateStory", clerk.value);
+    if (!rl.ok) return rl.response;
 
     const parsed = await parseJsonBody(req, generateStorySchema);
     if (!parsed.ok) return parsed.response;

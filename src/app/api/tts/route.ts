@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { generateTtsWithTimings } from "@/lib/tts";
 import { parseJsonBody, requireClerkUser } from "@/lib/api-helpers";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { ttsSchema } from "@/lib/schemas";
 
 // POST /api/tts — generate speech audio + Whisper word timestamps for a
@@ -15,6 +16,12 @@ export async function POST(req: Request) {
   try {
     const clerk = await requireClerkUser();
     if (!clerk.ok) return clerk.response;
+
+    // Per-user cap on TTS generations (200/hour). One request = one page
+    // preview, so this is deliberately loose enough for real reading
+    // sessions but tight enough to stop a loop burning OpenAI credits.
+    const rl = await enforceRateLimit("tts", clerk.value);
+    if (!rl.ok) return rl.response;
 
     const parsed = await parseJsonBody(req, ttsSchema);
     if (!parsed.ok) return parsed.response;

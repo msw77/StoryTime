@@ -1,5 +1,6 @@
 import { generatePageImage } from "@/lib/fal";
 import { parseJsonBody, requireClerkUser } from "@/lib/api-helpers";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { generateImagesSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
@@ -7,6 +8,12 @@ export async function POST(req: Request) {
   try {
     const clerk = await requireClerkUser();
     if (!clerk.ok) return clerk.response;
+
+    // Per-user cap on image generation requests (60/hour). Each request
+    // can still fan out up to IMAGE_PAGES_MAX pages (see schema), so this
+    // layers on top of the payload cap from Sitting 2.
+    const rl = await enforceRateLimit("generateImages", clerk.value);
+    if (!rl.ok) return rl.response;
 
     // Schema enforces: 1..IMAGE_PAGES_MAX pages, scene is required and
     // bounded, mood/index are bounded, characterDescription is bounded.

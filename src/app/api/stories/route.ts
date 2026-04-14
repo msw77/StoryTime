@@ -6,6 +6,7 @@ import {
   requireDbUserId,
   validateChildProfileOwnership,
 } from "@/lib/api-helpers";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { saveStorySchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
@@ -211,6 +212,13 @@ export async function POST(req: Request) {
     const userResult = await requireDbUserId();
     if (!userResult.ok) return userResult.response;
     const dbUserId = userResult.value;
+
+    // Per-user cap on story saves (10/hour). The POST body triggers TTS +
+    // storage upload for every page, so an unbounded save loop would burn
+    // OpenAI credits via this path just as fast as /api/tts. Cap it here
+    // to close that side door.
+    const rl = await enforceRateLimit("saveStory", dbUserId);
+    if (!rl.ok) return rl.response;
 
     // Validate the request body up front. Rejects anything oversized,
     // mistyped, or missing required fields before we spend compute on it.
