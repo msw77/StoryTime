@@ -264,11 +264,15 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
     if (!autoplay || finished) return;
 
     // Auto-advance: hold on the finished page for a beat before starting
-    // the next one. 2000ms feels like a natural page-turn pause — long
-    // enough for a young child to process the last sentence and look at
-    // the illustration, short enough that the session keeps moving.
-    // Manual nav: goToPage already stopped audio, start new page sooner.
-    const delay = wasAutoAdvance ? 2000 : 800;
+    // the next one. Scaled by age group — younger kids need time to
+    // process the last sentence and look at the illustration, older
+    // readers prefer a snappier pace. Manual nav is always quick since
+    // the user just tapped next themselves.
+    const autoAdvanceDelay =
+      story.age === "2-4" ? 1600 :
+      story.age === "4-7" ? 1200 :
+      800;
+    const delay = wasAutoAdvance ? autoAdvanceDelay : 800;
     const timer = setTimeout(() => readPage(), delay);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
