@@ -39,7 +39,11 @@ export function ProfileSelector({ profiles, onSelect, onCreate }: ProfileSelecto
 
   return (
     <div className="profile-selector">
-      <h1>📚 StoryTime</h1>
+      <img
+        src="/brand/logo-wordmark.png"
+        alt="StoryTime"
+        className="brand-wordmark welcome-wordmark"
+      />
       <h2>Who&apos;s reading today?</h2>
 
       <div className="profile-grid">

@@ -130,7 +130,7 @@ export function LibraryScreen({
           <button className="icon-btn" onClick={() => setShowStorybook(false)}>
             ←
           </button>
-          <h1>📖 My Stories</h1>
+          <h1 className="subview-title">My Stories</h1>
           <div className="header-btns">
             <UserButton />
           </div>
@@ -158,7 +158,11 @@ export function LibraryScreen({
 
         {myStories.length === 0 ? (
           <div className="storybook-empty">
-            <div style={{ fontSize: 56 }}>📖</div>
+            <img
+              src="/brand/empty-library.png"
+              alt=""
+              className="empty-illustration"
+            />
             <h2>{search ? "No matches" : "No stories yet!"}</h2>
             <p>{search ? `Nothing matched "${search}". Try a different search.` : "Stories you create will appear here."}</p>
             {!search && (
@@ -219,7 +223,7 @@ export function LibraryScreen({
           <button className="icon-btn" onClick={() => setShowHistory(false)}>
             ←
           </button>
-          <h1>🕐 Recently Read</h1>
+          <h1 className="subview-title">Recently Read</h1>
           <div className="header-btns">
             <UserButton />
           </div>
@@ -265,7 +269,14 @@ export function LibraryScreen({
   return (
     <>
       <div className="header">
-        <h1>📚 StoryTime</h1>
+        {/* Hand-lettered Fraunces wordmark placeholder generated via fal.ai
+            (nano-banana-2). Drop-in replacement for the old emoji+text h1.
+            Height-constrained; width flows from the natural aspect. */}
+        <img
+          src="/brand/logo-wordmark.png"
+          alt="StoryTime"
+          className="brand-wordmark"
+        />
         <div className="header-btns">
           {activeProfile && onSwitchProfile && (
             <button
@@ -286,7 +297,7 @@ export function LibraryScreen({
 
       {activeProfile && (
         <div style={{
-          padding: "0 20px 12px",
+          padding: "0 20px 4px",
           fontSize: 14,
           fontWeight: 700,
           color: "var(--muted)",
@@ -295,6 +306,18 @@ export function LibraryScreen({
           {activeProfile.age && ` · Age ${activeProfile.age}`}
         </div>
       )}
+
+      {/* Hero illustration banner — parent+child reading in a window nook.
+          Editorial anchor above the filter row on the main library view.
+          Placeholder (fal.ai nano-banana-2). Height-capped so it doesn't
+          push the story grid too far down the page. */}
+      <div className="library-hero">
+        <img
+          src="/brand/hero-illustration.png"
+          alt="A parent and child reading together in a cozy window nook"
+          className="library-hero-img"
+        />
+      </div>
 
       <div className="filter-row">
         <div className="filter-select-wrap">
@@ -326,22 +349,25 @@ export function LibraryScreen({
         </div>
       </div>
 
-      {/* Top action cards — Create + My Stories + Recently Read */}
+      {/* Top action cards — Create + My Stories + Recently Read.
+          Emojis replaced with custom brand icons (fal.ai placeholders,
+          see public/brand/). If any image 404s, the card still renders
+          without crashing; alt text is the same as the title below. */}
       {isPremium && (
         <div className="action-cards three-col">
           <div className="story-card create-card" onClick={onCreateNew}>
-            <div className="emoji">✨</div>
+            <img src="/brand/icon-create.png" alt="" className="action-icon" />
             <div className="title">Create Story</div>
           </div>
           <div className="story-card storybook-card" onClick={() => setShowStorybook(true)}>
-            <div className="emoji">📖</div>
+            <img src="/brand/icon-library.png" alt="" className="action-icon" />
             <div className="title">My Stories</div>
             {myStories.length > 0 && (
               <div className="storybook-count">{myStories.length}</div>
             )}
           </div>
           <div className="story-card history-card" onClick={() => setShowHistory(true)}>
-            <div className="emoji">🕐</div>
+            <img src="/brand/icon-history.png" alt="" className="action-icon" />
             <div className="title">Recently Read</div>
             {scopedReadingHistory.length > 0 && (
               <div className="storybook-count">{new Set(scopedReadingHistory.map((h) => h.story_id)).size}</div>

@@ -112,6 +112,32 @@ body > * {
   align-items: center;
   justify-content: space-between;
 }
+/* Brand wordmark. Post-processed with scripts/knockout-brand-backgrounds
+   to have a true alpha channel — no blend-mode trickery needed, the
+   image is genuinely transparent around the letterforms. */
+.brand-wordmark {
+  height: 60px;
+  width: auto;
+  display: block;
+  margin-left: -6px; /* hand-lettered PNG has slight internal padding;
+                        nudge to align optically with the 20px gutter */
+}
+/* Welcome / sign-in screen gets a bigger centered wordmark instead of
+   the header treatment — this is the app's "cover", so it should
+   feel like a book title rather than a nav logo. */
+.welcome-wordmark {
+  height: 96px;
+  margin: 0 auto 8px;
+}
+/* Sub-view titles (My Stories, Recently Read). These still use text
+   because the wordmark is specifically "StoryTime" — but they share
+   its editorial feel. */
+.subview-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+}
 .header h1 {
   font-family: var(--font-head);
   font-size: 30px;
@@ -372,19 +398,19 @@ body > * {
 .story-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 12px;
   padding: 0 20px;
 }
 .story-card {
   background: var(--card);
   border-radius: var(--radius);
-  padding: 18px 14px;
+  padding: 14px 12px;
   box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.25s;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   position: relative;
   overflow: hidden;
 }
@@ -415,11 +441,11 @@ body > * {
   transform: scale(0.96);
 }
 .story-card .emoji {
-  font-size: 36px;
+  font-size: 30px;
 }
 .story-card .title {
   font-weight: 800;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.3;
 }
 .story-card .badges {
@@ -428,9 +454,9 @@ body > * {
   flex-wrap: wrap;
 }
 .badge {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 100px;
   color: #fff;
 }
@@ -438,8 +464,18 @@ body > * {
 .action-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 12px;
   padding: 0 20px 16px;
+}
+/* Action cards are navigation tiles, not book covers — they should feel
+   flatter/wider than the story cards below. Override the taller
+   .story-card padding+gap so the three tiles compress vertically. */
+.create-card,
+.storybook-card,
+.history-card {
+  padding: 10px 10px;
+  gap: 2px;
+  min-height: 0;
 }
 /* Home-screen action cards. Soft tonal solids in the brand palette,
    with a warm radial highlight top-left so each card feels lit by
@@ -464,7 +500,8 @@ body > * {
   display: none;
 }
 .create-card .emoji {
-  font-size: 36px;
+  font-size: 24px;
+  line-height: 1;
 }
 .create-card .title {
   font-size: 13px;
@@ -482,7 +519,8 @@ body > * {
   align-items: center;
 }
 .storybook-card .emoji {
-  font-size: 36px;
+  font-size: 24px;
+  line-height: 1;
 }
 .storybook-card .title {
   font-size: 13px;
@@ -503,7 +541,8 @@ body > * {
   align-items: center;
 }
 .history-card .emoji {
-  font-size: 36px;
+  font-size: 24px;
+  line-height: 1;
 }
 .history-card .title {
   font-size: 13px;
@@ -905,12 +944,18 @@ body > * {
   border-radius: 5px;
   display: inline-block;
 }
+/* Active word highlight. We intentionally use a soft warm honey tint
+   instead of the deep terracotta accent — at full saturation the accent
+   felt "muddy" on every word as the narrator advanced. The honey tint
+   reads as a highlighter marker on paper rather than a solid pill, which
+   is the vibe we want for an editorial reader. Text stays dark for
+   contrast (no white-on-yellow legibility hit). */
 .story-text .word.active {
-  background: var(--accent);
-  color: #fff;
-  transform: scale(1.05);
+  background: #ff9b70;
+  color: var(--text);
+  transform: scale(1.04);
   border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(194, 94, 69, 0.3);
+  box-shadow: 0 1px 6px rgba(194, 94, 69, 0.28);
 }
 
 /* Page transition effects */
@@ -1460,4 +1505,65 @@ body > * {
   font-size: 12px;
   color: var(--muted);
   font-weight: 600;
+}
+
+/* ─── Custom brand imagery (placeholders generated via fal.ai) ─── */
+
+/* Action card icons — replace the emoji in Create / My Stories /
+   Recently Read tiles. The generated PNGs have a solid background
+   that matches the card, so we crop to a circle-ish softened square
+   and size to match the old 24px emoji footprint. */
+/* Action card icons. Post-processed to have real alpha + auto-trimmed
+   to tight content bounds, so sizing this box sizes the actual glyph.
+   Bigger than a typical icon because they're hand-drawn illustrations
+   that should feel like they were sketched directly on the card
+   rather than pasted on top. */
+.action-icon {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
+}
+/* Each card tints its own icon's container — the icons were generated
+   on matching card colors, so no further tint is needed. */
+
+/* Empty-state illustration for the "My Stories" folder when a child
+   has no saved stories yet. Width-capped so it doesn't balloon on
+   desktop widths; margin pushes it down from the header. */
+.empty-illustration {
+  width: 75%;
+  max-width: 260px;
+  height: auto;
+  display: block;
+  margin: 8px auto 12px;
+  border-radius: 14px;
+}
+
+/* Hero banner on the main library view. Full-bleed width inside the
+   app's padding gutter, with a capped height so the story grid stays
+   above the fold on most phones. Rounded and with a gentle drop-shadow
+   to feel like a magazine cover panel rather than a stock photo. */
+/* Hero banner — hand-drawn panoramic illustration. Matches the same
+   20px side gutter as the content below it (filter row, action cards,
+   story grid) so the left edge aligns with "Create Story" and the
+   right edge aligns with "Recently Read". PNG has real alpha (see
+   scripts/knockout-brand-backgrounds), so no blend mode needed — the
+   cream page shows through cleanly where the illustration is sparse.
+   Tight margins above (2px) and below (4px) so the hero hugs the
+   "Reading as …" line and the filter row — it's an accent strip, not
+   a big display panel. */
+.library-hero {
+  padding: 2px 20px 4px;
+  line-height: 0; /* kill the inline-image baseline gap */
+}
+.library-hero-img {
+  width: 100%;
+  /* Crop the generated 21:9 PNG vertically via object-fit: cover. The
+     source image has a lot of "ceiling" above the lamp + window and
+     "floor" below the couch/shelf that don't add anything; cropping
+     to ~140px lets the reading nook and bookshelf fill the strip. */
+  height: 140px;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
 }

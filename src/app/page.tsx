@@ -359,8 +359,11 @@ export default function Home() {
     return (
       <div className="app">
         <div className="welcome-screen">
-          <div style={{ fontSize: 64 }}>📚</div>
-          <h1>StoryTime</h1>
+          <img
+            src="/brand/logo-wordmark.png"
+            alt="StoryTime"
+            className="brand-wordmark welcome-wordmark"
+          />
           <p>Personalized read-along stories for kids ages 2–10</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%" }}>
             <SignInButton mode="modal">
