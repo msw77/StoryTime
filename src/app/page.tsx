@@ -107,6 +107,7 @@ export default function Home() {
               illustration_urls?: (string | null)[];
               audio_urls?: (string | null)[];
               word_timings?: (import("@/types/story").WordTiming[] | null)[];
+              child_profile_id?: string | null;
             }
             const mapped: Story[] = (savedStories as DbStory[]).map((s) => {
               const gc = GENRES.find((g) => g.id === s.genre);
@@ -119,6 +120,7 @@ export default function Home() {
                 age: s.age_group,
                 pages: typeof s.pages === "string" ? JSON.parse(s.pages) : s.pages,
                 generated: true,
+                childProfileId: s.child_profile_id ?? null,
                 fullPages: s.full_pages || undefined,
                 characterDescription: s.character_description || undefined,
                 // Hydrate saved image URLs so the reader skips regeneration.
@@ -250,6 +252,7 @@ export default function Home() {
       ...cur,
       id: optimisticId,
       generated: true,
+      childProfileId: activeProfile?.id ?? null,
       preloadedImages: imageUrls,
     };
     setStories((prev) => [optimistic, ...prev]);

@@ -21,6 +21,8 @@ export interface Story {
   pages: [string, string][];
   fullPages?: StoryPage[];
   generated?: boolean;
+  /** Which child profile this story was saved under. Null = legacy/shared. */
+  childProfileId?: string | null;
   duration?: string;
   characterDescription?: string;
   /** Pre-loaded image URLs (indexed by page number, null = not yet loaded) */

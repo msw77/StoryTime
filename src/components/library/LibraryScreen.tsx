@@ -37,6 +37,7 @@ interface ReadingHistoryEntry {
   story_color: string;
   is_generated: boolean;
   started_at: string;
+  child_profile_id?: string | null;
 }
 
 interface LibraryScreenProps {
@@ -89,9 +90,25 @@ export function LibraryScreen({
     return false;
   };
 
+  // Scope "My Stories" and "Recently Read" to the active child profile so
+  // each kid has their own library. Legacy rows with a null child_profile_id
+  // (saved before profiles existed) are shown to every profile as "shared"
+  // so they don't silently disappear from existing accounts.
+  const matchesActiveProfile = (childProfileId: string | null | undefined) => {
+    if (!activeProfile) return true;
+    if (childProfileId == null) return true;
+    return childProfileId === activeProfile.id;
+  };
+
   // Separate custom stories from built-in stories
-  const myStories = stories.filter((s) => s.generated).filter(searchMatches);
+  const myStories = stories
+    .filter((s) => s.generated)
+    .filter((s) => matchesActiveProfile(s.childProfileId))
+    .filter(searchMatches);
   const builtInStories = stories.filter((s) => !s.generated);
+  const scopedReadingHistory = readingHistory.filter((h) =>
+    matchesActiveProfile(h.child_profile_id),
+  );
 
   // Apply genre & age filters, then search, to built-in stories
   const filteredBuiltIn = builtInStories.filter((s) => {
@@ -190,7 +207,7 @@ export function LibraryScreen({
   if (showHistory) {
     // Deduplicate: show each story only once (most recent read)
     const seen = new Set<string>();
-    const uniqueHistory = readingHistory.filter((h) => {
+    const uniqueHistory = scopedReadingHistory.filter((h) => {
       if (seen.has(h.story_id)) return false;
       seen.add(h.story_id);
       return true;
@@ -326,8 +343,8 @@ export function LibraryScreen({
           <div className="story-card history-card" onClick={() => setShowHistory(true)}>
             <div className="emoji">🕐</div>
             <div className="title">Recently Read</div>
-            {readingHistory.length > 0 && (
-              <div className="storybook-count">{new Set(readingHistory.map((h) => h.story_id)).size}</div>
+            {scopedReadingHistory.length > 0 && (
+              <div className="storybook-count">{new Set(scopedReadingHistory.map((h) => h.story_id)).size}</div>
             )}
           </div>
         </div>
