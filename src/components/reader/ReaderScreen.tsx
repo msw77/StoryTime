@@ -68,9 +68,14 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
     }, 200);
   }, [pageIdx, pages.length, sfx, speech]);
 
-  // Set reading speed based on age group when story opens
+  // Set reading speed based on age group when story opens. Younger kids
+  // need noticeably more time to follow the highlighted words — a parent
+  // tester on 2-4 stories said the prior 0.85 still felt rushed, so we
+  // drop the youngest tier to 0.78 and keep a gentle slowdown on 4-7.
+  // Parents can still override manually via voice settings during the
+  // session.
   useEffect(() => {
-    const ageSpeed = story.age === "2-4" ? 0.85 : story.age === "4-7" ? 0.92 : 1.0;
+    const ageSpeed = story.age === "2-4" ? 0.78 : story.age === "4-7" ? 0.9 : 1.0;
     speech.setAiSpeed(ageSpeed);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [story.id]);
@@ -258,9 +263,12 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
 
     if (!autoplay || finished) return;
 
-    // Auto-advance: audio just finished, start next page after brief pause
-    // Manual nav: goToPage already stopped audio, start new page after longer pause
-    const delay = wasAutoAdvance ? 600 : 800;
+    // Auto-advance: hold on the finished page for a beat before starting
+    // the next one. 2000ms feels like a natural page-turn pause — long
+    // enough for a young child to process the last sentence and look at
+    // the illustration, short enough that the session keeps moving.
+    // Manual nav: goToPage already stopped audio, start new page sooner.
+    const delay = wasAutoAdvance ? 2000 : 800;
     const timer = setTimeout(() => readPage(), delay);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
