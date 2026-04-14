@@ -487,7 +487,7 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
           )}
         </div>
         <div ref={contentRef} className="reader-text-scroll">
-          <div className="story-text">
+          <div className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}`}>
             {tw.map((w, i) => (
               <span
                 key={i}

@@ -787,6 +787,13 @@ body,
   font-weight: 600;
   color: var(--text);
 }
+/* Younger kids get noticeably bigger text — 2-4 stories have far less
+   text per page, so there's plenty of room, and larger glyphs help
+   pre-readers follow the word highlight. */
+.story-text.story-text--young {
+  font-size: 22px;
+  line-height: 1.75;
+}
 .story-text .word {
   transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
   padding: 1px 4px;
