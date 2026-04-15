@@ -4,6 +4,80 @@ export interface StoryPage {
   sounds?: string[];
 }
 
+/** Word-level text effect. When the narrator reaches a tagged word, the
+ *  word itself transforms inline — the text IS the art, rather than a
+ *  flourish floating alongside it. Each effect is a short CSS animation
+ *  tied to a `word-fx-*` class in globals.css. */
+export type WordEffect =
+  /** Word shimmers in warm gold — pairs with "golden", "treasure",
+   *  "shining", "glinting". */
+  | "glow-gold"
+  /** Word sparkles with twinkling dots — pairs with "sparkling",
+   *  "magical", "glittering". */
+  | "twinkle"
+  /** Word scales up and holds briefly — pairs with "big", "huge",
+   *  "tall", "giant". */
+  | "grow"
+  /** Word bounces up and down — pairs with "giggled", "hopped",
+   *  "jumped", "bounced". */
+  | "bounce"
+  /** Word shakes horizontally — pairs with "shivered", "trembled",
+   *  "scared". */
+  | "shake"
+  /** Word pulses in a lub-dub heartbeat rhythm — pairs with "heart
+   *  beat" phrases. Pair with `span: 2` so both words pulse in sync.
+   *  The pulse plays a few cycles then settles back to baseline. */
+  | "heartbeat"
+  /** The word stamps onto the page as a big red hand-drawn X. This is
+   *  the specific "X marks the spot" effect — use it for the literal
+   *  letter X in treasure/map stories. */
+  | "red-x"
+  /** Word floats upward on a gentle breeze — pairs with "whisper",
+   *  "flew", "drifted". */
+  | "float"
+  /** Word(s) render in a handwritten script font on a paper-cream
+   *  background, as if the kid is looking at the physical note / sign
+   *  / letter the character is holding. Use `span` to cover the whole
+   *  quoted phrase. Structural reveal, same class as red-x. */
+  | "handwritten";
+
+/** Diegetic sound effect tied to a word — the actual sound of the thing
+ *  the narrator just said. Unlike the old synthesized cues, these play
+ *  real .mp3 files from /public/sfx/<name>.mp3. Missing files are silent
+ *  no-ops (the scaffold is meant to load real foley samples dropped in
+ *  later). */
+export type SoundCue =
+  | "footsteps"
+  | "door-close"
+  | "door-creak"
+  | "splash"
+  | "knock"
+  | "wind"
+  | "ink-stamp"
+  | "giggle"
+  | "heart-beat"
+  | "whoosh";
+
+/** A moment tied to a specific word in the page narration. When the
+ *  highlighted word crosses `at_word`, the visual effect (if any) plays
+ *  on the word inline, and the sound cue (if any) fires simultaneously.
+ *  Either field is optional — a moment can be visual-only, audio-only,
+ *  or both. Gated by the parent-settings effects toggle. */
+export interface WordMoment {
+  /** Zero-indexed word position in the page's body text (after
+   *  splitting on whitespace). */
+  at_word: number;
+  /** Number of consecutive words to apply the visual effect to,
+   *  starting at `at_word`. Defaults to 1. Use 2+ for multi-word
+   *  reveals like "heart beat" pulsing together, or for a quoted
+   *  phrase rendered as a handwritten note. */
+  span?: number;
+  /** Optional visual effect applied to the word's span. */
+  effect?: WordEffect;
+  /** Optional diegetic sound played when the word is reached. */
+  sound?: SoundCue;
+}
+
 /** A single word's timing within a page's audio, from OpenAI Whisper */
 export interface WordTiming {
   word: string;
@@ -32,6 +106,11 @@ export interface Story {
   audioUrls?: (string | null)[];
   /** Persisted Whisper word timings, indexed by page number. */
   wordTimings?: (WordTiming[] | null)[];
+  /** Optional hand-authored word moments, indexed by page number. Each
+   *  page has a list of {at_word, effect?, sound?} triples that fire a
+   *  word-inline visual effect and/or a diegetic sound when the narration
+   *  reaches that word. Pages with no moments can be omitted or null. */
+  moments?: (WordMoment[] | null)[];
 }
 
 export interface Genre {

@@ -5,6 +5,7 @@ import { Story, SpeechControls } from "@/types/story";
 import { SoundEffects } from "@/hooks/useSoundEffects";
 import { hydrateStoredAudio } from "@/hooks/useSpeech";
 import { SceneIllustration } from "./SceneIllustration";
+import { useWordMoments } from "@/hooks/useWordMoments";
 
 interface ReaderScreenProps {
   story: Story;
@@ -330,6 +331,23 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
 
   useEffect(() => () => speech.stop(), []);
 
+  // Word-level effects + diegetic sound playback. Fires once per word per
+  // page visit when speech.wordIndex crosses the at_word marker. Returns a
+  // map of wordIndex → effect name so the render loop below can apply the
+  // right CSS class without tracking state itself.
+  //
+  // MUST be called before any early return below — otherwise when the story
+  // reaches the end screen (`finished === true`) React renders one fewer
+  // hook than on the previous page and throws "Rendered fewer hooks than
+  // expected". Learned that the hard way.
+  const effectsForWord = useWordMoments({
+    moments: story.moments?.[pageIdx] ?? null,
+    pageIdx,
+    wordIndex: speech.wordIndex,
+    speaking: speech.speaking,
+    effectsEnabled,
+  });
+
   // "Save before leaving?" prompt
   if (showLeavePrompt) {
     return (
@@ -511,14 +529,19 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
         </div>
         <div ref={contentRef} className="reader-text-scroll">
           <div className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}`}>
-            {tw.map((w, i) => (
-              <span
-                key={i}
-                className={`word ${speech.speaking && i === speech.wordIndex ? "active" : ""}`}
-              >
-                {w}{" "}
-              </span>
-            ))}
+            {tw.map((w, i) => {
+              const effect = effectsForWord[i];
+              const classes = [
+                "word",
+                speech.speaking && i === speech.wordIndex ? "active" : "",
+                effect ? `word-fx word-fx-${effect}` : "",
+              ].filter(Boolean).join(" ");
+              return (
+                <span key={i} className={classes}>
+                  {w}{" "}
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>

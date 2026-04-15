@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces } from "next/font/google";
+import { Inter, Fraunces, Caveat } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
@@ -26,6 +26,16 @@ const fraunces = Fraunces({
   style: ["normal"],
 });
 
+// Handwriting typeface: Caveat. Used ONLY by the word-fx-handwritten
+// effect to render quoted notes, letters, and signs inside stories as
+// if they're physical handwritten objects the character is reading.
+// Loaded once here so the font swap is instant when the moment fires.
+const caveat = Caveat({
+  variable: "--font-handwritten",
+  subsets: ["latin"],
+  weight: ["500", "700"],
+});
+
 export const metadata: Metadata = {
   title: "StoryTime — Children's Read-Along Stories",
   description:
@@ -39,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
+      <html lang="en" className={`${inter.variable} ${fraunces.variable} ${caveat.variable}`}>
         <body>{children}</body>
       </html>
     </ClerkProvider>
