@@ -5,6 +5,7 @@ import { Story } from "@/types/story";
 import { GENRES, BUILDER_GENRES, REAL_GENRES, AGE_GROUPS, HERO_TYPES, LESSONS, DURATIONS } from "@/data/genres";
 import { generateStoryOffline } from "@/lib/storyEngine";
 import { prefetchStoryAudio } from "@/hooks/useSpeech";
+import { saveDraft } from "@/lib/draftStory";
 import { LoadingScreen } from "./LoadingScreen";
 
 interface BuilderScreenProps {
@@ -98,6 +99,29 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
       const data = await res.json();
       mark("story text received");
 
+      // ── Autosave draft (text-only) ──────────────────────────────────
+      // The moment Claude hands us a story, dump a minimal version to
+      // localStorage so it survives a crash during image/audio fetching
+      // or the reader render. If anything below here throws, the user
+      // can still recover the story text on next load. We'll overwrite
+      // this with a richer version once the full story object is built.
+      try {
+        const earlyDraft: Story = {
+          id: "ai_" + Date.now(),
+          title: data.title,
+          emoji: data.emoji || "✨",
+          color: gc?.color || "#6366f1",
+          genre: resolvedGenre,
+          age,
+          pages: data.pages,
+          fullPages: data.fullPages,
+          generated: true,
+          duration,
+          characterDescription: data.characterDescription || "",
+        };
+        saveDraft(earlyDraft);
+      } catch { /* never block generation on draft save */ }
+
       // ── Phase 2: page 1 illustration only ───────────────────────────
       // Previously we pre-generated half the story's images before opening
       // the reader. That blocked the user on 3+ slow image calls when really
@@ -152,6 +176,13 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
         characterDescription: data.characterDescription || "",
         preloadedImages,
       };
+
+      // ── Autosave draft (full version) ───────────────────────────────
+      // Overwrite the text-only draft we wrote above with the final
+      // story object (now including preloaded images). This is the
+      // version the library will inject on next load if the reader
+      // crashes before the user taps "Save to My Library".
+      try { saveDraft(story); } catch { /* never block */ }
 
       // ── Phase 3: warm page 1 audio ───────────────────────────────────
       // Wait for the audio to be fully decoded and ready to play with zero

@@ -14,6 +14,7 @@ import { VoiceModal } from "@/components/shared/VoiceModal";
 import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
 import { useEffectsPref } from "@/hooks/useEffectsPref";
+import { loadDraft, clearDraft } from "@/lib/draftStory";
 
 interface ChildProfile {
   id: string;
@@ -53,7 +54,20 @@ export default function Home() {
   const sfx = useSoundEffects();
 
   // Mark as loaded (saved stories now come from database, loaded after sign-in)
+  // Also hydrate any unsaved-draft story from localStorage so a reader
+  // crash doesn't lose the text. The draft is injected into the local
+  // library as an "ai_*" story — opening it goes through the normal save
+  // flow, and a successful save calls clearDraft() to remove it.
   useEffect(() => {
+    const draft = loadDraft();
+    if (draft) {
+      setStories((prev) => {
+        // Guard against a hot-reload re-running this effect and adding
+        // the same draft twice.
+        if (prev.some((s) => s.id === draft.id)) return prev;
+        return [draft, ...prev];
+      });
+    }
     setLoaded(true);
   }, []);
 
@@ -224,6 +238,14 @@ export default function Home() {
   };
 
   const handleDeleteStory = async (storyId: string) => {
+    // Draft stories (still just in localStorage) don't exist on the server,
+    // so hitting the delete API would 404. Detect by the "ai_" id prefix,
+    // clear the localStorage draft, remove from state, and return.
+    if (storyId.startsWith("ai_")) {
+      clearDraft();
+      setStories((prev) => prev.filter((s) => s.id !== storyId));
+      return;
+    }
     try {
       const res = await fetch(`/api/stories?id=${storyId}`, { method: "DELETE" });
       if (res.ok) {
@@ -333,6 +355,11 @@ export default function Home() {
       // Also update the reader's current story so if the user is still
       // reading, the hydrated audio URLs take effect immediately.
       setCur((prev) => (prev && prev.id === optimisticId ? persisted : prev));
+
+      // Story is safe in Supabase now — we can drop the localStorage
+      // draft. If we didn't, the next app load would re-inject it as a
+      // phantom "unsaved" copy next to the real persisted row.
+      clearDraft();
     } catch (err) {
       console.error("Failed to save story:", err);
       // Roll back the optimistic insert so the user isn't left with a
