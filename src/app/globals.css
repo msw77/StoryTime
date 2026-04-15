@@ -939,7 +939,8 @@ body > * {
   line-height: 1.75;
 }
 .story-text .word {
-  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease,
+              opacity 0.35s ease, filter 0.35s ease;
   padding: 1px 4px;
   border-radius: 5px;
   display: inline-block;
@@ -958,29 +959,144 @@ body > * {
   box-shadow: 0 1px 6px rgba(194, 94, 69, 0.28);
 }
 
-/* Page transition effects */
+/* Reading-lamp spotlight REMOVED — was dimming non-active words when
+   speaking, tested poorly (made it hard to read ahead). The standard
+   honey-highlight on the active word is enough. */
+
+/* ── Page-turn curl ─────────────────────────────────────────────────
+   Upgrade from a flat slide to a 3D page-flip. The reader-body rotates
+   around its left edge like a real picture book page being turned.
+   Needs perspective on the parent (.reader) — set below. The timing
+   matches the 200ms out / 400ms in JavaScript timer in ReaderScreen,
+   so the page-idx swap happens exactly when the old page is face-down. */
+.reader {
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+}
 .reader-content.page-exit,
 .reader-body.page-exit {
   opacity: 0;
-  transform: translateX(-20px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: rotateY(-75deg) translateX(-12px);
+  transform-origin: left center;
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+  backface-visibility: hidden;
 }
 .reader-content.page-enter,
 .reader-body.page-enter {
-  animation: page-slide-in 0.35s ease forwards;
+  animation: page-flip-in 0.4s cubic-bezier(0.22, 0.9, 0.34, 1) forwards;
+  transform-origin: left center;
+  backface-visibility: hidden;
 }
-@keyframes page-slide-in {
-  0% { opacity: 0; transform: translateX(20px); }
-  100% { opacity: 1; transform: translateX(0); }
+@keyframes page-flip-in {
+  0%   { opacity: 0; transform: rotateY(70deg) translateX(12px); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: rotateY(0deg) translateX(0); }
 }
 
-/* Image reveal animation */
+/* ── Ken Burns pan on every page illustration ──────────────────────
+   Two animations chained on the img element:
+   1. img-reveal: a quick 0.5s fade + scale-up so the image doesn't
+      pop in hard on page change.
+   2. ken-burns: a slow 26-second continuous pan+zoom that loops
+      alternating direction. The combination of "zoom-in" and "slow
+      drift down and to the right" mimics a film documentary Ken Burns
+      effect and gives static AI stills a sense of motion without
+      being distracting. 26s is long enough that you never consciously
+      notice the animation — you just feel that the scene is alive.
+   The image is already inside .ai-illustration which has overflow:hidden,
+   so scaling past 100% crops cleanly instead of leaking into layout. */
 .ai-illustration img {
-  animation: img-reveal 0.5s ease;
+  /* Chain: a quick fade-in on page change, then a slow 20s zoom-and-drift
+     that oscillates forever. Scale goes from 1.00 to 1.18 (was 1.10 —
+     bumped because the original was imperceptible). Translate goes up
+     to 4% to give a visible directional pan on top of the zoom. Ease
+     at both ends so the motion is smooth with no sudden direction
+     change when the animation reverses. */
+  animation:
+    img-reveal 0.5s ease,
+    ken-burns 20s ease-in-out 0.5s infinite alternate;
+  transform-origin: 60% 55%;
+  will-change: transform;
 }
 @keyframes img-reveal {
   0% { opacity: 0; transform: scale(0.97); }
   100% { opacity: 1; transform: scale(1); }
+}
+@keyframes ken-burns {
+  0%   { transform: scale(1.00) translate(0%, 0%); }
+  100% { transform: scale(1.18) translate(-4%, -3%); }
+}
+
+/* ── Cozy mode ──────────────────────────────────────────────────────
+   Toggled by the 🌙 button in the reader header. Previous version
+   used a warm sepia radial gradient + sepia image filter, but tested
+   as "too hot / not sleepy enough" — the user wanted a darker, calmer
+   bedtime feel instead. New behavior: just drop the overall brightness
+   and slightly cool the whole view so it reads as "lights dimmed for
+   bedtime" rather than "sitting by a fireplace". Background goes to
+   a deep muted blue-grey, text color shifts to a softer off-white
+   so it stays readable in the dim. Illustration keeps its own colors
+   (no sepia) but gets a slight brightness reduction so it doesn't
+   glare against the dim background.
+   In Sprint 2 we'll add an optional looping sound bed under this. */
+.reader {
+  transition: background 0.6s ease, filter 0.6s ease, color 0.6s ease;
+}
+.reader.cozy {
+  background: #3a4152;
+}
+.reader.cozy .reader-header {
+  background: #3a4152;
+}
+.reader.cozy .reader-header h2,
+.reader.cozy .page-num {
+  color: #e8e2d4;
+}
+.reader.cozy .hdr-btn,
+.reader.cozy .icon-btn {
+  background: #4a5263;
+  color: #e8e2d4;
+  border-color: #5a6373;
+}
+.reader.cozy .ai-illustration img {
+  filter: brightness(0.82) saturate(0.95);
+}
+.reader.cozy .story-text {
+  color: #e8e2d4;
+}
+.reader.cozy .story-text .word.active {
+  /* Keep the warm highlight but tone it down so it's not blinding
+     against the dark background. */
+  background: #d4875a;
+  color: #3a4152;
+  box-shadow: 0 1px 10px rgba(212, 135, 90, 0.4);
+}
+.reader.cozy .reader-progress {
+  background: #4a5263;
+}
+
+/* ── Cozy mode toggle button (sits inline in .header-controls) ── */
+.cozy-toggle {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 4px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cozy-toggle:hover {
+  background: var(--surface);
+}
+.cozy-toggle.on {
+  background: #3d2a18;
+  border-color: #3d2a18;
+  color: #ffcc85;
+  box-shadow: 0 0 14px rgba(255, 200, 130, 0.55);
 }
 
 /* Reader controls (legacy — kept for reference) */

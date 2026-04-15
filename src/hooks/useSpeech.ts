@@ -483,16 +483,41 @@ export function useSpeech(): SpeechControls {
       return;
     }
 
-    // Use the cached audio element directly (reset it for replay)
+    // Use the cached audio element directly (reset it for replay).
+    //
+    // IMPORTANT — defensive reset order. Previously we just set
+    // currentTime=0 then called play(). That looks correct, but
+    // setting currentTime on an <audio> element is an **async seek**.
+    // If the element was previously paused mid-playback (which is
+    // exactly what happens when the user flips pages: stop() called
+    // pause() and then set currentTime=0, but the seek is queued),
+    // AND the element isn't fully buffered yet, the subsequent play()
+    // can race the seek and start playback from the old currentTime
+    // instead of 0. User experience: "audio skips ahead mid-page"
+    // when flipping pages quickly then hitting play.
+    //
+    // Fix:
+    //   1. Explicit pause() before anything else, so the internal
+    //      playback state is quiesced before we touch currentTime.
+    //   2. Set currentTime=0.
+    //   3. Await a microtask (Promise.resolve) so the seek starts
+    //      processing before play() is called. In practice this one
+    //      tick is enough for the browser to latch the new seek
+    //      target; combined with the pause() above it reliably
+    //      starts playback from the beginning.
     const audio = cached.audio;
     // Clear any old event listeners by replacing with fresh ones below
     audio.onplay = null;
     audio.onended = null;
     audio.onpause = null;
     audio.onerror = null;
+    try { audio.pause(); } catch { /* ignore */ }
     audio.currentTime = 0;
     audio.playbackRate = aiSpeed;
     audioRef.current = audio;
+    // Yield one microtask so the seek request is latched before play()
+    await Promise.resolve();
+    if (cancelledRef.current) return;
 
     const timings = cached.wordTimings;
     let endHandled = false;

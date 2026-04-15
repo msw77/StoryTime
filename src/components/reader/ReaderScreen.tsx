@@ -23,6 +23,12 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   const [pageIdx, setPageIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [finished, setFinished] = useState(false);
+  // Cozy mode: warm sepia dim + radial vignette + candle-glow highlight.
+  // One-tap toggle in the reader header. Persists for the duration of
+  // this reader session only (intentional — a parent might want it for
+  // bedtime stories but not the daytime read). In Sprint 2 this state
+  // will also gate the looping fireplace-crackle ambient audio.
+  const [cozy, setCozy] = useState(false);
   // A story loaded from the library already lives in the DB — its id is a
   // DB UUID, not the "ai_<timestamp>" marker we assign to freshly-generated
   // stories. Treat it as already saved so we don't prompt to save on close
@@ -405,7 +411,7 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   const tw = page[1].split(/\s+/);
 
   return (
-    <div className="reader">
+    <div className={`reader ${cozy ? "cozy" : ""}`}>
       <div className="reader-header">
         <button className="icon-btn" onClick={handleBackClick}>←</button>
         <h2>{story.emoji} {story.title}</h2>
@@ -450,6 +456,18 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
             <span className="autoplay-toggle-track" aria-hidden="true">
               <span className="autoplay-toggle-knob" />
             </span>
+          </button>
+          {/* Cozy-mode toggle — warms the whole reader to a sepia bedtime
+              palette. Tiny icon button so it fits next to the autoplay
+              switch without crowding the header. */}
+          <button
+            type="button"
+            className={`cozy-toggle ${cozy ? "on" : ""}`}
+            onClick={() => setCozy((c) => !c)}
+            title={cozy ? "Cozy mode on — tap to turn off" : "Cozy mode (bedtime palette)"}
+            aria-label="Toggle cozy mode"
+          >
+            {cozy ? "🌙" : "☀️"}
           </button>
         </div>
       </div>
