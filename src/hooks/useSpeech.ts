@@ -397,6 +397,32 @@ export function useSpeech(): SpeechControls {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
+  // Monotonic epoch counter. Every stop() AND every new speakAI() call
+  // increments this. Each in-flight speakAI captures its own epoch at the
+  // top of the function and checks `myEpoch === speechEpochRef.current`
+  // at every async boundary. If a later call has taken over (or stop()
+  // has been called), the captured epoch won't match and the old call
+  // exits cleanly without clobbering the new one.
+  //
+  // Why not just use cancelledRef? Because cancelledRef is a shared
+  // boolean that every new speakAI call resets to false (so IT can run).
+  // That reset is invisible to any earlier in-flight call — once the
+  // earlier call's `await fetchAudio` resolves, it reads cancelledRef
+  // === false and thinks it's still valid, starts playing its old-page
+  // audio, spins up a second tracking loop, and you get overlapping
+  // narration + a word-highlight that jumps back and forth between two
+  // pages. That's the "jumping back / jumping forward" reader bug.
+  //
+  // An epoch counter fixes this because each call has its own captured
+  // value — a later call incrementing the counter doesn't retroactively
+  // un-cancel an earlier one.
+  const speechEpochRef = useRef(0);
+  // Track the safety timer in a ref so stop() can clear it directly.
+  // Previously this was a closure-local variable inside speakAI, which
+  // meant a mid-page stop() couldn't cancel it — so 30+ seconds later
+  // it would fire a stale handleEnd from the old page and advance the
+  // reader forward for no apparent reason. Now stop() clears it.
+  const safetyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load browser voices
   useEffect(() => {
@@ -416,10 +442,26 @@ export function useSpeech(): SpeechControls {
   // ─── Stop ─────────────────────────────────────────────────────────
 
   const stop = useCallback(() => {
+    // Bump the epoch so any in-flight speakAI sitting on an `await` will
+    // see its captured epoch != current and bail out cleanly. This is the
+    // *authoritative* cancellation signal — cancelledRef is kept for the
+    // browser-voice path and as a cheap extra guard, but the epoch is
+    // what makes cross-call cancellation actually work.
+    speechEpochRef.current++;
     cancelledRef.current = true;
 
     window.speechSynthesis.cancel();
     if (timerRef.current) clearInterval(timerRef.current);
+
+    // Kill the AI-path safety timer if one is pending — otherwise it
+    // lingers for up to ~30s after a page flip and eventually fires a
+    // stale handleEnd from the old page's speakAI closure, which auto-
+    // advances the reader or resets speaking state underneath a new
+    // call. That's the "reader randomly jumps forward/resets" bug.
+    if (safetyTimerRef.current) {
+      clearTimeout(safetyTimerRef.current);
+      safetyTimerRef.current = null;
+    }
 
     if (audioRef.current) {
       // Clear event handlers before pausing to prevent stale callbacks
@@ -459,6 +501,13 @@ export function useSpeech(): SpeechControls {
   const speakAI = useCallback(async (text: string, onEnd?: () => void) => {
     stop();
     cancelledRef.current = false;
+    // Capture OUR epoch. stop() just bumped the counter, so this call
+    // owns the current value. Any subsequent stop() or speakAI() will
+    // bump again; when we check `myEpoch !== speechEpochRef.current`
+    // later, that means we've been superseded and should bail out.
+    // This is the definitive cancellation signal for the async path.
+    const myEpoch = speechEpochRef.current;
+    const isStale = () => myEpoch !== speechEpochRef.current;
 
     const allWords = text.split(/\s+/).filter(Boolean);
     setWords(allWords);
@@ -474,7 +523,12 @@ export function useSpeech(): SpeechControls {
     const cached = await fetchAudio(text, aiVoice, aiSpeed, storyId, pageIdx);
     console.log(`[Audio] fetchAudio returned in ${((performance.now() - playStart) / 1000).toFixed(2)}s, ready=${cached?.ready}`);
 
-    if (cancelledRef.current) return;
+    // After the async fetch: have we been superseded? If so, exit
+    // silently without touching audio refs or state — a later call is
+    // now the source of truth. DO NOT use cancelledRef here alone; a
+    // later speakAI call will have reset it to false before we reach
+    // this point, hiding our cancellation. Epoch is authoritative.
+    if (isStale() || cancelledRef.current) return;
     setLoading(false);
 
     if (!cached || !cached.ready) {
@@ -517,25 +571,34 @@ export function useSpeech(): SpeechControls {
     audioRef.current = audio;
     // Yield one microtask so the seek request is latched before play()
     await Promise.resolve();
-    if (cancelledRef.current) return;
+    // Second epoch check — another stop() / speakAI may have fired while
+    // we were mutating currentTime. Without this guard, two calls racing
+    // on the same cached audio element both call play(), fighting over
+    // currentTime and producing the audible "jump back / jump forward".
+    if (isStale() || cancelledRef.current) return;
 
     const timings = cached.wordTimings;
     let endHandled = false;
-    let safetyTimer: ReturnType<typeof setTimeout> | null = null;
 
     const cleanup = () => {
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
         animFrameRef.current = null;
       }
-      if (safetyTimer) {
-        clearTimeout(safetyTimer);
-        safetyTimer = null;
+      if (safetyTimerRef.current) {
+        clearTimeout(safetyTimerRef.current);
+        safetyTimerRef.current = null;
       }
     };
 
     const handleEnd = () => {
-      if (endHandled || cancelledRef.current) return;
+      // Epoch check first — if a later call has taken over, this is a
+      // stale handleEnd firing from a zombie safety timer or from a
+      // paused-but-not-cleared audio element. We MUST NOT call onEnd
+      // in that case: the captured onEnd closure holds an old pageIdx
+      // and would call goToPage(oldIdx + 1) — auto-advancing the
+      // reader on top of whatever page the user is actually on.
+      if (endHandled || isStale() || cancelledRef.current) return;
       endHandled = true;
       cleanup();
       setSpeaking(false);
@@ -592,7 +655,12 @@ export function useSpeech(): SpeechControls {
     }
 
     const trackWords = () => {
-      if (cancelledRef.current || endHandled) return;
+      // Epoch check on every frame — if we've been superseded, this RAF
+      // loop must die immediately, otherwise it keeps writing wordIndex
+      // based on the old audio's currentTime while the new call's loop
+      // is also writing. Result is the highlight bouncing between two
+      // positions several times per second.
+      if (isStale() || cancelledRef.current || endHandled) return;
 
       // Check if audio naturally ended (backup for browsers that miss 'ended' event)
       if (audio.ended) {
@@ -628,6 +696,10 @@ export function useSpeech(): SpeechControls {
     audio.onended = handleEnd;
 
     audio.onerror = () => {
+      // Stale check first — a zombie error handler from an old cached
+      // audio element shouldn't trigger a browser-voice fallback while
+      // a newer call is already playing the right audio.
+      if (isStale()) return;
       cleanup();
       if (!cancelledRef.current && !endHandled) {
         endHandled = true;
@@ -641,6 +713,9 @@ export function useSpeech(): SpeechControls {
       await audio.play();
     } catch (err) {
       console.warn("Audio play failed:", err);
+      // If we were superseded during the play() promise, a new call is
+      // handling things — don't fall back to browser voice on top of it.
+      if (isStale()) return;
       cleanup();
       if (!cancelledRef.current && !endHandled) {
         endHandled = true;
@@ -650,16 +725,25 @@ export function useSpeech(): SpeechControls {
       return;
     }
 
-    if (cancelledRef.current || endHandled) return;
+    if (isStale() || cancelledRef.current || endHandled) return;
 
     // Start the tracking loop only after playback has begun
     animFrameRef.current = requestAnimationFrame(trackWords);
 
-    // Safety timeout — if audio should be done but 'ended' event never fires
+    // Safety timeout — if audio should be done but 'ended' event never fires.
+    // Stored in a shared ref (not a closure-local variable) so stop() can
+    // clear it directly when the user flips pages; otherwise it lingers and
+    // fires a stale handleEnd up to ~30s later, yanking the reader forward.
+    // The handler also double-checks the epoch in case stop() didn't run.
     const dur = audio.duration || 0;
     if (dur > 0) {
       const expectedMs = (dur / aiSpeed + 8) * 1000;
-      safetyTimer = setTimeout(() => {
+      // Clear any older safety timer that stop() didn't catch (belt and
+      // braces — stop() always clears it, but a direct re-entrant call
+      // without going through stop() could leak one).
+      if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
+      safetyTimerRef.current = setTimeout(() => {
+        if (isStale()) return;
         if (!endHandled && !cancelledRef.current) {
           console.warn("Audio safety timeout — forcing end");
           handleEnd();
