@@ -1075,6 +1075,54 @@ body > * {
   background: #4a5263;
 }
 
+/* ── Effects-off master switch ───────────────────────────────────────
+   Set when the parent settings "Audio & visual effects" toggle is
+   OFF. Kills Ken Burns (image stays perfectly still), downgrades the
+   page-flip to a flat fade, and (once Sprint 2 lands) will gate the
+   ambient audio bed + inline SFX triggers. Respects the user's choice
+   for a calmer quieter reading experience without affecting layout. */
+.reader.no-effects .ai-illustration img {
+  animation: none;
+  transform: none;
+}
+.reader.no-effects .reader-body.page-exit {
+  transform: none;
+  opacity: 0;
+}
+.reader.no-effects .reader-body.page-enter {
+  animation: none;
+  opacity: 1;
+}
+
+/* ── Parent settings modal: per-row layout ──────────────────────── */
+.settings-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.settings-row:first-of-type {
+  border-top: none;
+}
+.settings-row-info {
+  flex: 1;
+  min-width: 0;
+}
+.settings-row-title {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.settings-row-desc {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
 /* ── Cozy mode toggle button (sits inline in .header-controls) ── */
 .cozy-toggle {
   background: transparent;

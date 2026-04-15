@@ -47,6 +47,7 @@ interface LibraryScreenProps {
   onCreateNew: () => void;
   onDeleteStory?: (storyId: string) => void;
   setShowVoice: (show: boolean) => void;
+  setShowSettings?: (show: boolean) => void;
   isPremium?: boolean;
   freeStoryLimit?: number;
   activeProfile?: ChildProfile | null;
@@ -60,6 +61,7 @@ export function LibraryScreen({
   onCreateNew,
   onDeleteStory,
   setShowVoice,
+  setShowSettings,
   isPremium = false,
   freeStoryLimit = 5,
   activeProfile,
@@ -288,9 +290,18 @@ export function LibraryScreen({
               {activeProfile.avatar_emoji}
             </button>
           )}
-          <button className="icon-btn" onClick={() => setShowVoice(true)}>
+          <button className="icon-btn" onClick={() => setShowVoice(true)} title="Voice settings">
             🎙️
           </button>
+          {setShowSettings && (
+            <button
+              className="icon-btn"
+              onClick={() => setShowSettings(true)}
+              title="Parent settings"
+            >
+              ⚙️
+            </button>
+          )}
           <UserButton />
         </div>
       </div>

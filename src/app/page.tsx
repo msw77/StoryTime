@@ -11,7 +11,9 @@ import { LibraryScreen } from "@/components/library/LibraryScreen";
 import { ReaderScreen } from "@/components/reader/ReaderScreen";
 import { BuilderScreen } from "@/components/builder/BuilderScreen";
 import { VoiceModal } from "@/components/shared/VoiceModal";
+import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
+import { useEffectsPref } from "@/hooks/useEffectsPref";
 
 interface ChildProfile {
   id: string;
@@ -40,6 +42,8 @@ export default function Home() {
   const [cur, setCur] = useState<Story | null>(null);
   const [stories, setStories] = useState<Story[]>(ALL_STORIES);
   const [showVoice, setShowVoice] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [effectsEnabled, setEffectsEnabled] = useEffectsPref();
   const [loaded, setLoaded] = useState(false);
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<ChildProfile | null>(null);
@@ -409,6 +413,7 @@ export default function Home() {
           onCreateNew={() => setScreen("builder")}
           onDeleteStory={handleDeleteStory}
           setShowVoice={setShowVoice}
+          setShowSettings={setShowSettings}
           isPremium={isPremium}
           freeStoryLimit={FREE_STORY_LIMIT}
           activeProfile={activeProfile}
@@ -416,11 +421,24 @@ export default function Home() {
         />
       )}
       {screen === "reader" && cur && (
-        <ReaderScreen story={cur} onBack={handleBack} speech={speech} sfx={sfx} onSave={cur.generated ? handleSaveStory : undefined} />
+        <ReaderScreen
+          story={cur}
+          onBack={handleBack}
+          speech={speech}
+          sfx={sfx}
+          onSave={cur.generated ? handleSaveStory : undefined}
+          effectsEnabled={effectsEnabled}
+        />
       )}
       {screen === "builder" && (
         <BuilderScreen onBack={() => setScreen("library")} onStoryCreated={handleCreated} />
       )}
+      <ParentSettingsModal
+        show={showSettings}
+        onClose={() => setShowSettings(false)}
+        effectsEnabled={effectsEnabled}
+        setEffectsEnabled={setEffectsEnabled}
+      />
       <VoiceModal
         show={showVoice}
         onClose={() => setShowVoice(false)}

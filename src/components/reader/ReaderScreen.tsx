@@ -17,9 +17,14 @@ interface ReaderScreenProps {
    *  Returns a Promise — the server generates TTS audio for every page
    *  during save, so callers should await this to show accurate UI state. */
   onSave?: (imageUrls: (string | null)[]) => void | Promise<void>;
+  /** Master "audio & visual effects" preference from the parent settings
+   *  modal. When false, disables Ken Burns pan on illustrations, the 3D
+   *  page-flip (falls back to a flat fade), and — once Sprint 2 lands —
+   *  ambient sound beds + inline SFX cues. Defaults to true if unset. */
+  effectsEnabled?: boolean;
 }
 
-export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScreenProps) {
+export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnabled = true }: ReaderScreenProps) {
   const [pageIdx, setPageIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [finished, setFinished] = useState(false);
@@ -411,7 +416,7 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave }: ReaderScree
   const tw = page[1].split(/\s+/);
 
   return (
-    <div className={`reader ${cozy ? "cozy" : ""}`}>
+    <div className={`reader ${cozy ? "cozy" : ""} ${effectsEnabled ? "" : "no-effects"}`}>
       <div className="reader-header">
         <button className="icon-btn" onClick={handleBackClick}>←</button>
         <h2>{story.emoji} {story.title}</h2>
