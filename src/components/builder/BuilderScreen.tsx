@@ -1,19 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Story } from "@/types/story";
-import { GENRES, BUILDER_GENRES, REAL_GENRES, AGE_GROUPS, HERO_TYPES, LESSONS, DURATIONS } from "@/data/genres";
-import { generateStoryOffline } from "@/lib/storyEngine";
-import { prefetchStoryAudio } from "@/hooks/useSpeech";
-import { saveDraft } from "@/lib/draftStory";
-import { LoadingScreen } from "./LoadingScreen";
+import { BUILDER_GENRES, AGE_GROUPS, HERO_TYPES, LESSONS, DURATIONS } from "@/data/genres";
+import type { GenerateStoryFormValues } from "@/lib/generateStory";
 
 interface BuilderScreenProps {
   onBack: () => void;
-  onStoryCreated: (story: Story) => void;
+  /** Kick off generation on the parent, which owns the async lifecycle
+   *  so the work can survive navigation away from the LoadingScreen. */
+  onStartGeneration: (form: GenerateStoryFormValues) => void;
+  /** When true, a previous generation is still running in the
+   *  background (detached). We block starting a new one and show a
+   *  hint on the Create button. */
+  backgroundBusy?: boolean;
 }
 
-export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
+export function BuilderScreen({ onBack, onStartGeneration, backgroundBusy = false }: BuilderScreenProps) {
   const [heroName, setHeroName] = useState("");
   const [heroType, setHeroType] = useState(HERO_TYPES[0]);
   const [customHeroType, setCustomHeroType] = useState("");
@@ -24,9 +26,6 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
   const [lesson, setLesson] = useState("Be brave");
   const [customLesson, setCustomLesson] = useState("");
   const [extras, setExtras] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [loadingPhase, setLoadingPhase] = useState<"story" | "illustrations">("story");
-  const [loadingProgress, setLoadingProgress] = useState(0); // 0-100
   const [error, setError] = useState("");
 
   const availableDurations =
@@ -37,7 +36,11 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
       setDuration(availableDurations[0].id);
   }, [age]);
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
+    if (backgroundBusy) {
+      setError("Another story is still generating in the background — wait for the ding before starting a new one.");
+      return;
+    }
     if (!heroName.trim()) {
       setError("Give your hero a name!");
       return;
@@ -48,193 +51,27 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
       return;
     }
     setError("");
-    setLoading(true);
-    setLoadingPhase("story");
 
     const finalLesson = lesson === "Write my own…" ? customLesson : lesson;
-    // For preset hero types (e.g. "🐱 Cat"), strip the emoji prefix.
-    // For custom types, send the user's text verbatim.
+    // Preset hero types carry an emoji prefix ("🐱 Cat") that we strip;
+    // custom types are taken verbatim.
     const heroTypeClean = isCustomHero
       ? customHeroType.trim()
       : heroType.split(" ").slice(1).join(" ");
-    // Resolve "random" to an actual genre so the API gets a real value and
-    // the saved story ends up tagged with whatever genre was rolled.
-    const resolvedGenre =
-      genre === "random"
-        ? REAL_GENRES[Math.floor(Math.random() * REAL_GENRES.length)].id
-        : genre;
-    const gc = GENRES.find((g) => g.id === resolvedGenre);
 
-    // Phase timing — helps diagnose which external service is slow.
-    // View in browser DevTools console. Format: [StoryTime] phase: Xs
-    const t0 = performance.now();
-    const mark = (label: string) => {
-      const secs = ((performance.now() - t0) / 1000).toFixed(1);
-      console.log(`[StoryTime] ${label}: ${secs}s`);
-    };
-
-    try {
-      // ── Phase 1: Claude story text ───────────────────────────────────
-      mark("story generation started");
-      const res = await fetch("/api/generate-story", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          heroName: heroName.trim(),
-          heroType: heroTypeClean,
-          genre: resolvedGenre,
-          age,
-          obstacle,
-          lesson: finalLesson,
-          extras,
-          duration,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "AI generation failed");
-      }
-
-      const data = await res.json();
-      mark("story text received");
-
-      // ── Autosave draft (text-only) ──────────────────────────────────
-      // The moment Claude hands us a story, dump a minimal version to
-      // localStorage so it survives a crash during image/audio fetching
-      // or the reader render. If anything below here throws, the user
-      // can still recover the story text on next load. We'll overwrite
-      // this with a richer version once the full story object is built.
-      try {
-        const earlyDraft: Story = {
-          id: "ai_" + Date.now(),
-          title: data.title,
-          emoji: data.emoji || "✨",
-          color: gc?.color || "#6366f1",
-          genre: resolvedGenre,
-          age,
-          pages: data.pages,
-          fullPages: data.fullPages,
-          generated: true,
-          duration,
-          characterDescription: data.characterDescription || "",
-        };
-        saveDraft(earlyDraft);
-      } catch { /* never block generation on draft save */ }
-
-      // ── Phase 2: page 1 illustration only ───────────────────────────
-      // Previously we pre-generated half the story's images before opening
-      // the reader. That blocked the user on 3+ slow image calls when really
-      // they only need page 1 to start reading. The reader's existing
-      // progressive loader generates pages 2+ in the background while the
-      // user reads page 1, so pre-loading them here is pure dead time.
-      setLoadingPhase("illustrations");
-      setLoadingProgress(50);
-
-      const totalPages = data.pages.length;
-      const preloadedImages: (string | null)[] = new Array(totalPages).fill(null);
-
-      if (data.fullPages && data.fullPages.length > 0 && data.fullPages[0]?.scene) {
-        const charDesc = data.characterDescription || "";
-        try {
-          const imgRes = await fetch("/api/generate-images", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              pages: [{
-                scene: data.fullPages[0].scene,
-                mood: data.fullPages[0].mood || "warm",
-                index: 0,
-              }],
-              characterDescription: charDesc,
-            }),
-          });
-          if (imgRes.ok) {
-            const imgData = await imgRes.json();
-            for (const img of imgData.images) {
-              if (img.url) preloadedImages[img.index] = img.url;
-            }
-          }
-        } catch (imgErr) {
-          console.warn("Page 1 image failed:", imgErr);
-        }
-      }
-      setLoadingProgress(85);
-      mark("page 1 illustration done");
-
-      const story: Story = {
-        id: "ai_" + Date.now(),
-        title: data.title,
-        emoji: data.emoji || "✨",
-        color: gc?.color || "#6366f1",
-        genre: resolvedGenre,
-        age,
-        pages: data.pages,
-        fullPages: data.fullPages,
-        generated: true,
-        duration,
-        characterDescription: data.characterDescription || "",
-        preloadedImages,
-      };
-
-      // ── Autosave draft (full version) ───────────────────────────────
-      // Overwrite the text-only draft we wrote above with the final
-      // story object (now including preloaded images). This is the
-      // version the library will inject on next load if the reader
-      // crashes before the user taps "Save to My Library".
-      try { saveDraft(story); } catch { /* never block */ }
-
-      // ── Phase 3: warm page 1 audio ───────────────────────────────────
-      // Wait for the audio to be fully decoded and ready to play with zero
-      // latency. No cap — we're already waiting on a ~35s image, so a few
-      // extra seconds for audio is worth it for truly instant playback.
-      // If the TTS call fails entirely, the helper returns quickly and the
-      // reader will fall back to browser voice on play.
-      setLoadingProgress(98);
-      if (Array.isArray(data.pages) && data.pages.length > 0) {
-        const pageTexts = (data.pages as [string, string][]).map((p) => p[1]);
-        await prefetchStoryAudio(pageTexts, undefined, { maxPages: 1 });
-      }
-      setLoadingProgress(100);
-      mark("audio warmed, opening reader");
-
-      onStoryCreated(story);
-    } catch (aiError) {
-      console.warn("AI generation failed, falling back to offline engine:", aiError);
-      // Fall back to offline story engine
-      try {
-        const result = generateStoryOffline({
-          heroName: heroName.trim(),
-          heroType: heroTypeClean,
-          obstacle,
-          genre: resolvedGenre,
-          age,
-          lesson: finalLesson,
-          duration,
-        });
-        const story: Story = {
-          id: "gen_" + Date.now(),
-          title: result.title,
-          emoji: result.emoji || "✨",
-          color: gc?.color || "#6366f1",
-          genre: resolvedGenre,
-          age,
-          pages: result.pages,
-          generated: true,
-          duration,
-        };
-        onStoryCreated(story);
-      } catch (offlineError) {
-        setError("Failed: " + (offlineError as Error).message);
-      }
-    } finally {
-      setLoading(false);
-    }
+    // Hand off everything to the parent. The parent owns the promise,
+    // the LoadingScreen, the detach flow, and the final navigation.
+    onStartGeneration({
+      heroName: heroName.trim().charAt(0).toUpperCase() + heroName.trim().slice(1),
+      heroTypeClean,
+      obstacle,
+      genre, // parent will resolve "random" to a concrete id
+      age,
+      duration,
+      finalLesson,
+      extras,
+    });
   };
-
-  if (loading) {
-    return <LoadingScreen genre={genre} heroName={heroName.trim() || undefined} phase={loadingPhase} progress={loadingProgress} />;
-  }
 
   return (
     <div className="builder">
@@ -373,11 +210,22 @@ export function BuilderScreen({ onBack, onStoryCreated }: BuilderScreenProps) {
 
       <button
         className="pill-btn primary"
-        style={{ width: "100%", padding: 16, fontSize: 18 }}
+        style={{
+          width: "100%",
+          padding: 16,
+          fontSize: 18,
+          opacity: backgroundBusy ? 0.6 : 1,
+        }}
         onClick={handleCreate}
+        disabled={backgroundBusy}
       >
-        ✨ Create My Story!
+        {backgroundBusy ? "⏳ A story is already cooking…" : "✨ Create My Story!"}
       </button>
+      {backgroundBusy && (
+        <p style={{ fontSize: 12, color: "var(--muted)", textAlign: "center", marginTop: 8, fontWeight: 600 }}>
+          You&apos;ll hear a ding when it&apos;s ready.
+        </p>
+      )}
     </div>
   );
 }

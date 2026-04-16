@@ -121,6 +121,29 @@ function playStarTap(starIndex: number) {
   osc.stop(ctx.currentTime + 0.35);
 }
 
+// Two-note rising ding for background-save completion: "your story is
+// ready". Softer and shorter than celebration() — it's an ambient
+// notification, not a fanfare, so it doesn't steal focus from whatever
+// the child is already reading.
+function playNotification() {
+  const ctx = getCtx();
+  const notes = [659, 988]; // E5, B5 — bright, friendly, rising perfect fifth
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    const gain = ctx.createGain();
+    const t = ctx.currentTime + i * 0.11;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.09, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.42);
+  });
+}
+
 function playStartReading() {
   const ctx = getCtx();
   // Gentle two-note chime — signals "let's begin"
@@ -150,6 +173,7 @@ export interface SoundEffects {
   celebration: () => void;
   starTap: (index: number) => void;
   startReading: () => void;
+  notification: () => void;
   enabled: boolean;
   setEnabled: (v: boolean) => void;
 }
@@ -185,13 +209,17 @@ export function useSoundEffects(): SoundEffects {
     if (enabledRef.current) playStartReading();
   }, []);
 
+  const notification = useCallback(() => {
+    if (enabledRef.current) playNotification();
+  }, []);
+
   const setEnabled = useCallback((v: boolean) => {
     enabledRef.current = v;
     try { localStorage.setItem("storytime-sfx", v ? "on" : "off"); } catch {}
   }, []);
 
   return {
-    pageTurn, tap, celebration, starTap, startReading,
+    pageTurn, tap, celebration, starTap, startReading, notification,
     enabled: enabledRef.current, setEnabled,
   };
 }

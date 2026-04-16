@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { Story } from "@/types/story";
 import { GENRES, AGE_GROUPS } from "@/data/genres";
@@ -52,6 +52,12 @@ interface LibraryScreenProps {
   freeStoryLimit?: number;
   activeProfile?: ChildProfile | null;
   onSwitchProfile?: () => void;
+  /** Titles of stories that arrived via background save during this
+   *  session. Cards matching these titles render a small blue dot
+   *  until the user opens the story. Keyed by title (not id) because
+   *  the optimistic → DB UUID swap inside handleSaveStory makes id
+   *  matching unreliable across the save lifecycle. */
+  newStoryTitles?: Set<string>;
 }
 
 export function LibraryScreen({
@@ -66,12 +72,50 @@ export function LibraryScreen({
   freeStoryLimit = 5,
   activeProfile,
   onSwitchProfile,
+  newStoryTitles,
 }: LibraryScreenProps) {
   const [gf, setGf] = useState("all");
   const [af, setAf] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [showStorybook, setShowStorybook] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+
+  // Built-in story cover images — lazy-loaded from storyImages.json, which
+  // holds pre-generated fal.media URLs for every page of every built-in
+  // story. We only need page 0 for the library "book cover". Loaded once
+  // on mount as a dynamic import so it's not bundled into the initial
+  // library chunk. Until this resolves, cards fall back to the emoji
+  // variant — the book shape still renders, just without cover art.
+  const [coverImages, setCoverImages] = useState<Record<string, string>>({});
+  useEffect(() => {
+    let cancelled = false;
+    import("@/data/storyImages.json")
+      .then((mod) => {
+        if (cancelled) return;
+        const data = mod.default as Record<string, (string | null)[]>;
+        // Extract just page 0 as the cover; null entries are skipped so the
+        // fallback kicks in for stories whose page 1 failed to generate.
+        const covers: Record<string, string> = {};
+        for (const [id, pages] of Object.entries(data)) {
+          if (Array.isArray(pages) && pages[0]) covers[id] = pages[0];
+        }
+        setCoverImages(covers);
+      })
+      .catch(() => { /* leave covers empty → every card falls back to emoji */ });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Resolve a story's cover image. Built-in stories come from the
+  // storyImages map; AI stories use their own preloadedImages[0]. Either
+  // one can be missing (slow fal.media page, unsaved generation, etc.) —
+  // callers should pass the result straight to `<img src>` and render the
+  // emoji fallback when it's null.
+  const getCoverUrl = (s: Story): string | null => {
+    if (s.generated) {
+      return s.preloadedImages?.[0] ?? null;
+    }
+    return coverImages[s.id] ?? null;
+  };
 
   // Case-insensitive search across title, genre label, AND story page text.
   // Every story's pages are already in memory (as [pageTitle, bodyText] tuples),
@@ -124,6 +168,68 @@ export function LibraryScreen({
   const visibleBuiltIn = isPremium ? filteredBuiltIn : filteredBuiltIn.slice(0, freeStoryLimit);
   const lockedCount = isPremium ? 0 : Math.max(0, filteredBuiltIn.length - freeStoryLimit);
 
+  // Book-style story card. Shared by the main library grid and the
+  // "My Stories" subview so both places read as a shelf of books instead
+  // of a wall of flat tiles. If a cover URL is available, the full painted
+  // illustration fills the card; otherwise the card falls back to a
+  // centered emoji on the story's brand color (the `no-cover` variant
+  // handled in globals.css).
+  const renderBookCard = (s: Story, options?: { deletable?: boolean }) => {
+    const coverUrl = getCoverUrl(s);
+    const genreLabel = GENRES.find((g) => g.id === s.genre)?.label;
+    const ageLabel = AGE_GROUPS.find((a) => a.id === s.age)?.label;
+    const isNew = !!newStoryTitles && newStoryTitles.has(s.title);
+    return (
+      <div
+        key={s.id}
+        className={`story-card${coverUrl ? "" : " no-cover"}`}
+        onClick={() => onSelect(s)}
+        // CSS custom property read by `.story-card.no-cover` to tint the
+        // fallback cover in the story's brand color. Ignored when an
+        // actual cover image is present.
+        style={{ ["--fallback-color" as string]: s.color }}
+      >
+        {isNew && (
+          <span className="new-story-dot" aria-label="New story" title="New story" />
+        )}
+        {options?.deletable && onDeleteStory && (
+          <button
+            className="delete-story-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (confirm("Delete this story? This can't be undone.")) {
+                onDeleteStory(s.id);
+              }
+            }}
+            title="Delete story"
+          >
+            ✕
+          </button>
+        )}
+        {coverUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={coverUrl}
+            alt=""
+            className="book-cover-image"
+            loading="lazy"
+          />
+        ) : (
+          <div className="book-fallback-emoji" aria-hidden="true">
+            {s.emoji}
+          </div>
+        )}
+        <div className="book-title-block">
+          <div className="title">{s.title}</div>
+          <div className="badges">
+            {genreLabel && <span className="badge">{genreLabel}</span>}
+            {ageLabel && <span className="badge">{ageLabel}</span>}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // ── "My Storybook" folder view ──
   if (showStorybook) {
     return (
@@ -175,34 +281,7 @@ export function LibraryScreen({
           </div>
         ) : (
           <div className="story-grid" style={{ paddingTop: 8 }}>
-            {myStories.map((s) => (
-              <div key={s.id} className="story-card" onClick={() => onSelect(s)}>
-                {onDeleteStory && (
-                  <button
-                    className="delete-story-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (confirm("Delete this story? This can't be undone.")) {
-                        onDeleteStory(s.id);
-                      }
-                    }}
-                    title="Delete story"
-                  >
-                    ✕
-                  </button>
-                )}
-                <div className="emoji">{s.emoji}</div>
-                <div className="title">{s.title}</div>
-                <div className="badges">
-                  <span className="badge" style={{ background: s.color }}>
-                    {GENRES.find((g) => g.id === s.genre)?.label}
-                  </span>
-                  <span className="badge" style={{ background: "var(--accent2)" }}>
-                    {AGE_GROUPS.find((a) => a.id === s.age)?.label}
-                  </span>
-                </div>
-              </div>
-            ))}
+            {myStories.map((s) => renderBookCard(s, { deletable: true }))}
           </div>
         )}
       </>
@@ -421,20 +500,7 @@ export function LibraryScreen({
           </div>
         ) : (
           <div className="story-grid">
-            {visibleBuiltIn.map((s) => (
-              <div key={s.id} className="story-card" onClick={() => onSelect(s)}>
-                <div className="emoji">{s.emoji}</div>
-                <div className="title">{s.title}</div>
-                <div className="badges">
-                  <span className="badge" style={{ background: s.color }}>
-                    {GENRES.find((g) => g.id === s.genre)?.label}
-                  </span>
-                  <span className="badge" style={{ background: "var(--accent2)" }}>
-                    {AGE_GROUPS.find((a) => a.id === s.age)?.label}
-                  </span>
-                </div>
-              </div>
-            ))}
+            {visibleBuiltIn.map((s) => renderBookCard(s))}
             {!isPremium && lockedCount > 0 && (
               <PaywallCard storiesRemaining={freeStoryLimit} />
             )}

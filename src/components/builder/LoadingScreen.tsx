@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface LoadingScreenProps {
   genre?: string;
@@ -9,6 +9,13 @@ interface LoadingScreenProps {
   phase?: "story" | "illustrations";
   /** 0–100 progress value */
   progress?: number;
+  /** Optional callback — when set, renders a "Read something else"
+   *  button at the bottom of the screen. Tapping it navigates the user
+   *  back to the library while the generation keeps running in the
+   *  background. When it finishes, the parent auto-saves the story and
+   *  fires a toast + ding. Omit this prop to render the original
+   *  blocking-only loading experience. */
+  onDetach?: () => void;
 }
 
 // ─── Riddles & Jokes (kid-tested, parent-approved) ───────────────────
@@ -162,6 +169,48 @@ const JOKES: { setup: string; punchline: string; genres?: string[] }[] = [
   { setup: "Why did the two spiders get along?", punchline: "They were real web buddies!", genres: ["friendship"] },
   { setup: "What did one raindrop say to the other?", punchline: "Two's company, three's a cloud!", genres: ["friendship"] },
   { setup: "Why are peas such good friends?", punchline: "They're always in the same pod!", genres: ["friendship"] },
+
+  // Food jokes
+  { setup: "Why did the tomato turn red?", punchline: "Because it saw the salad dressing!" },
+  { setup: "What do you call a sad strawberry?", punchline: "A blueberry!" },
+  { setup: "Why did the grape stop in the middle of the road?", punchline: "Because it ran out of juice!" },
+  { setup: "What's a scarecrow's favorite fruit?", punchline: "Straw-berries!" },
+  { setup: "What did the baby corn say to the mama corn?", punchline: "Where's pop corn?" },
+  { setup: "Why did the mushroom get invited to every party?", punchline: "Because he's a fun-gi!" },
+  { setup: "What do you call a sleeping pizza?", punchline: "A piZZZZa!" },
+  { setup: "Why was the cucumber mad?", punchline: "Because it was in a pickle!" },
+  { setup: "What did the apple say to the pie?", punchline: "You've got some crust!" },
+  { setup: "What do you call a peanut in a spacesuit?", punchline: "An astro-NUT!" },
+
+  // School jokes
+  { setup: "Why did the student eat his homework?", punchline: "Because the teacher said it was a piece of cake!" },
+  { setup: "What's a snake's favorite subject?", punchline: "Hiss-tory!" },
+  { setup: "Why did the clock go to the principal's office?", punchline: "For tocking too much!" },
+  { setup: "What's the king of all school supplies?", punchline: "The ruler!" },
+  { setup: "Why was 6 afraid of 7?", punchline: "Because 7, 8 (ate), 9!" },
+  { setup: "Why is a fish so easy to weigh?", punchline: "Because it has its own scales!" },
+  { setup: "What did the pencil say to the other pencil?", punchline: "Looking sharp!" },
+  { setup: "Why can't your nose be 12 inches long?", punchline: "Because then it would be a foot!" },
+
+  // Weather & nature
+  { setup: "What did one volcano say to the other?", punchline: "I lava you!" },
+  { setup: "What falls in winter but never gets hurt?", punchline: "Snow!" },
+  { setup: "What bow can't be tied?", punchline: "A rainbow!" },
+  { setup: "How do trees access the internet?", punchline: "They log in!" },
+  { setup: "What did the big flower say to the little flower?", punchline: "Hey there, bud!" },
+  { setup: "Why did the leaf go to the doctor?", punchline: "It was feeling green!" },
+  { setup: "What do you call a snowman in July?", punchline: "A puddle!" },
+  { setup: "Why do watermelons have fancy weddings?", punchline: "Because they cantaloupe!" },
+
+  // Tongue twisters (shown as jokes — the "punchline" is the challenge)
+  { setup: "🗣️ Tongue twister time! Say this 5 times fast:", punchline: "Red lorry, yellow lorry, red lorry, yellow lorry!" },
+  { setup: "🗣️ Tongue twister time! Say this 5 times fast:", punchline: "Rubber baby buggy bumpers!" },
+  { setup: "🗣️ Tongue twister time! Say this 5 times fast:", punchline: "She sells seashells by the seashore!" },
+  { setup: "🗣️ Tongue twister time! Say this 5 times fast:", punchline: "Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair!" },
+  { setup: "🗣️ Tongue twister time! Say this 5 times fast:", punchline: "Toy boat, toy boat, toy boat!" },
+  { setup: "🗣️ Tongue twister time! Say this 3 times fast:", punchline: "Unique New York, unique New York, you know you need unique New York!" },
+  { setup: "🗣️ Tongue twister time! Say this 5 times fast:", punchline: "Peter Piper picked a peck of pickled peppers!" },
+  { setup: "🗣️ Tongue twister time! Say this 5 times fast:", punchline: "How much wood would a woodchuck chuck if a woodchuck could chuck wood?" },
 ];
 
 // ─── Fun Facts ───────────────────────────────────────────────────────
@@ -302,6 +351,28 @@ const FUN_FACTS: { fact: string; genres?: string[] }[] = [
   { fact: "Laughter is contagious — your brain actually prepares your face to smile when you hear someone else laugh!", genres: ["friendship"] },
   { fact: "Prairie dogs greet each other by kissing!", genres: ["friendship"] },
   { fact: "Penguins give each other pebbles as gifts when they like someone!", genres: ["friendship"] },
+
+  // Food / everyday
+  { fact: "A strawberry isn't a berry, but a banana is!" },
+  { fact: "Ketchup was once sold as medicine in the 1830s!" },
+  { fact: "The stickers on fruit are actually edible — though they don't taste great!" },
+  { fact: "Apples float because they're 25% air!" },
+  { fact: "Astronauts can't cry properly in space because tears don't fall — they just float as bubbles!" },
+  { fact: "There are more stars in the universe than grains of sand on all the beaches on Earth!" },
+  { fact: "It takes about 12 bees their entire lifetime to make a single tablespoon of honey!" },
+  { fact: "A day on Mercury lasts 59 Earth days — imagine waiting that long for bedtime!" },
+  { fact: "Your body has enough iron in it to make a nail about 3 inches long!" },
+  { fact: "Cats have over 100 vocal sounds — dogs only have about 10!" },
+  { fact: "The average person walks about 100,000 miles in their lifetime — that's more than 4 trips around the Earth!" },
+  { fact: "A cloud can weigh over a million pounds!" },
+  { fact: "The shortest war in history lasted just 38 to 45 minutes!" },
+  { fact: "A single bolt of lightning is hot enough to fry an egg — it's about 5 times hotter than the surface of the sun!" },
+  { fact: "Wombat poop is cube-shaped so it doesn't roll away!" },
+  { fact: "Cuttlefish have THREE hearts and green-blue blood!" },
+  { fact: "The longest anyone has held their breath underwater is 24 minutes and 37 seconds!" },
+  { fact: "A group of hedgehogs is called a 'prickle'!" },
+  { fact: "The inventors of bubble wrap originally tried to sell it as wallpaper!" },
+  { fact: "There's a basketball court on the top floor of the US Supreme Court — it's called 'the highest court in the land'!" },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────
@@ -319,7 +390,7 @@ function formatEta(seconds: number): string {
   return `About ${mins}:${String(secs).padStart(2, "0")} left`;
 }
 
-export function LoadingScreen({ genre, heroName, progress = 0 }: LoadingScreenProps) {
+export function LoadingScreen({ genre, heroName, progress = 0, onDetach }: LoadingScreenProps) {
   const [contentIndex, setContentIndex] = useState(0);
   const [showPunchline, setShowPunchline] = useState(false);
   const [isJoke, setIsJoke] = useState(true);
@@ -428,14 +499,30 @@ export function LoadingScreen({ genre, heroName, progress = 0 }: LoadingScreenPr
     return formatEta(Math.max(TOTAL_EXPECTED_SECONDS - elapsedSec, 15));
   })();
 
+  // ── Detach button press state ──────────────────────────────────────
+  // When tapped, show a confirmation message briefly before navigating
+  // away — gives the user visual proof their tap registered and the
+  // story will be saved. Short delay so the message is visible.
+  const [detaching, setDetaching] = useState(false);
+  const handleDetach = useCallback(() => {
+    if (!onDetach || detaching) return;
+    setDetaching(true);
+    setTimeout(() => onDetach(), 1200);
+  }, [onDetach, detaching]);
+
+  // Rotating sparkle emoji for the hero name (feels more alive than
+  // a static spinner for a kids' app).
+  const sparkles = ["✨", "🌟", "💫", "⭐"];
+  const sparkle = sparkles[Math.floor(elapsedSec / 2) % sparkles.length];
+
   return (
     <div className="generating">
+      {/* ── Top: animated header + progress ─────────────────────── */}
       <div className="loading-top">
-        <div className="spinner" />
-        <h2 style={{ fontFamily: "var(--font-head)" }}>
+        <div className="loading-sparkle" aria-hidden="true">{sparkle}</div>
+        <h2 className="loading-title">
           {heroName ? `Creating ${heroName}'s story…` : "Creating your story…"}
         </h2>
-
         <div className="loading-progress-wrap">
           <div className="loading-progress-bar">
             <div
@@ -448,30 +535,53 @@ export function LoadingScreen({ genre, heroName, progress = 0 }: LoadingScreenPr
         </div>
       </div>
 
-      <div className={`fun-card ${fadeIn ? "fade-in" : "fade-out"}`}>
-        {isJoke ? (
-          <div className="fun-joke">
-            <div className="fun-label">😄 Riddle time!</div>
-            <div className="fun-setup">{currentJoke.setup}</div>
-            <div className="fun-divider" />
-            {showPunchline ? (
-              <div className="fun-punchline">{currentJoke.punchline}</div>
-            ) : (
-              <button
-                className="fun-reveal-btn"
-                onClick={() => setShowPunchline(true)}
-              >
-                Tap to reveal the answer!
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="fun-fact">
-            <div className="fun-label">🧠 Did you know?</div>
-            <div className="fun-text">{currentFact.fact}</div>
-          </div>
-        )}
+      {/* ── Middle: jokes & riddles (flex-grows to fill) ─────── */}
+      <div className="loading-middle">
+        <div className={`fun-card ${fadeIn ? "fade-in" : "fade-out"}`}>
+          {isJoke ? (
+            <div className="fun-joke">
+              <div className="fun-label">😄 Riddle time!</div>
+              <div className="fun-setup">{currentJoke.setup}</div>
+              <div className="fun-divider" />
+              {showPunchline ? (
+                <div className="fun-punchline">{currentJoke.punchline}</div>
+              ) : (
+                <button
+                  className="fun-reveal-btn"
+                  onClick={() => setShowPunchline(true)}
+                >
+                  Tap to reveal the answer!
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="fun-fact">
+              <div className="fun-label">🧠 Did you know?</div>
+              <div className="fun-text">{currentFact.fact}</div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* ── Bottom: detach button ───────────────────────────────── */}
+      {onDetach && (
+        <div className="loading-detach">
+          {detaching ? (
+            <div className="loading-detach-confirm">
+              ✅ The story will be in My Stories soon!
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="loading-detach-btn"
+              onClick={handleDetach}
+            >
+              <span className="loading-detach-line1">Read something else</span>
+              <span className="loading-detach-line2">you&apos;ll get a ding when it&apos;s ready</span>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

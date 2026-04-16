@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { Story } from "@/types/story";
 import { ALL_STORIES } from "@/data/stories";
@@ -10,11 +10,13 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LibraryScreen } from "@/components/library/LibraryScreen";
 import { ReaderScreen } from "@/components/reader/ReaderScreen";
 import { BuilderScreen } from "@/components/builder/BuilderScreen";
+import { LoadingScreen } from "@/components/builder/LoadingScreen";
 import { VoiceModal } from "@/components/shared/VoiceModal";
 import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
 import { useEffectsPref } from "@/hooks/useEffectsPref";
 import { loadDraft, clearDraft } from "@/lib/draftStory";
+import { generateStoryFlow, type GenerateStoryFormValues } from "@/lib/generateStory";
 
 interface ChildProfile {
   id: string;
@@ -39,7 +41,7 @@ const FREE_STORY_LIMIT = 5;
 
 export default function Home() {
   const { isLoaded: clerkLoaded, isSignedIn } = useUser();
-  const [screen, setScreen] = useState<"profiles" | "library" | "reader" | "builder">("profiles");
+  const [screen, setScreen] = useState<"profiles" | "library" | "reader" | "builder" | "loading">("profiles");
   const [cur, setCur] = useState<Story | null>(null);
   const [stories, setStories] = useState<Story[]>(ALL_STORIES);
   const [showVoice, setShowVoice] = useState(false);
@@ -52,6 +54,34 @@ export default function Home() {
   const [readingHistory, setReadingHistory] = useState<ReadingHistoryEntry[]>([]);
   const speech = useSpeech();
   const sfx = useSoundEffects();
+
+  // ── Custom-story generation state (lifted from BuilderScreen) ──────
+  // These live here so the async pipeline can survive the user leaving
+  // the LoadingScreen. `generating` is true for the whole lifetime of
+  // an in-flight generation; `detachedRef` flips to true when the user
+  // taps "Read something else" and tells the completion handler to
+  // silently auto-save instead of navigating into the reader.
+  const [generating, setGenerating] = useState(false);
+  const [loadingPhase, setLoadingPhase] = useState<"story" | "illustrations">("story");
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [generatingHero, setGeneratingHero] = useState<string | undefined>();
+  const [generatingGenre, setGeneratingGenre] = useState<string | undefined>();
+  const detachedRef = useRef(false);
+
+  // Transient toast shown on successful background save (bottom of the
+  // screen, fades out after a few seconds). Independent of sfx.notification
+  // so the visual feedback still lands even if audio is blocked on iOS.
+  const [toast, setToast] = useState<string | null>(null);
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  // Ids of stories that arrived via background save in this session —
+  // the library renders a small "new" dot on each until the user opens
+  // the story, at which point we remove it from the set.
+  const [newStoryIds, setNewStoryIds] = useState<Set<string>>(new Set());
 
   // Mark as loaded (saved stories now come from database, loaded after sign-in)
   // Also hydrate any unsaved-draft story from localStorage so a reader
@@ -122,6 +152,7 @@ export default function Home() {
               page_count: number;
               full_pages?: { scene: string; mood: string }[];
               character_description?: string;
+              hero_type?: string | null;
               illustration_urls?: (string | null)[];
               audio_urls?: (string | null)[];
               word_timings?: (import("@/types/story").WordTiming[] | null)[];
@@ -141,6 +172,7 @@ export default function Home() {
                 childProfileId: s.child_profile_id ?? null,
                 fullPages: s.full_pages || undefined,
                 characterDescription: s.character_description || undefined,
+                heroType: s.hero_type || undefined,
                 // Hydrate saved image URLs so the reader skips regeneration.
                 // Missing/null entries will still lazy-generate on open.
                 preloadedImages: Array.isArray(s.illustration_urls) ? s.illustration_urls : undefined,
@@ -189,6 +221,17 @@ export default function Home() {
     setCur(s);
     setScreen("reader");
 
+    // Clear the "new story" dot once the child actually opens it.
+    // We keyed newStoryIds by title (optimistic id vs DB UUID swap
+    // makes id matching unreliable across the save lifecycle).
+    if (newStoryIds.has(s.title)) {
+      setNewStoryIds((prev) => {
+        const next = new Set(prev);
+        next.delete(s.title);
+        return next;
+      });
+    }
+
     // Log to reading history (fire and forget — don't block the reader)
     fetch("/api/reading-history", {
       method: "POST",
@@ -232,11 +275,6 @@ export default function Home() {
     setScreen("profiles");
   };
 
-  const handleCreated = async (s: Story) => {
-    setCur(s);
-    setScreen("reader");
-  };
-
   const handleDeleteStory = async (storyId: string) => {
     // Draft stories (still just in localStorage) don't exist on the server,
     // so hitting the delete API would 404. Detect by the "ai_" id prefix,
@@ -256,8 +294,105 @@ export default function Home() {
     }
   };
 
-  const handleSaveStory = async (imageUrls: (string | null)[]) => {
-    if (!cur) return;
+  // ── Kick off a custom story generation ──────────────────────────────
+  // Called from BuilderScreen with the validated form values. We own
+  // the promise here (not inside the builder) so the work can survive
+  // the user navigating away from the LoadingScreen.
+  const startGeneration = (form: GenerateStoryFormValues) => {
+    if (generating) {
+      // Should already be blocked at the UI layer, but double-check —
+      // concurrent generations would race against handleSaveStory's
+      // optimistic insert and make a mess.
+      return;
+    }
+    detachedRef.current = false;
+    setGenerating(true);
+    setLoadingPhase("story");
+    setLoadingProgress(0);
+    setGeneratingHero(form.heroName);
+    setGeneratingGenre(form.genre);
+    setScreen("loading");
+
+    // Fire and forget. The promise resolves on its own timeline; we
+    // branch inside the `.then` based on whether the user detached.
+    generateStoryFlow(form, {
+      onPhase: (p) => setLoadingPhase(p),
+      onProgress: (pct) => setLoadingProgress(pct),
+      onMark: (label, secs) => console.log(`[StoryTime] ${label}: ${secs.toFixed(1)}s`),
+    })
+      .then(async ({ story }) => {
+        if (detachedRef.current) {
+          // ── Detached path ─────────────────────────────────────────
+          // The user already left the LoadingScreen. Silently run the
+          // save path, mark the new story so the library shows a NEW
+          // dot, show a toast, and play the ding. We pass `story` as
+          // the override so handleSaveStory doesn't try to read a
+          // stale `cur` — and so it doesn't hijack whatever the user
+          // is currently reading, if anything.
+          try {
+            const imgs = story.preloadedImages ?? new Array(story.pages.length).fill(null);
+            await handleSaveStory(imgs, story);
+            // The optimistic id chosen inside handleSaveStory isn't
+            // visible to us, so we can't match it exactly. As a decent
+            // proxy, flag every story in state whose title matches and
+            // was saved in this burst — close enough for a transient
+            // "new" dot. (In practice only one generation is in flight
+            // at a time thanks to the concurrency guard.)
+            setNewStoryIds((prev) => {
+              const next = new Set(prev);
+              next.add(story.title);
+              return next;
+            });
+            setToast(`✨ ${story.title} is ready in My Stories!`);
+            try { sfx.notification(); } catch { /* iOS may block */ }
+          } catch (err) {
+            console.error("Background save failed:", err);
+            setToast("Hmm — your story finished but couldn't save. Try again?");
+          }
+        } else {
+          // ── Normal path: user waited it out ───────────────────────
+          setCur(story);
+          setScreen("reader");
+        }
+      })
+      .catch((err) => {
+        console.error("Story generation failed:", err);
+        if (detachedRef.current) {
+          setToast("Your story couldn't finish generating. Try again?");
+        } else {
+          // Pop back to the builder so the user can retry. They lose
+          // the "loading" state but keep whatever they typed — builder
+          // state is intact because it never unmounted its form state.
+          setScreen("builder");
+        }
+      })
+      .finally(() => {
+        setGenerating(false);
+        detachedRef.current = false;
+      });
+  };
+
+  // Called when the user taps "Read something else" on the LoadingScreen.
+  // Flips the detach flag and sends them back to the library. The active
+  // generation promise keeps running; when it resolves, the .then above
+  // notices detachedRef.current === true and takes the background-save
+  // branch instead of navigating into the reader.
+  const detachGeneration = () => {
+    detachedRef.current = true;
+    setScreen("library");
+  };
+
+  // `storyOverride` lets the background-save path pass the freshly
+  // generated story directly, instead of relying on `cur`. The Reader's
+  // onSave callback still calls this without the override (storyOverride
+  // is undefined), in which case we fall back to reading `cur` the same
+  // way as before.
+  const handleSaveStory = async (
+    imageUrls: (string | null)[],
+    storyOverride?: Story,
+  ) => {
+    const source = storyOverride ?? cur;
+    if (!source) return;
 
     // ── Optimistic save ──────────────────────────────────────────────────
     // The server takes 15-30s to generate + upload TTS audio for every page
@@ -275,29 +410,33 @@ export default function Home() {
         ? crypto.randomUUID()
         : `opt_${Date.now()}`;
     const optimistic: Story = {
-      ...cur,
+      ...source,
       id: optimisticId,
       generated: true,
       childProfileId: activeProfile?.id ?? null,
       preloadedImages: imageUrls,
     };
     setStories((prev) => [optimistic, ...prev]);
-    setCur(optimistic);
+    // Only swap `cur` if we're saving the currently-open story. When
+    // the background-save path provides an override for a story the
+    // user isn't actively reading, we leave `cur` alone.
+    if (!storyOverride) setCur(optimistic);
 
     try {
       const res = await fetch("/api/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: cur.title,
-          emoji: cur.emoji,
-          genre: cur.genre,
-          age: cur.age,
-          pages: cur.pages,
-          duration: cur.duration,
+          title: source.title,
+          emoji: source.emoji,
+          genre: source.genre,
+          age: source.age,
+          pages: source.pages,
+          duration: source.duration,
           childProfileId: activeProfile?.id,
-          fullPages: cur.fullPages,
-          characterDescription: cur.characterDescription,
+          fullPages: source.fullPages,
+          characterDescription: source.characterDescription,
+          heroType: source.heroType,
           // Persist the generated images so future opens don't regenerate them.
           // Null entries are pages whose images haven't loaded yet — they'll
           // regenerate on-demand next time (a partial save is better than none).
@@ -367,7 +506,12 @@ export default function Home() {
       // saved. We match by the temp id so a parallel save of a different
       // story can't be affected.
       setStories((prev) => prev.filter((s) => s.id !== optimisticId));
-      setCur((prev) => (prev && prev.id === optimisticId ? cur : prev));
+      // Only roll back `cur` if we hijacked it above. The background-save
+      // path passes a storyOverride and never touches `cur`, so there's
+      // nothing to revert in that case.
+      if (!storyOverride) {
+        setCur((prev) => (prev && prev.id === optimisticId ? null : prev));
+      }
       // Re-throw so the reader's handleSave catch block runs and flips its
       // "Saved ✓" state back to "Save to My Library". Without this, the UI
       // would keep claiming the save succeeded even though we just undid it.
@@ -445,6 +589,7 @@ export default function Home() {
           freeStoryLimit={FREE_STORY_LIMIT}
           activeProfile={activeProfile}
           onSwitchProfile={handleBackToProfiles}
+          newStoryTitles={newStoryIds}
         />
       )}
       {screen === "reader" && cur && (
@@ -458,7 +603,25 @@ export default function Home() {
         />
       )}
       {screen === "builder" && (
-        <BuilderScreen onBack={() => setScreen("library")} onStoryCreated={handleCreated} />
+        <BuilderScreen
+          onBack={() => setScreen("library")}
+          onStartGeneration={startGeneration}
+          backgroundBusy={generating}
+        />
+      )}
+      {screen === "loading" && (
+        <LoadingScreen
+          heroName={generatingHero}
+          genre={generatingGenre}
+          phase={loadingPhase}
+          progress={loadingProgress}
+          onDetach={detachGeneration}
+        />
+      )}
+      {toast && (
+        <div className="toast" role="status" aria-live="polite">
+          {toast}
+        </div>
       )}
       <ParentSettingsModal
         show={showSettings}
