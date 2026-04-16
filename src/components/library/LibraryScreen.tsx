@@ -179,10 +179,11 @@ export function LibraryScreen({
     const genreLabel = GENRES.find((g) => g.id === s.genre)?.label;
     const ageLabel = AGE_GROUPS.find((a) => a.id === s.age)?.label;
     const isNew = !!newStoryTitles && newStoryTitles.has(s.title);
+    const isClassic = !!s.isClassic;
     return (
       <div
         key={s.id}
-        className={`story-card${coverUrl ? "" : " no-cover"}`}
+        className={`story-card${coverUrl ? "" : " no-cover"}${isClassic ? " classic-card" : ""}`}
         onClick={() => onSelect(s)}
         // CSS custom property read by `.story-card.no-cover` to tint the
         // fallback cover in the story's brand color. Ignored when an
@@ -219,10 +220,16 @@ export function LibraryScreen({
             {s.emoji}
           </div>
         )}
+        {isClassic && (
+          <div className="classic-collection-label">Classics Collection</div>
+        )}
         <div className="book-title-block">
           <div className="title">{s.title}</div>
+          {isClassic && s.originalAuthor && (
+            <div className="classic-author">{s.originalAuthor}</div>
+          )}
           <div className="badges">
-            {genreLabel && <span className="badge">{genreLabel}</span>}
+            {!isClassic && genreLabel && <span className="badge">{genreLabel}</span>}
             {ageLabel && <span className="badge">{ageLabel}</span>}
           </div>
         </div>

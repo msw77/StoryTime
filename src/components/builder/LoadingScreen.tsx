@@ -126,25 +126,25 @@ const JOKES: { setup: string; punchline: string; genres?: string[] }[] = [
   { setup: "What do you call a dinosaur with an extensive vocabulary?", punchline: "A thesaurus!", genres: ["silly"] },
 
   // Science
-  { setup: "Why can't you trust atoms?", punchline: "They make up everything!", genres: ["science"] },
-  { setup: "How do scientists freshen their breath?", punchline: "With experi-mints!", genres: ["science"] },
-  { setup: "What did the earth say to the other planets?", punchline: "You guys have no life!", genres: ["science"] },
-  { setup: "Why did the sun go to school?", punchline: "To get a little brighter!", genres: ["science"] },
-  { setup: "Why are chemists great at solving problems?", punchline: "They have all the solutions!", genres: ["science"] },
-  { setup: "What did the scientist say when he found two isotopes of helium?", punchline: "HeHe!", genres: ["science"] },
-  { setup: "Why did the physicist break up with biology?", punchline: "There was no chemistry!", genres: ["science"] },
-  { setup: "What do planets like to read?", punchline: "Comet books!", genres: ["science"] },
-  { setup: "Why is the moon so tired?", punchline: "Because it works the night shift!", genres: ["science"] },
-  { setup: "How does the sun listen to music?", punchline: "On a ray-dio!", genres: ["science"] },
+  { setup: "Why can't you trust atoms?", punchline: "They make up everything!", genres: ["discovery"] },
+  { setup: "How do scientists freshen their breath?", punchline: "With experi-mints!", genres: ["discovery"] },
+  { setup: "What did the earth say to the other planets?", punchline: "You guys have no life!", genres: ["discovery"] },
+  { setup: "Why did the sun go to school?", punchline: "To get a little brighter!", genres: ["discovery"] },
+  { setup: "Why are chemists great at solving problems?", punchline: "They have all the solutions!", genres: ["discovery"] },
+  { setup: "What did the scientist say when he found two isotopes of helium?", punchline: "HeHe!", genres: ["discovery"] },
+  { setup: "Why did the physicist break up with biology?", punchline: "There was no chemistry!", genres: ["discovery"] },
+  { setup: "What do planets like to read?", punchline: "Comet books!", genres: ["discovery"] },
+  { setup: "Why is the moon so tired?", punchline: "Because it works the night shift!", genres: ["discovery"] },
+  { setup: "How does the sun listen to music?", punchline: "On a ray-dio!", genres: ["discovery"] },
 
   // Mystery
-  { setup: "What has keys but can't open locks?", punchline: "A piano!", genres: ["mystery"] },
-  { setup: "What has many teeth but can't bite?", punchline: "A comb!", genres: ["mystery"] },
-  { setup: "What can you break without touching it?", punchline: "A promise!", genres: ["mystery"] },
-  { setup: "What disappears as soon as you say its name?", punchline: "Silence!", genres: ["mystery"] },
-  { setup: "I'm tall when I'm young and short when I'm old. What am I?", punchline: "A candle!", genres: ["mystery"] },
-  { setup: "What goes through towns and over hills but never moves?", punchline: "A road!", genres: ["mystery"] },
-  { setup: "What has a face and two hands but no arms or legs?", punchline: "A clock!", genres: ["mystery"] },
+  { setup: "What has keys but can't open locks?", punchline: "A piano!", genres: ["adventure"] },
+  { setup: "What has many teeth but can't bite?", punchline: "A comb!", genres: ["adventure"] },
+  { setup: "What can you break without touching it?", punchline: "A promise!", genres: ["adventure"] },
+  { setup: "What disappears as soon as you say its name?", punchline: "Silence!", genres: ["adventure"] },
+  { setup: "I'm tall when I'm young and short when I'm old. What am I?", punchline: "A candle!", genres: ["adventure"] },
+  { setup: "What goes through towns and over hills but never moves?", punchline: "A road!", genres: ["adventure"] },
+  { setup: "What has a face and two hands but no arms or legs?", punchline: "A clock!", genres: ["adventure"] },
 
   // Sports
   { setup: "Why are basketball players messy eaters?", punchline: "They're always dribbling!", genres: ["sports"] },
@@ -156,12 +156,12 @@ const JOKES: { setup: string; punchline: string; genres?: string[] }[] = [
   { setup: "What's a skeleton's favorite sport?", punchline: "Skull-ball!", genres: ["sports"] },
 
   // History
-  { setup: "How did the Vikings send messages?", punchline: "By Norse code!", genres: ["history"] },
-  { setup: "Why were the early days of history called the Dark Ages?", punchline: "Because there were so many knights!", genres: ["history"] },
-  { setup: "What did King Tut say when he got scared?", punchline: "I want my mummy!", genres: ["history"] },
-  { setup: "Why did the knight run around his bedroom?", punchline: "He was trying to catch up on his sleep!", genres: ["history"] },
-  { setup: "What's a pharaoh's favorite dance?", punchline: "The mummy shuffle!", genres: ["history"] },
-  { setup: "Why did the Romans build straight roads?", punchline: "So their soldiers wouldn't go around the bend!", genres: ["history"] },
+  { setup: "How did the Vikings send messages?", punchline: "By Norse code!", genres: ["discovery"] },
+  { setup: "Why were the early days of history called the Dark Ages?", punchline: "Because there were so many knights!", genres: ["discovery"] },
+  { setup: "What did King Tut say when he got scared?", punchline: "I want my mummy!", genres: ["discovery"] },
+  { setup: "Why did the knight run around his bedroom?", punchline: "He was trying to catch up on his sleep!", genres: ["discovery"] },
+  { setup: "What's a pharaoh's favorite dance?", punchline: "The mummy shuffle!", genres: ["discovery"] },
+  { setup: "Why did the Romans build straight roads?", punchline: "So their soldiers wouldn't go around the bend!", genres: ["discovery"] },
 
   // Friendship
   { setup: "What did the left hand say to the right hand?", punchline: "How does it feel to always be right?", genres: ["friendship"] },
@@ -285,21 +285,21 @@ const FUN_FACTS: { fact: string; genres?: string[] }[] = [
   { fact: "Tardigrades (water bears) can survive in space!", genres: ["animals"] },
 
   // Science / space / physics
-  { fact: "A teaspoon of a neutron star would weigh about 6 billion tons!", genres: ["science"] },
-  { fact: "Honey never spoils — archaeologists found 3,000-year-old honey in Egypt that was still perfectly good!", genres: ["science"] },
-  { fact: "If you could fold a piece of paper 42 times, it would reach the moon!", genres: ["science"] },
-  { fact: "Lightning is five times hotter than the surface of the sun!", genres: ["science"] },
-  { fact: "One day on Venus is longer than a year on Venus!", genres: ["science"] },
-  { fact: "There's a planet made largely of diamond — it's called 55 Cancri e!", genres: ["science"] },
-  { fact: "A bolt of lightning contains enough energy to toast 100,000 slices of bread!", genres: ["science"] },
-  { fact: "Jupiter has a storm called the Great Red Spot that has been raging for at least 350 years!", genres: ["science"] },
-  { fact: "Your bones are 5 times stronger than steel of the same weight!", genres: ["science"] },
-  { fact: "Hot water freezes faster than cold water — and nobody really knows why!", genres: ["science"] },
-  { fact: "The only letter that doesn't appear on the periodic table is J!", genres: ["science"] },
-  { fact: "Bananas are slightly radioactive — but not enough to hurt you!", genres: ["science"] },
-  { fact: "Sound travels about 4 times faster in water than in air!", genres: ["science"] },
-  { fact: "Saturn's moon Titan has rivers and lakes — but they're made of liquid methane, not water!", genres: ["science"] },
-  { fact: "A day on Mars is only 37 minutes longer than a day on Earth!", genres: ["science"] },
+  { fact: "A teaspoon of a neutron star would weigh about 6 billion tons!", genres: ["discovery"] },
+  { fact: "Honey never spoils — archaeologists found 3,000-year-old honey in Egypt that was still perfectly good!", genres: ["discovery"] },
+  { fact: "If you could fold a piece of paper 42 times, it would reach the moon!", genres: ["discovery"] },
+  { fact: "Lightning is five times hotter than the surface of the sun!", genres: ["discovery"] },
+  { fact: "One day on Venus is longer than a year on Venus!", genres: ["discovery"] },
+  { fact: "There's a planet made largely of diamond — it's called 55 Cancri e!", genres: ["discovery"] },
+  { fact: "A bolt of lightning contains enough energy to toast 100,000 slices of bread!", genres: ["discovery"] },
+  { fact: "Jupiter has a storm called the Great Red Spot that has been raging for at least 350 years!", genres: ["discovery"] },
+  { fact: "Your bones are 5 times stronger than steel of the same weight!", genres: ["discovery"] },
+  { fact: "Hot water freezes faster than cold water — and nobody really knows why!", genres: ["discovery"] },
+  { fact: "The only letter that doesn't appear on the periodic table is J!", genres: ["discovery"] },
+  { fact: "Bananas are slightly radioactive — but not enough to hurt you!", genres: ["discovery"] },
+  { fact: "Sound travels about 4 times faster in water than in air!", genres: ["discovery"] },
+  { fact: "Saturn's moon Titan has rivers and lakes — but they're made of liquid methane, not water!", genres: ["discovery"] },
+  { fact: "A day on Mars is only 37 minutes longer than a day on Earth!", genres: ["discovery"] },
 
   // Silly / body / world
   { fact: "It's impossible to hum while holding your nose! Try it!", genres: ["silly"] },
@@ -316,12 +316,12 @@ const FUN_FACTS: { fact: string; genres?: string[] }[] = [
   { fact: "There are more chickens than people on Earth!", genres: ["silly"] },
 
   // Mystery / weird
-  { fact: "Sherlock Holmes has been played by over 250 different actors — more than any other character!", genres: ["mystery"] },
-  { fact: "Koala fingerprints are so similar to human fingerprints that they've actually confused crime scene investigators!", genres: ["mystery"] },
-  { fact: "Somewhere in the Bermuda Triangle, ships and planes really do go missing more often than elsewhere!", genres: ["mystery"] },
-  { fact: "The Voynich Manuscript is a 600-year-old book in an unknown language nobody has ever decoded!", genres: ["mystery"] },
-  { fact: "The Nazca Lines in Peru are giant drawings in the desert that can only be seen from the sky — made over 2,000 years ago!", genres: ["mystery"] },
-  { fact: "In 1908, a mysterious explosion in Siberia flattened 80 million trees — and we still aren't 100% sure what caused it!", genres: ["mystery"] },
+  { fact: "Sherlock Holmes has been played by over 250 different actors — more than any other character!", genres: ["adventure"] },
+  { fact: "Koala fingerprints are so similar to human fingerprints that they've actually confused crime scene investigators!", genres: ["adventure"] },
+  { fact: "Somewhere in the Bermuda Triangle, ships and planes really do go missing more often than elsewhere!", genres: ["adventure"] },
+  { fact: "The Voynich Manuscript is a 600-year-old book in an unknown language nobody has ever decoded!", genres: ["adventure"] },
+  { fact: "The Nazca Lines in Peru are giant drawings in the desert that can only be seen from the sky — made over 2,000 years ago!", genres: ["adventure"] },
+  { fact: "In 1908, a mysterious explosion in Siberia flattened 80 million trees — and we still aren't 100% sure what caused it!", genres: ["adventure"] },
 
   // Sports
   { fact: "The first basketball game was played with a soccer ball and two peach baskets nailed to a balcony!", genres: ["sports"] },
@@ -333,16 +333,16 @@ const FUN_FACTS: { fact: string; genres?: string[] }[] = [
   { fact: "The longest tennis match ever played lasted 11 hours and 5 minutes!", genres: ["sports"] },
 
   // History
-  { fact: "Ancient Egyptians used stone pillows! They believed soft pillows were for the weak.", genres: ["history"] },
-  { fact: "In medieval times, pineapples were so rare that people would rent them just to display at parties!", genres: ["history"] },
-  { fact: "Cleopatra lived closer in time to us than to the building of the Great Pyramid!", genres: ["history"] },
-  { fact: "The Great Wall of China took over 2,000 years to build — it was built by many different emperors!", genres: ["history"] },
-  { fact: "Ancient Romans used crushed mouse brains as toothpaste!", genres: ["history"] },
-  { fact: "The shortest war in history was between Britain and Zanzibar in 1896 — it lasted only 38 minutes!", genres: ["history"] },
-  { fact: "In ancient Greece, throwing an apple at someone was considered a marriage proposal!", genres: ["history"] },
-  { fact: "Vikings used melted beaver teeth as iron for their axes!", genres: ["history"] },
-  { fact: "Napoleon was actually average height for his time — the 'short Napoleon' myth came from mixing up French and British inches!", genres: ["history"] },
-  { fact: "The first alarm clock could only ring at 4 a.m.!", genres: ["history"] },
+  { fact: "Ancient Egyptians used stone pillows! They believed soft pillows were for the weak.", genres: ["discovery"] },
+  { fact: "In medieval times, pineapples were so rare that people would rent them just to display at parties!", genres: ["discovery"] },
+  { fact: "Cleopatra lived closer in time to us than to the building of the Great Pyramid!", genres: ["discovery"] },
+  { fact: "The Great Wall of China took over 2,000 years to build — it was built by many different emperors!", genres: ["discovery"] },
+  { fact: "Ancient Romans used crushed mouse brains as toothpaste!", genres: ["discovery"] },
+  { fact: "The shortest war in history was between Britain and Zanzibar in 1896 — it lasted only 38 minutes!", genres: ["discovery"] },
+  { fact: "In ancient Greece, throwing an apple at someone was considered a marriage proposal!", genres: ["discovery"] },
+  { fact: "Vikings used melted beaver teeth as iron for their axes!", genres: ["discovery"] },
+  { fact: "Napoleon was actually average height for his time — the 'short Napoleon' myth came from mixing up French and British inches!", genres: ["discovery"] },
+  { fact: "The first alarm clock could only ring at 4 a.m.!", genres: ["discovery"] },
 
   // Friendship / social
   { fact: "Dolphins call each other by unique whistles — they basically have names for each other!", genres: ["friendship"] },
@@ -397,21 +397,13 @@ export function LoadingScreen({ genre, heroName, progress = 0, onDetach }: Loadi
   const [fadeIn, setFadeIn] = useState(true);
   const [elapsedSec, setElapsedSec] = useState(0);
 
-  // Build genre-relevant content lists (genre-specific first, then general)
-  const relevantJokes = genre
-    ? [...JOKES.filter((j) => j.genres?.includes(genre)), ...JOKES.filter((j) => !j.genres)]
-    : JOKES;
-
-  const relevantFacts = genre
-    ? [...FUN_FACTS.filter((f) => f.genres?.includes(genre)), ...FUN_FACTS.filter((f) => !f.genres)]
-    : FUN_FACTS;
-
-  // Shuffle on mount
+  // Shuffle the full pool on mount — no genre filtering, so every
+  // generation gets the full variety of jokes and facts.
   const [shuffledJokes] = useState(() =>
-    [...relevantJokes].sort(() => Math.random() - 0.5)
+    [...JOKES].sort(() => Math.random() - 0.5)
   );
   const [shuffledFacts] = useState(() =>
-    [...relevantFacts].sort(() => Math.random() - 0.5)
+    [...FUN_FACTS].sort(() => Math.random() - 0.5)
   );
 
   // Rotate content every 9 seconds (joke → fact → joke → fact)

@@ -103,6 +103,14 @@ export interface Story {
   pages: [string, string][];
   fullPages?: StoryPage[];
   generated?: boolean;
+  /** True for stories in the "Classics" section — retold public domain
+   *  tales like Cinderella, The Three Little Pigs, etc. */
+  isClassic?: boolean;
+  /** Original author/source for classic stories, e.g. "Brothers Grimm",
+   *  "Aesop", "Hans Christian Andersen". */
+  originalAuthor?: string;
+  /** Short one-line description shown in the library for classics. */
+  description?: string;
   /** Which child profile this story was saved under. Null = legacy/shared. */
   childProfileId?: string | null;
   duration?: string;

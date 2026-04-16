@@ -1,0 +1,112 @@
+{
+  "classic_three_little_pigs": {
+    "narrator": "nova",
+    "characters": {
+      "pip": "alloy",
+      "pat": "alloy",
+      "penny": "shimmer",
+      "wolf": "onyx",
+      "pigs": "alloy"
+    }
+  },
+  "classic_goldilocks": {
+    "narrator": "nova",
+    "characters": {
+      "goldilocks": "shimmer",
+      "papa bear": "onyx",
+      "papa": "onyx",
+      "mama bear": "fable",
+      "mama": "fable",
+      "baby bear": "alloy",
+      "baby": "alloy"
+    }
+  },
+  "classic_tortoise_hare": {
+    "narrator": "nova",
+    "characters": {
+      "hare": "echo",
+      "tortoise": "fable",
+      "animals": "alloy"
+    }
+  },
+  "classic_ugly_duckling": {
+    "narrator": "nova",
+    "characters": {
+      "duckling": "alloy",
+      "grey duckling": "alloy",
+      "ducklings": "shimmer",
+      "yellow ducklings": "shimmer",
+      "swans": "fable",
+      "swan": "fable"
+    }
+  },
+  "classic_red_riding_hood": {
+    "narrator": "nova",
+    "characters": {
+      "little red": "shimmer",
+      "red": "shimmer",
+      "mom": "fable",
+      "mother": "fable",
+      "wolf": "onyx",
+      "woodcutter": "echo"
+    }
+  },
+  "classic_billy_goats_gruff": {
+    "narrator": "nova",
+    "characters": {
+      "troll": "onyx",
+      "little goat": "shimmer",
+      "littlest": "shimmer",
+      "middle goat": "alloy",
+      "middle": "alloy",
+      "big goat": "echo",
+      "great big": "echo",
+      "goats": "alloy"
+    }
+  },
+  "classic_little_red_hen": {
+    "narrator": "nova",
+    "characters": {
+      "hen": "shimmer",
+      "little red hen": "shimmer",
+      "cat": "alloy",
+      "dog": "echo",
+      "duck": "fable"
+    }
+  },
+  "classic_jack_beanstalk": {
+    "narrator": "nova",
+    "characters": {
+      "jack": "alloy",
+      "man": "fable",
+      "old man": "fable",
+      "giant": "onyx",
+      "mother": "shimmer",
+      "mom": "shimmer"
+    }
+  },
+  "classic_gingerbread_man": {
+    "narrator": "nova",
+    "characters": {
+      "gingerbread man": "alloy",
+      "gingerbread": "alloy",
+      "old man": "echo",
+      "old woman": "fable",
+      "cow": "fable",
+      "horse": "echo",
+      "fox": "onyx"
+    }
+  },
+  "classic_enormous_turnip": {
+    "narrator": "nova",
+    "characters": {
+      "farmer": "echo",
+      "old farmer": "echo",
+      "wife": "fable",
+      "granddaughter": "shimmer",
+      "dog": "alloy",
+      "cat": "alloy",
+      "mouse": "shimmer"
+    }
+  }
+}

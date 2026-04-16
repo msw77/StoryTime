@@ -907,6 +907,79 @@ body > * {
   transform: translateY(0) scale(0.98);
 }
 
+/* ── Classic story card treatment ─────────────────────────────────
+   Gold foil border + burgundy ribbon bookmark. Gives classics a
+   premium "heirloom book" feel that's distinct from AI-generated
+   stories and the regular built-in library. */
+.story-grid .story-card.classic-card {
+  /* Gold foil border — warm gradient that catches the light */
+  border: 2.5px solid transparent;
+  background-clip: padding-box;
+  outline: 2.5px solid;
+  outline-color: #c9a84c;
+  outline-offset: -2.5px;
+  /* Slightly warmer shadow to complement the gold */
+  box-shadow:
+    inset -3px 0 0 rgba(0, 0, 0, 0.12),
+    inset -5px 0 0 rgba(255, 255, 255, 0.35),
+    inset -7px 0 0 rgba(0, 0, 0, 0.06),
+    3px 6px 14px rgba(180, 130, 50, 0.15),
+    6px 10px 24px rgba(78, 52, 34, 0.12);
+}
+.story-grid .story-card.classic-card:hover {
+  outline-color: #dbb85c;
+  box-shadow:
+    inset -3px 0 0 rgba(0, 0, 0, 0.12),
+    inset -5px 0 0 rgba(255, 255, 255, 0.35),
+    inset -7px 0 0 rgba(0, 0, 0, 0.06),
+    4px 8px 18px rgba(180, 130, 50, 0.22),
+    8px 14px 32px rgba(78, 52, 34, 0.14);
+}
+
+/* Classic title block needs extra top room so the absolutely-positioned
+   "Classics Collection" label doesn't overlap the title text. The label
+   lives in the gap between image bottom (~42% from bottom) and where
+   the title text begins. */
+.story-grid .story-card.classic-card .book-title-block {
+  padding-top: 16px;
+}
+/* "Classics Collection" label — absolutely positioned on the card in
+   the gap between cover image and title block. Pinned at the same
+   height on every classic card regardless of title length. */
+.classic-collection-label {
+  position: absolute;
+  left: 10px;
+  right: 0;
+  bottom: 37%;
+  z-index: 3;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 9px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: #b8960b;
+  text-align: center;
+  line-height: 1;
+  padding: 0 10px;
+}
+
+/* Author name rendered in script on the book face — like a real
+   classic book cover. Sits below the title in the title block. */
+.classic-author {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(78, 52, 34, 0.7);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Reader */
 .reader {
   height: 100vh;

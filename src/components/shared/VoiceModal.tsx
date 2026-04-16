@@ -5,6 +5,8 @@ import { VoiceMode, AIVoiceName, AI_VOICES } from "@/types/story";
 interface VoiceModalProps {
   show: boolean;
   onClose: () => void;
+  /** When true, voice selection is locked — classics use character voices */
+  isClassic?: boolean;
   // Voice mode
   voiceMode: VoiceMode;
   setVoiceMode: (mode: VoiceMode) => void;
@@ -22,7 +24,7 @@ interface VoiceModalProps {
 }
 
 export function VoiceModal({
-  show, onClose,
+  show, onClose, isClassic,
   voiceMode, setVoiceMode,
   aiVoice, setAiVoice, aiSpeed, setAiSpeed,
   allVoices, voice, setVoice, rate, setRate,
@@ -76,119 +78,151 @@ export function VoiceModal({
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>🎙️ Voice Settings</h3>
 
-        {/* Mode toggle */}
-        <div className="voice-mode-toggle">
-          <button
-            className={`mode-btn ${voiceMode === "ai" ? "active" : ""}`}
-            onClick={() => setVoiceMode("ai")}
-          >
-            ✨ AI Voice
-          </button>
-          <button
-            className={`mode-btn ${voiceMode === "browser" ? "active" : ""}`}
-            onClick={() => setVoiceMode("browser")}
-          >
-            🔊 Device Voice
-          </button>
-        </div>
-
-        {voiceMode === "ai" ? (
-          <>
-            <p style={{ fontSize: 13, color: "var(--muted)", fontWeight: 600, marginBottom: 12 }}>
-              Professional AI narration powered by OpenAI. Sounds natural and expressive — perfect for storytime!
+        {/* Classic stories use pre-generated multi-voice audio —
+            voice selection is locked. Show a friendly note instead. */}
+        {isClassic && (
+          <div style={{
+            textAlign: "center",
+            padding: "24px 16px",
+          }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>🎭</div>
+            <div style={{
+              fontSize: 15,
+              fontWeight: 700,
+              color: "var(--text)",
+              marginBottom: 8,
+            }}>
+              Character Voices
+            </div>
+            <p style={{
+              fontSize: 13,
+              color: "var(--muted)",
+              lineHeight: 1.5,
+              maxWidth: 280,
+              margin: "0 auto",
+            }}>
+              Classic stories use unique voices for each character — the narrator, the wolf, the pigs, and more — for a theatrical storytime experience.
             </p>
+          </div>
+        )}
 
-            <div className="speed-section">
-              <label>Speed: {aiSpeed.toFixed(1)}x</label>
-              <input
-                type="range"
-                className="speed-slider"
-                min="0.7"
-                max="1.3"
-                step="0.1"
-                value={aiSpeed}
-                onChange={(e) => setAiSpeed(+e.target.value)}
-              />
+        {/* Mode toggle + voice picker — hidden for classics */}
+        {!isClassic && (
+          <>
+            <div className="voice-mode-toggle">
+              <button
+                className={`mode-btn ${voiceMode === "ai" ? "active" : ""}`}
+                onClick={() => setVoiceMode("ai")}
+              >
+                ✨ AI Voice
+              </button>
+              <button
+                className={`mode-btn ${voiceMode === "browser" ? "active" : ""}`}
+                onClick={() => setVoiceMode("browser")}
+              >
+                🔊 Device Voice
+              </button>
             </div>
 
-            <div style={{ marginTop: 16 }}>
-              {AI_VOICES.map((v) => (
-                <div
-                  key={v.id}
-                  className={`voice-item ${aiVoice === v.id ? "active" : ""}`}
-                  onClick={() => setAiVoice(v.id)}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div className="voice-name">
-                      {v.id === "nova" ? "⭐ " : ""}{v.label}
-                    </div>
-                    <div className="voice-lang">{v.desc}</div>
-                  </div>
-                  <button
-                    className="preview-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      previewAI(v.id);
-                    }}
-                  >
-                    ▶ Preview
-                  </button>
+            {voiceMode === "ai" ? (
+              <>
+                <p style={{ fontSize: 13, color: "var(--muted)", fontWeight: 600, marginBottom: 12 }}>
+                  Professional AI narration powered by OpenAI. Sounds natural and expressive — perfect for storytime!
+                </p>
+
+                <div className="speed-section">
+                  <label>Speed: {aiSpeed.toFixed(1)}x</label>
+                  <input
+                    type="range"
+                    className="speed-slider"
+                    min="0.7"
+                    max="1.3"
+                    step="0.1"
+                    value={aiSpeed}
+                    onChange={(e) => setAiSpeed(+e.target.value)}
+                  />
                 </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <>
-            <p style={{ fontSize: 13, color: "var(--muted)", fontWeight: 600, marginBottom: 12 }}>
-              Uses your device&apos;s built-in voices. Free and works offline. Voices marked ✨ sound more natural.
-            </p>
 
-            <div className="speed-section">
-              <label>Speed: {rate.toFixed(2)}x</label>
-              <input
-                type="range"
-                className="speed-slider"
-                min="0.6"
-                max="1.1"
-                step="0.01"
-                value={rate}
-                onChange={(e) => setRate(+e.target.value)}
-              />
-            </div>
-
-            <div style={{ marginTop: 16 }}>
-              {[...allVoices]
-                .sort((a, b) => {
-                  const ae = /enhanced|premium/i.test(a.name) ? 0 : 1;
-                  const be = /enhanced|premium/i.test(b.name) ? 0 : 1;
-                  return ae - be || a.name.localeCompare(b.name);
-                })
-                .map((v, i) => (
-                  <div
-                    key={i}
-                    className={`voice-item ${voice?.name === v.name ? "active" : ""}`}
-                    onClick={() => setVoice(v)}
-                  >
-                    <div style={{ flex: 1 }}>
-                      <div className="voice-name">
-                        {isEnhanced(v) ? "✨ " : ""}{v.name}
-                      </div>
-                      <div className="voice-lang">
-                        {v.lang}{isEnhanced(v) ? " · Enhanced" : ""}
-                      </div>
-                    </div>
-                    <button
-                      className="preview-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        previewBrowser(v);
-                      }}
+                <div style={{ marginTop: 16 }}>
+                  {AI_VOICES.map((v) => (
+                    <div
+                      key={v.id}
+                      className={`voice-item ${aiVoice === v.id ? "active" : ""}`}
+                      onClick={() => setAiVoice(v.id)}
                     >
-                      ▶ Preview
-                    </button>
-                  </div>
-                ))}
-            </div>
+                      <div style={{ flex: 1 }}>
+                        <div className="voice-name">
+                          {v.id === "nova" ? "⭐ " : ""}{v.label}
+                        </div>
+                        <div className="voice-lang">{v.desc}</div>
+                      </div>
+                      <button
+                        className="preview-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          previewAI(v.id);
+                        }}
+                      >
+                        ▶ Preview
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: 13, color: "var(--muted)", fontWeight: 600, marginBottom: 12 }}>
+                  Uses your device&apos;s built-in voices. Free and works offline. Voices marked ✨ sound more natural.
+                </p>
+
+                <div className="speed-section">
+                  <label>Speed: {rate.toFixed(2)}x</label>
+                  <input
+                    type="range"
+                    className="speed-slider"
+                    min="0.6"
+                    max="1.1"
+                    step="0.01"
+                    value={rate}
+                    onChange={(e) => setRate(+e.target.value)}
+                  />
+                </div>
+
+                <div style={{ marginTop: 16 }}>
+                  {[...allVoices]
+                    .sort((a, b) => {
+                      const ae = /enhanced|premium/i.test(a.name) ? 0 : 1;
+                      const be = /enhanced|premium/i.test(b.name) ? 0 : 1;
+                      return ae - be || a.name.localeCompare(b.name);
+                    })
+                    .map((v, i) => (
+                      <div
+                        key={i}
+                        className={`voice-item ${voice?.name === v.name ? "active" : ""}`}
+                        onClick={() => setVoice(v)}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div className="voice-name">
+                            {isEnhanced(v) ? "✨ " : ""}{v.name}
+                          </div>
+                          <div className="voice-lang">
+                            {v.lang}{isEnhanced(v) ? " · Enhanced" : ""}
+                          </div>
+                        </div>
+                        <button
+                          className="preview-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            previewBrowser(v);
+                          }}
+                        >
+                          ▶ Preview
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              </>
+            )}
           </>
         )}
 

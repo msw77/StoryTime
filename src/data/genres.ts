@@ -7,15 +7,14 @@ import { Genre, AgeGroup, Duration } from "@/types/story";
 // brand accents (warm terracotta + sage) so everything feels related.
 export const GENRES: Genre[] = [
   { id: "all", label: "All Genres", emoji: "📖", color: "#8a8170" },         // stone
+  { id: "classics", label: "Classics", emoji: "📖", color: "#b8860b" },      // dark goldenrod
   { id: "adventure", label: "Adventure", emoji: "🗺️", color: "#b55a3c" },   // terracotta
   { id: "fantasy", label: "Fantasy", emoji: "🧙", color: "#9584ad" },        // dusty lavender
   { id: "friendship", label: "Friendship", emoji: "🤝", color: "#d4a055" }, // warm honey
   { id: "silly", label: "Silly", emoji: "🤪", color: "#8ba478" },            // soft sage
-  { id: "mystery", label: "Mystery", emoji: "🔍", color: "#6b85a3" },        // dusty blue
-  { id: "science", label: "Science", emoji: "🔬", color: "#6fa39a" },        // muted teal
+  { id: "discovery", label: "Discovery", emoji: "🌍", color: "#6fa39a" },    // muted teal
   { id: "animals", label: "Animals", emoji: "🐾", color: "#c58a5a" },        // clay
   { id: "sports", label: "Sports", emoji: "⚽", color: "#7a9e8f" },          // eucalyptus
-  { id: "history", label: "History", emoji: "🏛️", color: "#8a6a4c" },       // umber
   // "random" is builder-only — not a real genre; resolved to a random real
   // genre in BuilderScreen before sending to the API. Kept in GENRES so the
   // color lookup at save time still finds something sensible.
@@ -28,9 +27,10 @@ export const AGE_GROUPS: AgeGroup[] = [
   { id: "7-10", label: "📚 Ages 7–10" },
 ];
 
-// Builder screen shows every genre except the "all" library filter.
-export const BUILDER_GENRES = GENRES.filter((g) => g.id !== "all");
-// Real genres (exclude the synthetic "random" option) for randomization.
+// Builder screen shows every genre except the "all" library filter and
+// "classics" (classics are curated built-in stories, not a builder option).
+export const BUILDER_GENRES = GENRES.filter((g) => g.id !== "all" && g.id !== "classics");
+// Real genres (exclude synthetic "random" and curated "classics") for randomization.
 export const REAL_GENRES = BUILDER_GENRES.filter((g) => g.id !== "random");
 
 export const LESSONS = [

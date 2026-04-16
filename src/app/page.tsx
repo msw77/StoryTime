@@ -632,6 +632,7 @@ export default function Home() {
       <VoiceModal
         show={showVoice}
         onClose={() => setShowVoice(false)}
+        isClassic={!!cur?.isClassic}
         voiceMode={speech.voiceMode}
         setVoiceMode={speech.setVoiceMode}
         aiVoice={speech.aiVoice}
