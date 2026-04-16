@@ -21,12 +21,18 @@ export async function POST(req: Request) {
     // pages and fan out 500 paid fal calls in a single request.
     const parsed = await parseJsonBody(req, generateImagesSchema);
     if (!parsed.ok) return parsed.response;
-    const { pages, characterDescription } = parsed.value;
+    const { pages, characterDescription, heroType } = parsed.value;
 
     // Generate all requested images in parallel
     const results = await Promise.allSettled(
       pages.map((page, i) =>
-        generatePageImage(page.scene, page.mood || "warm", page.index ?? i, characterDescription ?? undefined)
+        generatePageImage(
+          page.scene,
+          page.mood || "warm",
+          page.index ?? i,
+          characterDescription ?? undefined,
+          heroType ?? undefined,
+        )
       )
     );
 

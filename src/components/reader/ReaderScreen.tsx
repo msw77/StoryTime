@@ -123,6 +123,11 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
           index: i,
         })),
         characterDescription: charDesc,
+        // Pass the hero's species/form so the image layer can reinforce
+        // it with a top-level SUBJECT directive. Undefined for stories
+        // saved before heroType was persisted — the image layer simply
+        // skips the extra line in that case.
+        heroType: story.heroType,
       }),
     });
     if (!res.ok) throw new Error(`API returned ${res.status}`);
@@ -433,6 +438,27 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
 
   const tw = page[1].split(/\s+/);
 
+  // ── Chapter banner ────────────────────────────────────────────────
+  // Medium/Long AI stories come back from Claude with a `chapterTitle`
+  // set on the first page of each chapter. When the current page has a
+  // chapterTitle, we render a banner above the story text that reads
+  // "Chapter N · The Chapter Title". The number is derived by counting
+  // how many earlier pages also have a chapterTitle (so Page 1 is
+  // always Chapter 1, no off-by-one bookkeeping needed).
+  const currentChapterTitle: string | null = (() => {
+    const t = story.fullPages?.[pageIdx]?.chapterTitle;
+    return typeof t === "string" && t.trim() ? t.trim() : null;
+  })();
+  const currentChapterNumber: number = (() => {
+    if (!currentChapterTitle || !story.fullPages) return 0;
+    let n = 0;
+    for (let i = 0; i <= pageIdx; i++) {
+      const t = story.fullPages[i]?.chapterTitle;
+      if (typeof t === "string" && t.trim()) n++;
+    }
+    return n;
+  })();
+
   return (
     <div className={`reader ${cozy ? "cozy" : ""} ${effectsEnabled ? "" : "no-effects"}`}>
       <div className="reader-header">
@@ -528,6 +554,14 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
           )}
         </div>
         <div ref={contentRef} className="reader-text-scroll">
+          {currentChapterTitle && (
+            <div className="chapter-banner" key={`ch-${pageIdx}`}>
+              <div className="chapter-banner-rule" aria-hidden="true" />
+              <div className="chapter-banner-number">Chapter {currentChapterNumber}</div>
+              <div className="chapter-banner-title">{currentChapterTitle}</div>
+              <div className="chapter-banner-divider" aria-hidden="true" />
+            </div>
+          )}
           <div className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}`}>
             {tw.map((w, i) => {
               const effect = effectsForWord[i];

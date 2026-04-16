@@ -2,6 +2,14 @@ export interface StoryPage {
   scene?: string;
   mood?: string;
   sounds?: string[];
+  /** If this page is the first page of a chapter, the chapter title the
+   *  AI assigned to it (e.g. "A Strange Package"). Subsequent pages in
+   *  the same chapter leave this undefined/null. The chapter number is
+   *  derived from how many earlier pages also have a chapterTitle.
+   *  Only populated for Medium/Long AI stories (3 and 5 chapters
+   *  respectively). Short/Quick stories flow as one picture-book piece
+   *  with no chapter breaks. */
+  chapterTitle?: string | null;
 }
 
 /** Word-level text effect. When the narrator reaches a tagged word, the
@@ -98,6 +106,13 @@ export interface Story {
   /** Which child profile this story was saved under. Null = legacy/shared. */
   childProfileId?: string | null;
   duration?: string;
+  /** The hero's species/form as selected in the builder — "mermaid",
+   *  "dragon", "boy", "girl", "kid", etc. Persisted so that when the
+   *  reader progressively regenerates later pages' illustrations, it
+   *  can pass heroType to the image model as an extra belt-and-braces
+   *  hint on top of the AI-written characterDescription. Optional:
+   *  older stories saved before this field existed will be null. */
+  heroType?: string;
   characterDescription?: string;
   /** Pre-loaded image URLs (indexed by page number, null = not yet loaded) */
   preloadedImages?: (string | null)[];

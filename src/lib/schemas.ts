@@ -151,6 +151,7 @@ export const generateImagesSchema = z.object({
     .min(1, "at least one page required")
     .max(IMAGE_PAGES_MAX, `too many pages (max ${IMAGE_PAGES_MAX})`),
   characterDescription: optionalBoundedString(LIMITS.CHARACTER_DESC_MAX),
+  heroType: optionalBoundedString(LIMITS.HERO_TYPE_MAX),
 });
 
 export type GenerateImagesInput = z.infer<typeof generateImagesSchema>;
