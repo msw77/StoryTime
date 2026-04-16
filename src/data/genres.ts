@@ -19,7 +19,7 @@ export const GENRES: Genre[] = [
   // "random" is builder-only — not a real genre; resolved to a random real
   // genre in BuilderScreen before sending to the API. Kept in GENRES so the
   // color lookup at save time still finds something sensible.
-  { id: "random", label: "Random", emoji: "🎲", color: "#8a8170" },          // stone
+  { id: "random", label: "Surprise Me!", emoji: "🎲", color: "#8a8170" },    // stone
 ];
 
 export const AGE_GROUPS: AgeGroup[] = [
