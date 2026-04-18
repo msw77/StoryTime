@@ -3217,7 +3217,16 @@ body > * {
   line-height: 1.12;
   font-style: italic;
   margin-bottom: 10px;
-  /* No line-clamp — let long titles wrap freely instead of clipping. */
+  /* Clamp to 2 lines. Long titles ("The Story of American Independence",
+     "The Voyage of the Mayflower", etc.) were wrapping to 3-4 lines on
+     phones, pushing the Start Reading button off the bottom edge of the
+     hero card. Ellipsis on overflow keeps the card's geometry stable. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .home-hero-cta {
   display: inline-block;
