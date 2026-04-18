@@ -3187,7 +3187,12 @@ body > * {
   left: 20px;
   top: 18px;
   bottom: 18px;
-  right: 36%;
+  /* Narrowed from right: 36% so long titles ("The Story of American
+     Independence", "The Voyage of the Mayflower") get enough
+     horizontal room to land in 2 lines instead of 3-4. The
+     illustration's subject is usually centered-right; 28% reserved
+     on the right still leaves the main subject visible. */
+  right: 28%;
   display: flex;
   flex-direction: column;
   /* Text pinned to the top-left of the hero. Eyebrow + title sit up
@@ -3195,10 +3200,15 @@ body > * {
      centered in the scene). Start Reading button sits below the title
      with breathing room — NOT at the bottom corner. */
   justify-content: flex-start;
-  gap: 10px;
+  gap: 8px;
   text-align: left;
   color: #f7efdf;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  /* Cap the whole text block so the CTA can never push past the card's
+     bottom edge. Any overflow is hidden — hidden overflow inside a
+     flex column is the escape hatch when the title is longer than the
+     clamp can manage on very-narrow viewports. */
+  overflow: hidden;
 }
 .home-hero-eyebrow {
   font-family: "Georgia", "Times New Roman", serif;
@@ -3212,21 +3222,28 @@ body > * {
 }
 .home-hero-title {
   font-family: var(--font-heading), "Fraunces", Georgia, serif;
-  font-size: 22px;
+  /* Responsive size — stays readable on narrow phones but doesn't push
+     long titles into a 3rd line. Scales 19→24px across typical viewport
+     widths. Desktop override bumps this to 26px (see @media below). */
+  font-size: clamp(19px, 4.4vw, 24px);
   font-weight: 700;
-  line-height: 1.12;
+  line-height: 1.14;
   font-style: italic;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   /* Clamp to 2 lines. Long titles ("The Story of American Independence",
-     "The Voyage of the Mayflower", etc.) were wrapping to 3-4 lines on
-     phones, pushing the Start Reading button off the bottom edge of the
-     hero card. Ellipsis on overflow keeps the card's geometry stable. */
+     "The Voyage of the Mayflower", etc.) were wrapping to 3-4 lines and
+     pushing the Start Reading button off the bottom edge of the hero
+     card. Explicit max-height as belt-and-suspenders for browsers that
+     disagree about line-clamp semantics. */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-height: calc(1.14em * 2);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .home-hero-cta {
   display: inline-block;
@@ -3268,7 +3285,10 @@ body > * {
     aspect-ratio: 5 / 2;
     max-height: 280px;
   }
-  .home-hero-title { font-size: 28px; }
+  /* Desktop size override — title uses clamp() base; this bumps the
+     upper end up a little for wider screens. Kept under 28px so even
+     the longest title in the library clears in 2 lines. */
+  .home-hero-title { font-size: 26px; }
   .home-hero-eyebrow { font-size: 12px; }
   .home-hero-age { font-size: 11px; padding: 5px 12px; }
 }
