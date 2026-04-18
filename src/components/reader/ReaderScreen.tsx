@@ -589,17 +589,12 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
               <div className="chapter-banner-divider" aria-hidden="true" />
             </div>
           )}
-          {/* Phase 3 — expose wordProgress (0..1) as a CSS custom property
-               on the story-text container. The active word's ::after
-               pseudo-element reads it to render the sweep underline that
-               traces under the word in real time with the narration.
-               Keeping the var on the PARENT (not on each word) means we
-               do one style update per RAF tick instead of one per word. */}
+          {/* The sweep-underline experiment is reverted — solid highlight
+               feels better given our timing accuracy. wordProgress is
+               still exposed on SpeechControls for diagnostics and future
+               use, just not rendered here. */}
           <div
             className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}`}
-            style={{
-              ["--word-progress" as string]: speech.speaking ? speech.wordProgress : 0,
-            }}
           >
             {tw.map((w, i) => {
               const effect = effectsForWord[i];

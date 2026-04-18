@@ -1452,68 +1452,25 @@ body > * {
   box-shadow: 0 1px 6px rgba(194, 94, 69, 0.28);
 }
 
-/* ── Phase 3: sweep underline ────────────────────────────────────────
-   A narrow terracotta line under the active word that fills left-to-
-   right in real time as the audio speaks the word. Creates the "finger
-   tracing under the words" feeling that makes premium read-along apps
-   (Yoto, Epic) feel magical rather than mechanical.
-
-   The ReaderScreen sets --word-progress on the parent .story-text
-   element as a single 0..1 value, updated every RAF tick from
-   useSpeech's wordProgress state. Only the currently-active word's
-   ::after reads it, so we get one style update per frame instead of
-   one per word per frame. The calc() multiplier keeps the underline
-   inset slightly from the padding edges so it doesn't touch the
-   rounded corners.
-
-   Phase 4 refinement: the ::after exists on EVERY word (default
-   opacity: 0) rather than only on .active. This lets us transition
-   opacity when the class flips off, so the underline fades away
-   gracefully instead of vanishing — matching the 0.25s background
-   fade-out on the .active state. Inactive pseudos with opacity: 0
-   cost essentially nothing to render (browsers skip them). */
-.story-text .word::after {
-  content: "";
-  position: absolute;
-  left: 4px; /* matches .word padding-left */
-  right: 4px; /* matches .word padding-right */
-  bottom: 0;
-  height: 2px;
-  background: #c25e45; /* brand terracotta accent */
-  border-radius: 2px;
-  transform-origin: left center;
-  transform: scaleX(0);
-  opacity: 0;
-  pointer-events: none;
-  /* Opacity transition on deactivation; scaleX has no transition
-     because during playback we want the underline to track audio at
-     60Hz — a transition on scaleX would lag behind the voice. */
-  transition: opacity 0.2s ease;
-}
-.story-text .word.active::after {
-  opacity: 1;
-  transform: scaleX(var(--word-progress, 0));
-  /* A hair of opacity fade on the head of the underline so it feels
-     like a pen nib, not a hard-cut bar. */
-  box-shadow: 0 0 2px rgba(194, 94, 69, 0.35);
-}
-
-/* ── Phase 4: reduced-motion respect ─────────────────────────────────
-   Users with prefers-reduced-motion set have explicitly asked for less
-   movement. Disable the active-word scale breath and the sweep-underline
-   transform animation (the underline still appears as a static bar so
-   the kid can see which word is being read, but it doesn't track the
-   audio in real time — less movement, same read-along utility). */
+/* ── Reduced-motion respect ──────────────────────────────────────────
+   Users who've opted into prefers-reduced-motion get a flatter active-
+   word state (no scale breath, faster background fade) while keeping
+   the highlight visible so read-along utility is preserved. */
 @media (prefers-reduced-motion: reduce) {
   .story-text .word { transition: background 0.15s linear; }
-  .story-text .word.active {
-    transform: none;
-  }
-  .story-text .word.active::after {
-    /* Static underline that spans the whole word, no sweep. */
-    transform: scaleX(1);
-  }
+  .story-text .word.active { transform: none; }
 }
+
+/* ── Phase 3 rollback — sweep-underline removed ──────────────────────
+   We briefly shipped a sub-word progress underline driven by
+   useSpeech.wordProgress. In practice our timing data isn't accurate
+   enough at the sub-word level (interpolated orphan words especially)
+   for that kind of visual precision — a cursor that tracks a fraction
+   of a second off the audio reads as wrong, not helpful. The solid
+   honey highlight + scale breath is enough of a read-along cue; the
+   word IS either active or it isn't. If/when we get per-grapheme
+   timings (not available from Whisper), we can revisit. wordProgress
+   stays exposed on SpeechControls for diagnostics + future use. */
 
 /* Reading-lamp spotlight REMOVED — was dimming non-active words when
    speaking, tested poorly (made it hard to read ahead). The standard
