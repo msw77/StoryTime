@@ -1456,39 +1456,36 @@ body > * {
    Science-of-Reading: Pillar 4 (Vocabulary).
    The AI flags 3–5 vocabulary words per page at story-generation time.
    Those get a subtle visual cue so the child knows "this word has a
-   secret you can tap". Deliberately understated — a 1px dotted
-   terracotta underline at 40% opacity is just enough to be noticed on
-   a second read, not a permanent "look at me" badge that breaks
-   narrative flow on the first read.
+   secret you can tap".
 
-   IMPORTANT: the underline is `text-decoration`, which renders INSIDE
-   the word's padding box. Pair with `text-underline-offset` so the
-   line sits a couple pixels below the baseline, not jammed against
-   descenders like the "g" in "giggle". cursor: pointer + hover state
-   signals tappability on desktop; tap feedback (background bump) works
-   on touch. */
+   Initial design was a dotted underline, but a parent tester flagged
+   that it read as a spellcheck / grammar-suggestion indicator. Swapped
+   to a soft cream-honey background wash — reads as "noteworthy" rather
+   than "incorrect". Deliberately kept lighter than the active-word
+   honey so a vocab word currently BEING narrated doesn't look
+   washed-out. Works in cozy mode (darker backdrop) without special
+   casing — the tint just reads a touch more saturated on dark. */
 .story-text .word.vocab-word {
-  text-decoration: underline dotted rgba(194, 94, 69, 0.55);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  background: rgba(228, 147, 58, 0.14);
+  border-radius: 4px;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 .story-text .word.vocab-word:hover:not(.active) {
-  background: rgba(194, 94, 69, 0.08);
+  background: rgba(228, 147, 58, 0.26);
 }
 .story-text .word.vocab-word:active:not(.active) {
-  background: rgba(194, 94, 69, 0.14);
+  background: rgba(228, 147, 58, 0.34);
 }
-/* When a vocab word is ALSO the active word, the honey highlight wins
-   — the dotted underline would compete with the strong background. */
+/* When a vocab word is ALSO the currently-narrated word, the strong
+   honey highlight takes over — no need to combine. The vocab class's
+   softer wash would look muddy underneath. */
 .story-text .word.vocab-word.active {
-  text-decoration: none;
+  background: #ff9b70;
 }
-/* Reduced-motion path: keep dots subtle, no hover flash. */
+/* Reduced-motion path: keep the wash but kill the transition animation. */
 @media (prefers-reduced-motion: reduce) {
-  .story-text .word.vocab-word:hover:not(.active) {
-    background: transparent;
-  }
+  .story-text .word.vocab-word { transition: none; }
 }
 
 /* ── Word Glow modal ─────────────────────────────────────────────────
