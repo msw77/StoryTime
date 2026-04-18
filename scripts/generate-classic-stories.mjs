@@ -84,10 +84,10 @@ const STORIES_4_7 = [
     description: "A wooden puppet who learns what it means to be truly real.",
     sourceGuidance: "Collodi's core story arc — wanting to be a real boy, lies making his nose grow, learning the value of honesty. Soften darker plot points." },
 
-  { id: "classic_aladdin",            shortName: "aladdin",           title: "Aladdin and the Magic Lamp",       emoji: "🪔", color: "#b8860b",
-    originalAuthor: "One Thousand and One Nights",
-    description: "A poor boy, an old lamp, and the genie inside.",
-    sourceGuidance: "ORIGINAL Arabian Nights version — NOT the Disney version. Aladdin is a poor boy in an unnamed Chinese/Arabian city. Two genies (ring and lamp). Original character designs." },
+  { id: "classic_emperors_new_clothes", shortName: "emperors-new-clothes", title: "The Emperor's New Clothes",    emoji: "👑", color: "#c86b85",
+    originalAuthor: "Hans Christian Andersen",
+    description: "A vain emperor, two sneaky tailors, and one very honest child.",
+    sourceGuidance: "Hans Christian Andersen's classic. A vain emperor who loves fancy clothes is tricked by two clever swindlers claiming to weave magical fabric that is invisible to anyone foolish or unfit for their job. The emperor parades through town in nothing but his underthings while everyone pretends the clothes are beautiful, until a small child shouts the truth. For ages 4-7, keep the emperor in his underclothes (not fully nude) during the parade — funny, never crude. Emphasize the moral: telling the truth even when it's hard." },
 
   { id: "classic_bremen_musicians",   shortName: "bremen-musicians",  title: "The Bremen Town Musicians",        emoji: "🎻", color: "#9c6e3a",
     originalAuthor: "Brothers Grimm",
@@ -265,12 +265,12 @@ alignment:
 
 ## Trademark avoidance (CRITICAL)
 These prompts go to an AI image generator. You MUST NOT produce anything that could look like a trademarked adaptation.
-- NO Disney-style designs. No Disney blue Cinderella dress, no Disney Aladdin look, no Alice in blue dress + white apron, etc.
+- NO Disney-style designs. No Disney blue Cinderella dress, no Alice in blue dress + white apron, etc.
 - NO DreamWorks / Pixar / Ghibli / any film-TV aesthetic.
 - Create ORIGINAL character appearances that look distinctly different from any famous adaptation.
 - Include the literal phrase "original character design, not based on any existing adaptation" in EVERY scene prompt.
 - Cinderella: give her an entirely different hair/dress/build than Disney.
-- Aladdin: original Arabian Nights setting, original design, NOT Disney.
+- Emperor's New Clothes: medieval-European setting; emperor is never nude in the parade scene — he's in simple white knee-length underclothes.
 - Alice: NOT a blue dress + white apron.
 - When in doubt, make it look NOTHING like the famous version.
 

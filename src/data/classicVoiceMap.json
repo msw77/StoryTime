@@ -199,18 +199,6 @@
       "fairy": "Same storyteller voice, lifted airy and gentle with a sparkling, kind lilt — playing a magical blue fairy."
     }
   },
-  "classic_aladdin": {
-    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, rich with wonder for a faraway tale. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
-    "characters": {
-      "aladdin": "Same storyteller voice, lifted brighter and youthful with a kind, curious warmth — playing a good-hearted young hero.",
-      "magician": "Same storyteller voice, dropped lower with a sly, silky, smirking tone — playing a cartoonish tricky villain for young kids, mischievous but not frightening.",
-      "mother": "Same storyteller voice, softened and gentle with motherly warmth — playing Aladdin's loving mother.",
-      "ring-genie": "Same storyteller voice, lifted to a light, twinkly, friendly tone — playing a small helpful magical spirit.",
-      "lamp-genie": "Same storyteller voice, dropped deep and round with a booming but jolly warmth — playing a giant cheerful magical helper.",
-      "badr": "Same storyteller voice, lifted to a graceful, clever, kind tone — playing a brave clever princess.",
-      "princess": "Same storyteller voice, lifted to a graceful, clever, kind tone — playing a brave clever princess."
-    }
-  },
   "classic_bremen_musicians": {
     "narrator": "Warm bedtime storyteller voice — a parent reading aloud, cheerful and expressive with a twinkle of humor. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
@@ -339,6 +327,16 @@
       "weaver": "Same storyteller voice, higher and exasperated with a sharp edge of distress — playing a fretful town weaver.",
       "children": "Same storyteller voice, lifted bright and breathless with eager wonder — playing a chorus of delighted Hamelin children.",
       "townspeople": "Same storyteller voice, roughened into a grumbling shared chorus — playing the worried and angry townsfolk of Hamelin."
+    }
+  },
+  "classic_emperors_new_clothes": {
+    "narrator": "Warm bedtime storyteller voice, a parent reading aloud, clear and expressive with a twinkle of humor. Maintain a natural, steady storytelling pace throughout, do not speed up or slow down.",
+    "characters": {
+      "emperor": "Same storyteller voice, puffed up and grand with a slightly silly pompous lilt, playing a vain but good-hearted emperor.",
+      "tailors": "Same storyteller voice, hushed and sly with a sugary smirk, playing two sneaky trickster tailors.",
+      "adviser": "Same storyteller voice, gentle and creaky with a nervous wobble, playing a kindly old palace adviser.",
+      "child": "Same storyteller voice, lifted bright and clear like a small honest kid, playing the truthful little girl.",
+      "townsfolk": "Same storyteller voice, warm and chatty with a murmuring crowd flavor, playing cheerful townspeople."
     }
   }
 }

@@ -260,23 +260,56 @@ export function LibraryScreen({
     return pool[idx];
   })();
 
-  // Classics rail — only the built-in classic retellings, filtered to
-  // the active kid's age band if one is set on the profile, otherwise
-  // all classics. Ordered by age then original title so the rail reads
-  // predictably across sessions.
-  const classicsRail: Story[] = builtInStories
-    .filter((s) => s.isClassic)
-    .sort((a, b) => {
-      const ageOrder: Record<string, number> = { "2-4": 0, "4-7": 1, "7-10": 2 };
-      const ageDiff = (ageOrder[a.age] ?? 9) - (ageOrder[b.age] ?? 9);
-      if (ageDiff !== 0) return ageDiff;
-      return a.title.localeCompare(b.title);
-    });
+  // Age-relevance sort. Puts stories in the active kid's band FIRST,
+  // then adjacent bands (a 5yo who's ready for 7-10 sees 4-7 before
+  // 2-4, and vice versa), then whatever's left. Stable within each
+  // tier so we don't shuffle on every render. If there's no active
+  // profile (e.g. guest mode), leaves the input order untouched so
+  // parents browsing without a picked kid see everything balanced.
+  //
+  // Uses the same ageToBand() mapping as the hero picker: 2-4 for
+  // ages ≤4, 4-7 for 5-7, 7-10 for 8+. Simple buckets — we can swap
+  // in a smarter engine later (reading history, preferred genres)
+  // without changing the call sites.
+  const ageToBand = (n: number | null | undefined): string | null => {
+    if (n == null) return null;
+    if (n <= 4) return "2-4";
+    if (n <= 7) return "4-7";
+    return "7-10";
+  };
+  const kidBand = ageToBand(activeProfile?.age ?? null);
+  const BAND_ORDER: Record<string, number> = { "2-4": 0, "4-7": 1, "7-10": 2 };
+  const bandDistance = (band: string): number => {
+    if (!kidBand) return 0;
+    if (band === kidBand) return 0;
+    const a = BAND_ORDER[band] ?? 9;
+    const b = BAND_ORDER[kidBand] ?? 9;
+    return Math.abs(a - b);
+  };
+  const sortByAgeRelevance = <T extends Story>(list: T[]): T[] => {
+    // Tag each with its original index to make the sort stable without
+    // relying on the engine being stable (Array.sort is stable in
+    // modern engines, but belt-and-suspenders).
+    return list
+      .map((s, i) => ({ s, i, d: bandDistance(s.age) }))
+      .sort((a, b) => a.d - b.d || a.i - b.i)
+      .map((x) => x.s);
+  };
+
+  // Classics rail — only the built-in classic retellings. Sorted so
+  // the active kid's age-band books lead, then adjacent, then rest.
+  // Within a band, alphabetized so ordering is stable across sessions.
+  const classicsRail: Story[] = sortByAgeRelevance(
+    builtInStories
+      .filter((s) => s.isClassic)
+      .sort((a, b) => a.title.localeCompare(b.title)),
+  );
 
   // Per-genre rails — maps each real genre to its built-in stories.
   // Excludes "all", "random", and "classics" (classics get their own
-  // featured rail above). Empty genres are dropped so we don't render
-  // an empty rail.
+  // featured rail above). Each rail is age-relevance sorted so a 5yo
+  // sees the 4-7 Adventure stories before the 7-10 ones, etc. Empty
+  // genres are dropped so we don't render an empty rail.
   const genreRails: Array<{ id: string; label: string; emoji: string; stories: Story[] }> =
     GENRES
       .filter((g) => g.id !== "all" && g.id !== "random" && g.id !== "classics")
@@ -284,7 +317,9 @@ export function LibraryScreen({
         id: g.id,
         label: g.label,
         emoji: g.emoji,
-        stories: builtInStories.filter((s) => s.genre === g.id && !s.isClassic),
+        stories: sortByAgeRelevance(
+          builtInStories.filter((s) => s.genre === g.id && !s.isClassic),
+        ),
       }))
       .filter((g) => g.stories.length > 0);
 

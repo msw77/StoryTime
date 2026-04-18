@@ -1486,191 +1486,6 @@ export const CLASSIC_STORIES_4_7: Story[] = [
     ]
   },
   {
-    "id": "classic_aladdin",
-    "title": "Aladdin and the Magic Lamp",
-    "emoji": "🪔",
-    "color": "#b8860b",
-    "genre": "classics",
-    "age": "4-7",
-    "isClassic": true,
-    "originalAuthor": "One Thousand and One Nights",
-    "description": "A poor boy, an old lamp, and the genie inside.",
-    "duration": "5",
-    "pages": [
-      [
-        "Page 1",
-        "In a faraway city of golden domes, there lived a poor boy named Aladdin. He lived with his mother in a tiny house. They had very little, but they had each other. Aladdin was kind and clever."
-      ],
-      [
-        "Page 2",
-        "One day, a tall stranger in a dark robe stopped Aladdin. \"I am your long-lost uncle!\" he said with a sly smile. But he was not an uncle at all. He was a tricky magician with a secret plan."
-      ],
-      [
-        "Page 3",
-        "The magician led Aladdin far into the desert. He tapped the sand with a ring. Whoosh! A stone door opened. \"Climb down,\" he said. \"Bring me the old lamp. Take this ring for luck.\""
-      ],
-      [
-        "Page 4",
-        "Down, down went Aladdin into a sparkling cave. Jewels glittered on every tree! He tucked the dusty lamp into his pocket. But when he climbed back up, the magician shouted, \"Give it now!\""
-      ],
-      [
-        "Page 5",
-        "Aladdin said, \"Help me out first!\" The angry magician stamped his foot. Boom! The door slammed shut. Poor Aladdin sat in the dark, frightened and alone. He rubbed his hands, worried. Then something amazing happened."
-      ],
-      [
-        "Page 6",
-        "Rubbing the ring, Aladdin saw a shimmery puff of smoke. A kind ring-genie appeared! \"What do you wish, young master?\" Aladdin gasped. \"Please take me home to my mother!\" In a blink, he was home."
-      ],
-      [
-        "Page 7",
-        "Aladdin's mother hugged him tight. \"Let us polish this old lamp and sell it,\" she said. She rubbed it gently. Boom! A giant lamp-genie swirled up, big as the ceiling. \"I serve the lamp!\" he said."
-      ],
-      [
-        "Page 8",
-        "Aladdin's eyes grew wide. \"Please bring us something to eat!\" Silver trays appeared, piled with warm bread, sweet figs, and steaming stew. Mother and son ate and laughed. No more hungry nights ever again."
-      ],
-      [
-        "Page 9",
-        "Years passed. Aladdin grew up tall and kind. One day he saw the Sultan's daughter, Princess Badr, walking with her maids. Her smile made his heart thump. \"I will ask to marry her!\" he said."
-      ],
-      [
-        "Page 10",
-        "The lamp-genie built a shining palace overnight, with silver towers and gardens of roses. The Sultan was amazed. Aladdin and Princess Badr became friends, then married. The whole city cheered and danced in the streets."
-      ],
-      [
-        "Page 11",
-        "But the tricky magician heard the news! He dressed as a peddler, calling, \"New lamps for old!\" The princess did not know the secret. She traded the dusty old lamp for a shiny new one. Oh no!"
-      ],
-      [
-        "Page 12",
-        "The magician rubbed the lamp and whisked the palace far away. Aladdin searched everywhere. Then he remembered the ring! He rubbed it, and the ring-genie helped him find his wife. Together they made a clever plan."
-      ],
-      [
-        "Page 13",
-        "Brave Princess Badr tricked the magician with a sleepy drink. Aladdin snatched the lamp back! The lamp-genie carried the palace home. The magician ran far, far away. Aladdin and Badr lived happily, kind and grateful, forever."
-      ]
-    ],
-    "fullPages": [
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A thin boy around eight years old with tousled black curls, warm brown skin, big dark eyes, wearing a simple patched beige tunic and loose trousers with bare feet, stands beside a small smiling mother in a green headscarf and russet robe in front of a tiny mud-brick house. Behind them, a sunlit city of golden domes and minarets rises under a honey-colored sky. Warm golden afternoon light, cozy composition, gentle pastel palette.",
-        "mood": "warm",
-        "sounds": [
-          "distant market chatter",
-          "gentle desert breeze",
-          "a bird trilling softly"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Aladdin, the thin boy with tousled black curls, warm brown skin, patched beige tunic and loose trousers, looks up surprised at a tall thin stranger in a long dark purple robe with a pointed black beard, bushy eyebrows, and a sly toothy smile. They stand in a narrow stone alley with market stalls behind them. Dusty afternoon light, slight green-purple shadows hinting at magic, composition focuses on the stranger leaning down too close.",
-        "mood": "mysterious",
-        "sounds": [
-          "footsteps on stone",
-          "distant clang of a coppersmith",
-          "soft wind through alleys"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. In a rolling orange desert at dusk, the magician in dark purple robe and pointed black beard points down at a glowing stone trapdoor that has opened in the sand. Aladdin, the thin boy with tousled black curls and beige tunic, holds a small silver ring and peers nervously at the opening. Swirling magical sparkles rise from the door. Deep violet-pink sunset sky, long shadows, tiny distant palms.",
-        "mood": "magical",
-        "sounds": [
-          "whooshing magical wind",
-          "sand shifting",
-          "low humming chant"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Aladdin, the thin boy with tousled black curls, warm brown skin, beige tunic, stands wide-eyed inside a glittering underground cavern. Trees made of sparkling jewels — rubies, emeralds, sapphires — glow all around him. He clutches a plain brass oil lamp covered in dust. Cool blue-green magical light mixed with rainbow sparkles from the gems. Composition shows the boy small against the vast jewel-tree forest, full of wonder.",
-        "mood": "magical",
-        "sounds": [
-          "tinkling crystal chimes",
-          "soft magical shimmer",
-          "echoing footsteps"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Aladdin, the thin boy with tousled black curls and beige tunic, sits curled up in a dark stone chamber, arms around his knees, a worried look on his face. A thin moonlight beam filters down through a crack above. The closed stone trapdoor looms overhead. A silver ring glints faintly on his finger. Cool indigo and deep blue tones, a single warm spot of light on his face, gentle and not scary.",
-        "mood": "tense",
-        "sounds": [
-          "a single water drip",
-          "a soft sniffle",
-          "distant stone settling"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Aladdin, the thin boy with tousled black curls, looks up in astonishment as a friendly translucent genie swirls from the silver ring. The ring-genie is small, cheerful, with flowing smoke-like robes of pale lavender, kind round eyes, and a curly topknot. Soft glowing sparkles fill the dark cave. Warm purple-pink magical glow lighting Aladdin's face, cozy and wondrous composition, gentle smiling genie leaning toward the boy.",
-        "mood": "magical",
-        "sounds": [
-          "twinkling magic chime",
-          "gentle whoosh of smoke",
-          "a soft friendly hum"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Inside a cozy small home with clay walls and a woven rug, Aladdin's mother in a green headscarf and russet robe polishes a dusty brass lamp. An enormous friendly lamp-genie swirls up to the ceiling — muscular, with golden-green smoky tail instead of legs, a long black braided beard, a pearl earring, and a wide kind smile. Aladdin watches in wonder. Warm candlelight, swirling gold smoke, lighting bright and cheerful, not scary.",
-        "mood": "magical",
-        "sounds": [
-          "a rumbling friendly laugh",
-          "whoosh of magical smoke",
-          "crackling lamp flame"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Aladdin and his mother (green headscarf, russet robe) sit cross-legged on a woven rug eating joyfully from gleaming silver trays piled with round breads, purple figs, dates, and a steaming bowl of stew. The lamp-genie with golden smoky tail and kind smile floats gently behind, watching fondly. Warm lantern light, golden yellow tones, happy faces, cozy and heartwarming composition.",
-        "mood": "cozy",
-        "sounds": [
-          "gentle laughter",
-          "clink of silver cups",
-          "soft bubbling stew"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Aladdin, now a young man around sixteen, taller, still with tousled black curls, warm brown skin, now wearing a handsome cream tunic with gold trim, stands in a sunny marketplace gazing with a soft smile at Princess Badr — a graceful young woman with long dark braided hair, warm brown skin, a rose-pink silk gown and gauzy veil, walking with two maids. Pink petals drift in the air. Sunny afternoon, soft pink-gold palette, romantic but gentle composition.",
-        "mood": "warm",
-        "sounds": [
-          "distant lute music",
-          "fluttering silk veils",
-          "cheerful market chatter"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A magnificent silver-towered palace with domes and rose gardens glows under a golden sunrise. Aladdin in cream tunic with gold trim and Princess Badr in rose-pink gown stand on a balcony smiling. Crowds of happy townspeople dance in the streets below with lanterns and ribbons. Tousled black curls on Aladdin, long dark braided hair on Badr. Golden pink dawn light, wide festive composition, joyful celebration.",
-        "mood": "triumphant",
-        "sounds": [
-          "cheering crowds",
-          "drums and tambourines",
-          "ringing palace bells"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The tricky magician, disguised with a hooded gray cloak but still with pointed black beard and sly eyes, holds up a shiny new brass lamp. Princess Badr with long dark braided hair and rose-pink gown reaches out holding an old dusty lamp, unaware. They stand at a palace courtyard gate. Slight green shadow under the magician hinting at mischief. Cloudy afternoon light, uneasy but gentle composition, not scary.",
-        "mood": "tense",
-        "sounds": [
-          "the peddler's sing-song call",
-          "clatter of lamps",
-          "wind rustling palace curtains"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Aladdin in cream tunic with gold trim stands in an empty square where the palace used to be, rubbing his silver ring. The small lavender ring-genie swirls up again, pointing kindly toward the horizon where the missing palace shimmers tiny in the distance on a hillside. Tousled black curls, determined face. Soft twilight blue and orange sky, gentle magical sparkles, hopeful composition.",
-        "mood": "exciting",
-        "sounds": [
-          "whoosh of magical wind",
-          "soft genie chime",
-          "Aladdin's steady breath"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Princess Badr in rose-pink gown smiles slyly, holding a golden cup, as the magician slumps asleep in a cushioned chair. Aladdin in cream tunic with gold trim tiptoes in and snatches the dusty brass lamp from a low table. Behind them through a window, the silver-towered palace begins to glow and lift. Warm candlelight, cozy reunion feeling, happy clever heroes, gentle triumphant composition.",
-        "mood": "triumphant",
-        "sounds": [
-          "soft snoring",
-          "tinkling of the cup",
-          "a whoosh of magic carrying the palace home"
-        ]
-      }
-    ]
-  },
-  {
     "id": "classic_bremen_musicians",
     "title": "The Bremen Town Musicians",
     "emoji": "🎻",
@@ -1851,6 +1666,191 @@ export const CLASSIC_STORIES_4_7: Story[] = [
           "fire crackling softly",
           "four animals singing together",
           "wind chimes tinkling gently"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "classic_emperors_new_clothes",
+    "title": "The Emperor's New Clothes",
+    "emoji": "👑",
+    "color": "#c86b85",
+    "genre": "classics",
+    "age": "4-7",
+    "isClassic": true,
+    "originalAuthor": "Hans Christian Andersen",
+    "description": "A vain emperor, two sneaky tailors, and one very honest child.",
+    "duration": "5",
+    "pages": [
+      [
+        "Page 1",
+        "Long ago, in a sunny little kingdom, there lived an emperor who loved clothes. Silk ones. Velvet ones. Sparkly ones with golden buttons. He had a whole palace wing just for his outfits!"
+      ],
+      [
+        "Page 2",
+        "Every hour, the emperor changed into something new. \"How do I look?\" he asked his mirror. \"Splendid!\" he answered himself, twirling happily. His people sighed. Their emperor cared about clothes more than anything else."
+      ],
+      [
+        "Page 3",
+        "One bright morning, two sneaky strangers arrived at the palace gates. They had twinkly eyes and curly smiles. \"We are the greatest tailors in the world,\" they said. \"We weave magical cloth!\""
+      ],
+      [
+        "Page 4",
+        "\"Magical?\" gasped the emperor, leaning forward. \"Oh yes,\" whispered the tailors. \"Only smart and clever people can see it. Silly folks see nothing at all.\" The emperor's eyes went wide as saucers."
+      ],
+      [
+        "Page 5",
+        "\"I must have it!\" cried the emperor. He gave the tailors gold, silk thread, and a little workshop. The tailors pretended to weave on empty looms. Clickety-clack went nothing. They giggled behind their hands."
+      ],
+      [
+        "Page 6",
+        "The emperor sent his old adviser to peek. The adviser squinted at the empty loom. He saw nothing! But he did not want to seem silly. \"Beautiful!\" he fibbed. \"Simply marvelous!\""
+      ],
+      [
+        "Page 7",
+        "At last the tailors called out, \"All finished!\" They held up their arms as if carrying something grand. The emperor saw nothing. His heart thumped. \"I mustn't seem foolish,\" he thought. \"Wonderful!\" he said."
+      ],
+      [
+        "Page 8",
+        "The tailors helped him \"dress\" for the big parade. They pretended to button, tuck, and tie. The emperor stood in only his soft white underclothes, shivering just a little. \"Perfect fit!\" the tailors sang."
+      ],
+      [
+        "Page 9",
+        "Trumpets blared. Ta-da da! Out marched the emperor through the town square. Flags waved. Crowds gathered. And there stood the emperor in his underthings, head high, nose in the air."
+      ],
+      [
+        "Page 10",
+        "\"Ooh, how grand!\" cried the townsfolk. \"Lovely colors!\" said one. \"Such fine stitching!\" said another. Nobody wanted to seem silly. So everyone pretended. Everyone, that is, except one small child near the front."
+      ],
+      [
+        "Page 11",
+        "The little child blinked. She tugged her father's sleeve. Then, in a clear, honest voice, she called out, \"But the emperor isn't wearing any clothes!\" The whole square went quiet as a mouse."
+      ],
+      [
+        "Page 12",
+        "A giggle bubbled up. Then another. Soon everyone was whispering, \"She's right! She's right!\" The emperor's cheeks turned pink as petals. He realized the tailors had tricked him. And they were long gone!"
+      ],
+      [
+        "Page 13",
+        "The emperor hurried home, wrapped in a warm cloak. He thanked the honest little child with a smile. From that day on, he listened to the truth, no matter how hard it was to hear."
+      ]
+    ],
+    "fullPages": [
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A plump, cheerful middle-aged emperor with a bushy black mustache, rosy cheeks, and a tall gold crown, wearing an elaborate magenta and emerald robe with puffy sleeves and ruffled collar. He stands in a grand palace wardrobe room filled with colorful outfits on wooden stands. Warm afternoon sunlight streams through tall arched windows. Rich reds, golds, and soft creams dominate the palette. Storybook style with gentle lines and a whimsical, slightly silly feel.",
+        "mood": "warm",
+        "sounds": [
+          "soft footsteps on marble floor",
+          "fabric rustling",
+          "distant palace bells"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The same plump emperor with bushy black mustache and tall gold crown, now twirling in front of a large oval gold-framed mirror, wearing a bright yellow outfit with polka dots. His reflection smiles back. Two weary servants in blue tunics stand behind him sighing politely. Afternoon light, cozy palace bedroom with tapestries. Playful, humorous composition. Warm golds and soft lavenders.",
+        "mood": "funny",
+        "sounds": [
+          "shoes tapping on stone",
+          "gentle sighing",
+          "clock ticking softly"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Two sneaky thin tailors with twinkly eyes, curly smiles, and long colorful coats, one with a red pointed cap and the other with a green one, stand at grand palace gates. They each carry a small leather satchel. Guards in silver helmets watch curiously. Morning sunlight on cobblestones, the palace rising in the background with pennants flying. Mischievous mood, bright cheerful colors.",
+        "mood": "mysterious",
+        "sounds": [
+          "palace gates creaking",
+          "birdsong in the morning",
+          "soft footsteps on cobblestone"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and tall gold crown, now in a rich magenta robe, leans forward eagerly on his golden throne, eyes wide as saucers. The two sneaky tailors in colorful coats and pointed caps (one red, one green) whisper beside him with sly smiles. Throne room with tall purple curtains and flickering candelabras. Warm amber light. Expressive, comic storybook style.",
+        "mood": "mysterious",
+        "sounds": [
+          "whispering voices",
+          "candle flames flickering",
+          "emperor gasping softly"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The two sneaky tailors with twinkly eyes and curly smiles sit at two large wooden empty looms in a sunny workshop. They mime weaving the air, tongues poking out playfully. Spools of silk thread and piles of shiny gold coins sit on a side table. Bright morning light through a cottage window. Humorous and playful tone, warm honey-colored palette with hints of green and red.",
+        "mood": "funny",
+        "sounds": [
+          "wooden looms clacking",
+          "tailors giggling",
+          "coins clinking"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A kindly old adviser with a long white beard, round spectacles, a plum-colored robe, and a soft floppy hat, squints hard at an empty loom. The two sneaky tailors (one in red cap, one in green cap) gesture proudly at nothing. The adviser's eyebrows are raised in worry but he forces a polite smile. Cozy workshop with afternoon sun. Humorous composition, soft dusty colors with warm highlights.",
+        "mood": "funny",
+        "sounds": [
+          "floorboards creaking",
+          "nervous throat clearing",
+          "tailors humming"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The two sneaky tailors in colorful coats and pointed caps (red and green) hold up their arms as if presenting a grand invisible garment. The plump emperor with bushy black mustache and tall gold crown, in a rich magenta robe, stares with hand on his chin, eyes nervous but trying to look wise. Workshop with soft golden afternoon light. Warm tones, gentle humor, empty space between the tailors' hands clearly visible.",
+        "mood": "tense",
+        "sounds": [
+          "heart thumping softly",
+          "fabric fluttering in imagination",
+          "tailors saying tada"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and tall gold crown now stands in simple soft white knee-length underclothes (long tunic shirt and baggy shorts), shivering slightly with a dignified expression. The two sneaky tailors mime buttoning and tucking invisible clothes around him. Dressing room with a mirror, warm candlelight, velvet curtains. Gentle silly humor, pink and gold palette. Emperor is modestly covered in knee-length underclothes throughout.",
+        "mood": "funny",
+        "sounds": [
+          "tailors humming a tune",
+          "mime patting",
+          "chilly shiver"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and tall gold crown, wearing only modest white knee-length underclothes (long tunic shirt and baggy shorts), marches proudly through a cobblestone medieval European town square with his nose in the air. Trumpeters in red tabards blow golden horns. Colorful flags and banners flutter. Crowds of townsfolk line the sides gasping. Bright sunny day, cheerful blues and reds. Clearly comic, never crude. Emperor is fully covered in underclothes.",
+        "mood": "funny",
+        "sounds": [
+          "trumpets blaring tada",
+          "flags flapping in breeze",
+          "crowd murmuring"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Townsfolk of all ages in colorful medieval tunics and dresses clap and point, mouths open in fake awe. In the front stands a small round-cheeked child with short brown curls and a yellow smock, looking puzzled. Behind her, a kindly father with a brown beard in a green coat holds her hand. The emperor (bushy black mustache, gold crown, white knee-length underclothes) marches past in the background. Bright square, cheerful palette.",
+        "mood": "tense",
+        "sounds": [
+          "crowd oohing and ahhing",
+          "child tugging a sleeve",
+          "footsteps on cobblestone"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Close-up of the small round-cheeked child with short brown curls in a yellow smock pointing bravely at the emperor, her mouth open in a clear honest shout. The whole crowd behind her has frozen in surprise, eyes wide. The emperor (bushy black mustache, gold crown, white knee-length underclothes) halts mid-step. A single bird pauses in the sky. Warm midday light, bright and clear, palette of yellow, soft blue, and rose.",
+        "mood": "triumphant",
+        "sounds": [
+          "child shouting clearly",
+          "sudden hush",
+          "single bird chirp"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor (bushy black mustache, gold crown, white knee-length underclothes) stands in the town square with cheeks bright pink, covering his face with one hand. Townsfolk around him giggle kindly behind hands and fans. In the distance, the two sneaky tailors in red and green caps sprint away with bulging satchels of gold. Warm sunny square, humorous but gentle mood, pink and peach tones.",
+        "mood": "funny",
+        "sounds": [
+          "soft giggling spreading",
+          "footsteps running away",
+          "coins jingling in satchels"
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and gold crown, now wrapped in a warm red cloak, kneels down smiling gently to shake hands with the small round-cheeked child in her yellow smock. Townsfolk watch warmly in the background. Late afternoon sunlight spills across the palace steps. Soft golden glow, peaceful palette of rose, amber, and warm cream. A heartfelt, happy-ending mood.",
+        "mood": "warm",
+        "sounds": [
+          "soft applause",
+          "warm breeze",
+          "gentle palace bells"
         ]
       }
     ]

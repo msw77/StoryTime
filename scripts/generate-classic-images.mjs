@@ -70,11 +70,12 @@ The witch is a stern older woman in a long black or charcoal hooded cloak, NOT a
 The prince is a young man in simple medieval clothes — muted brown and blue tunic and leather boots.
 Setting: a tall stone tower surrounded by forest, or the witch's walled garden.`,
 
-  classic_aladdin: `CRITICAL CHARACTER DIRECTIVES — NON-NEGOTIABLE:
-Aladdin is a slim young man with short dark hair and warm tan skin. He wears a LOOSE BEIGE LINEN TUNIC with a simple cloth belt, and plain linen trousers. He does NOT have a bare chest. NOT a purple vest. NOT a red fez. NOT a red sash. NOT Disney Aladdin's iconic styling.
-The princess is a graceful young woman with dark hair in a simple coil, wearing a flowing TURQUOISE or DEEP EMERALD robe with modest coverage. NOT a pink gown with a crop top. NOT Jasmine styling. NOT Disney.
-The genie is an ethereal amorphous figure of warm golden-orange light and smoke — NOT blue, NOT muscular, NOT with a hoop earring, NOT Disney Genie. Looks like swirling luminous vapor with a gentle face.
-Setting: historical medieval Arabian city with mud-brick houses, arched doorways, market scenes — NOT the Disney Agrabah palace silhouette.`,
+  classic_emperors_new_clothes: `CRITICAL CHARACTER DIRECTIVES — NON-NEGOTIABLE:
+The Emperor is a stout middle-aged man with a round face, rosy cheeks, and a neatly trimmed brown beard. He wears an ELABORATE royal robe (rich red or purple velvet with gold trim) in every scene EXCEPT the parade scenes where he is shown in simple white knee-length underclothes (a plain long white undershirt and knee-length shorts) — never nude, never even implied nude, always fully clothed in underclothes. This is a children's book: the joke is the emperor thinks he is dressed elegantly while he is obviously in his undies.
+The two swindlers/tailors are a pair of shifty-looking men in shabby practical clothes (brown jerkins, plain linen shirts), pretending to work at empty looms. Give them sly expressions only.
+The child at the end is a young curious kid (about 5-7 years old) with a cap and simple tunic, pointing at the emperor with a surprised open mouth.
+Background courtiers and townspeople wear a mix of medieval-european fashion — fancy at court, plainer in the town scenes — with varied ages and skin tones.
+Setting: a European-style palace interior with tall windows and tapestries, a weaver's workshop with empty looms, and a sunny town square with bunting and flags for the parade. Rich warm watercolor palette. NOT photo-realistic, NOT 3D, NOT Disney.`,
 
   classic_cinderella: `CRITICAL CHARACTER DIRECTIVES — NON-NEGOTIABLE:
 Cinderella is a young woman with CHESTNUT-BROWN curls (not blonde) and hazel eyes. In everyday scenes she wears a CREAM LINEN DRESS with a muted GREEN APRON and sometimes has ash smudges on her cheeks. At the ball she wears a SILVER-AND-ROSE gown with gold embroidery — NOT Disney pale blue, NOT a sparkly ballgown. She is always PRESENT in the scene — do NOT produce generic cartoon children on blank backgrounds.
@@ -259,10 +260,14 @@ const STORY_SCRUBBERS = {
     text
       .replace(/\b(platinum|icy\s+blonde|ice\s+blonde|ice-blonde|silver\s+blonde)[^,.;]*/gi, "auburn")
       .replace(/\b(icy\s+purple|icy\s+blue|frozen\s+style|elsa[-\s]style)[^,.;]*/gi, "earth-toned"),
-  classic_aladdin: (text) =>
+  classic_emperors_new_clothes: (text) =>
     text
-      .replace(/\b(purple\s+vest|red\s+fez|bare[\s-]?chest(ed)?|red\s+sash)[^,.;]*/gi, "loose beige linen tunic")
-      .replace(/\b(blue[\s-]?skinned?\s+genie|muscular\s+genie|hoop[\s-]?earring)[^,.;]*/gi, "amorphous glowing golden genie"),
+      // Never produce actually-nude art for this story. Any scrub of
+      // nudity-adjacent phrasing in the scene prompt becomes "wearing
+      // simple knee-length white underclothes" so the image model
+      // keeps the emperor decent even if Claude's scene text got too
+      // literal about the parade.
+      .replace(/\b(naked|nude|bare(-|\s)?skin|unclothed)[^,.;]*/gi, "wearing simple knee-length white underclothes"),
   classic_cinderella: (text) =>
     text
       .replace(/\b(pale\s+blue\s+(ball\s*)?gown|powder\s+blue\s+dress|disney\s+blue)[^,.;]*/gi, "silver-and-rose ball gown")
