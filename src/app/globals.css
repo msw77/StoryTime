@@ -1475,6 +1475,25 @@ body > * {
   cursor: pointer;
 }
 
+/* ── Parent Settings feedback link ───────────────────────────────────
+   Subtle text-button shown during the beta period. Only renders if
+   NEXT_PUBLIC_FEEDBACK_URL or NEXT_PUBLIC_FEEDBACK_EMAIL is set, so
+   production builds don't show it once beta closes. */
+.settings-feedback-link {
+  display: inline-block;
+  color: #7d6a55;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.settings-feedback-link:hover {
+  background: rgba(194, 94, 69, 0.08);
+  color: #c25e45;
+}
+
 /* ── Error boundary fallback ─────────────────────────────────────────
    Calm, warm crash screen. The kid sees "something popped" — soft
    language — not a stack trace. Matches the rest of the app's cream

@@ -2,20 +2,54 @@
 
 /**
  * Parent Settings modal — opened from the ⚙️ gear button in the library
- * header. This is the intended home for any preference that isn't
- * story-specific: audio/visual effects, future accessibility options,
- * future consent toggles for Sprint 4 signature features, etc.
- *
- * Today it holds a single control: the master "Audio & visual effects"
- * toggle, which defaults ON and, when off, disables Ken Burns pan on
- * illustrations, the 3D page-flip animation, and (once Sprint 2 lands)
- * ambient sound beds + inline SFX cues. The preference is persisted
- * locally via useEffectsPref so it survives across sessions.
+ * header. Home for preferences that apply across every story:
+ * audio/visual effects, story-questions toggle, feedback link (beta
+ * period), future accessibility options.
  *
  * Kept intentionally separate from VoiceModal (the 🎙️ modal) because
  * voice-specific settings and parent-wide preferences have different
  * mental models — one is per-story, one is per-device.
  */
+
+// Feedback link component. Renders ONLY when one of two env vars is
+// set, so non-beta builds hide the button entirely (instead of having
+// a broken "leave feedback" link in the final product).
+//
+// Priority order:
+//   1. NEXT_PUBLIC_FEEDBACK_URL — a Tally/Typeform/Google Form URL.
+//      Opens in a new tab. Preferred because it collects structured
+//      data without the parent opening their email client.
+//   2. NEXT_PUBLIC_FEEDBACK_EMAIL — a mailto: fallback. Opens the
+//      native mail client with a pre-filled subject. Works even if
+//      you haven't set up a form yet; useful for the first day of
+//      beta when you just want any reply at all.
+//
+// Neither set = no button. Silent fail by design — we don't want a
+// "Send feedback" link that 404s when a tester taps it.
+function FeedbackLink() {
+  const url = process.env.NEXT_PUBLIC_FEEDBACK_URL;
+  const email = process.env.NEXT_PUBLIC_FEEDBACK_EMAIL;
+  if (!url && !email) return null;
+
+  const href = url
+    ? url
+    : `mailto:${email}?subject=${encodeURIComponent("StoryTime feedback")}&body=${encodeURIComponent(
+        "What age is your kid?\n\nWhat felt magical?\n\nWhat felt broken or confusing?\n\nWould you recommend this to another parent?",
+      )}`;
+
+  return (
+    <div style={{ marginTop: 14, textAlign: "center" }}>
+      <a
+        href={href}
+        target={url ? "_blank" : undefined}
+        rel={url ? "noopener noreferrer" : undefined}
+        className="settings-feedback-link"
+      >
+        💬 Send feedback
+      </a>
+    </div>
+  );
+}
 
 interface ParentSettingsModalProps {
   show: boolean;
@@ -135,6 +169,13 @@ export function ParentSettingsModal({
             </button>
           </div>
         )}
+
+        {/* Feedback link. Shown only when configured so non-beta users
+            don't see a stranger button. Prefers a hosted form
+            (Tally/Typeform) via NEXT_PUBLIC_FEEDBACK_URL; falls back to
+            a mailto: if NEXT_PUBLIC_FEEDBACK_EMAIL is set instead.
+            Either way, tap → opens in a new tab / native mail client. */}
+        <FeedbackLink />
 
         <div style={{ marginTop: 20, textAlign: "center" }}>
           <button className="pill-btn primary" onClick={onClose}>
