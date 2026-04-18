@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { writeFileSync, createReadStream, unlinkSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
+import { logApiUsage } from "@/lib/costTracking";
 
 // Shared TTS + Whisper helper used by /api/tts (one-shot preview) and
 // /api/stories (persistent save). Always generates audio at natural speed
@@ -51,8 +52,9 @@ export async function generateTtsWithTimings(
   const openai = getClient();
 
   // Step 1: Generate TTS audio
+  const ttsModel = "tts-1";
   const ttsResponse = await openai.audio.speech.create({
-    model: "tts-1",
+    model: ttsModel,
     voice: selectedVoice,
     input: text,
     speed: 1.0,
@@ -60,6 +62,15 @@ export async function generateTtsWithTimings(
   });
 
   const audioBuffer = Buffer.from(await ttsResponse.arrayBuffer());
+
+  // Fire-and-forget TTS cost logging (charged per input character).
+  logApiUsage({
+    provider: "openai",
+    operation: "tts",
+    model: ttsModel,
+    inputChars: text.length,
+    category: "user-audio",
+  });
 
   // Step 2: Run Whisper for precise word timestamps.
   // Write to a tempfile so we can use createReadStream (most reliable path
@@ -76,6 +87,15 @@ export async function generateTtsWithTimings(
       file: createReadStream(tmpPath),
       response_format: "verbose_json",
       timestamp_granularities: ["word"],
+    });
+
+    // Whisper is priced per audio minute. duration is in seconds in the
+    // verbose_json response; costTracking converts to cents.
+    logApiUsage({
+      provider: "openai",
+      operation: "whisper",
+      audioSeconds: whisperResponse.duration ?? 0,
+      category: "user-audio",
     });
 
     wordTimings = (whisperResponse.words || []).map((w) => ({

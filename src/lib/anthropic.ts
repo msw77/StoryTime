@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { logApiUsage } from "@/lib/costTracking";
 
 function getClient() {
   const apiKey = process.env.STORYTIME_ANTHROPIC_KEY;
@@ -160,12 +161,27 @@ Return valid JSON only, no other text:
 }`;
 
   const anthropic = getClient();
+  const model = "claude-sonnet-4-20250514";
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model,
     max_tokens: 8192,
     messages: [
       { role: "user", content: prompt },
     ],
+  });
+
+  // Fire-and-forget cost logging. Category is "user-story" since this
+  // path runs when a parent generates a custom story through the app.
+  logApiUsage({
+    provider: "anthropic",
+    operation: "story-generation",
+    model,
+    inputTokens: response.usage?.input_tokens ?? 0,
+    outputTokens: response.usage?.output_tokens ?? 0,
+    category: "user-story",
+    metadata: {
+      pageCount: response.usage?.output_tokens ? undefined : undefined,
+    },
   });
 
   // Extract the text content

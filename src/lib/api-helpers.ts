@@ -33,11 +33,45 @@ function fail(message: string, status: number): HelperFailure {
   return { ok: false, response: NextResponse.json({ error: message }, { status }) };
 }
 
+// Dev preview auth bypass (same flag as middleware.ts + page.tsx). In
+// bypass mode API routes skip Clerk and operate against the FIRST user
+// row in the Supabase `users` table — which for a single-dev account is
+// "you" and pulls through all your real profiles, stories, history.
+// Gated by NODE_ENV to make certain this path can't ship to prod.
+const DEV_AUTH_BYPASS =
+  process.env.NODE_ENV === "development" &&
+  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+
+// Cache the looked-up bypass user id so we don't hit Supabase on every
+// API call during a dev session.
+let cachedBypassUserId: string | null = null;
+
+async function getBypassUserId(): Promise<string | null> {
+  if (cachedBypassUserId) return cachedBypassUserId;
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("users")
+    .select("id")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .single();
+  if (data?.id) {
+    cachedBypassUserId = data.id as string;
+    return cachedBypassUserId;
+  }
+  return null;
+}
+
 /**
  * Require an authenticated Clerk user. Returns the Clerk user id, or a
  * 401 NextResponse the caller should return directly.
  */
 export async function requireClerkUser(): Promise<HelperResult<string>> {
+  if (DEV_AUTH_BYPASS) {
+    // In bypass mode there's no Clerk user id — just a synthetic marker.
+    // Callers that actually need the Clerk id are gated separately.
+    return { ok: true, value: "__dev_bypass__" };
+  }
   const { userId } = await auth();
   if (!userId) return fail("Not signed in", 401);
   return { ok: true, value: userId };
@@ -52,6 +86,12 @@ export async function requireClerkUser(): Promise<HelperResult<string>> {
  * auto-creates the row, but we handle it defensively).
  */
 export async function requireDbUserId(): Promise<HelperResult<string>> {
+  if (DEV_AUTH_BYPASS) {
+    const id = await getBypassUserId();
+    if (!id) return fail("Bypass user not found", 500);
+    return { ok: true, value: id };
+  }
+
   const clerk = await requireClerkUser();
   if (!clerk.ok) return clerk;
 

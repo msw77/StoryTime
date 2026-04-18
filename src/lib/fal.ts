@@ -1,4 +1,5 @@
 import { fal } from "@fal-ai/client";
+import { logApiUsage } from "@/lib/costTracking";
 
 fal.config({
   credentials: process.env.FAL_KEY,
@@ -70,7 +71,8 @@ export async function generatePageImage(
   // Imagen 4 Fast: ~5s/image vs ~48s on nano-banana-2, better prompt adherence,
   // and better character consistency across pages. Revert to "fal-ai/nano-banana-2"
   // if we ever want the softer watercolor look back.
-  const result = await fal.subscribe("fal-ai/imagen4/preview/fast", {
+  const model = "fal-ai/imagen4/preview/fast";
+  const result = await fal.subscribe(model, {
     input: {
       prompt,
       aspect_ratio: "16:9",
@@ -83,6 +85,16 @@ export async function generatePageImage(
   if (!data.images || data.images.length === 0) {
     throw new Error("No image returned from fal.ai");
   }
+
+  // Fire-and-forget cost logging. Category is "user-image" — this path
+  // runs when a parent/child triggers an illustration generation in-app.
+  logApiUsage({
+    provider: "fal",
+    operation: "image-generation",
+    model,
+    imagesGenerated: data.images.length,
+    category: "user-image",
+  });
 
   return {
     url: data.images[0].url,
