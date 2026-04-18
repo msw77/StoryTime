@@ -27,7 +27,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import type { VocabWord } from "@/types/story";
+import type { VocabWord, ReadAloudWord } from "@/types/story";
 
 interface VocabWordModalProps {
   word: VocabWord;
@@ -38,6 +38,12 @@ interface VocabWordModalProps {
   /** Fire when the kid wants to hear the word pronounced. Parent owns
    *  the TTS call (keeps the modal pure). */
   onHearWord?: () => void;
+  /** Matching readAloud entry for this word (if Claude flagged it as
+   *  one). When present, we show a "Sound It Out" button that triggers
+   *  syllable-by-syllable playback. Used for Pillars 1 + 2 (phonemic
+   *  awareness + phonics) alongside Word Glow's vocabulary work. */
+  readAloud?: ReadAloudWord | null;
+  onSoundItOut?: () => void;
 }
 
 export function VocabWordModal({
@@ -45,6 +51,8 @@ export function VocabWordModal({
   ageBand,
   onDismiss,
   onHearWord,
+  readAloud,
+  onSoundItOut,
 }: VocabWordModalProps) {
   // Focus trap + Escape-to-dismiss. For kids we can't lean on keyboard
   // but parents testing on desktop expect Esc to close.
@@ -133,6 +141,32 @@ export function VocabWordModal({
             <span className="vocab-modal-example-label">Like this:</span>{" "}
             {word.exampleSentence}
           </p>
+        )}
+
+        {/* Sound It Out — Science of Reading Pillars 1 + 2. Only shown
+            if this word is also flagged as a readAloud target (it has
+            phonetic syllable breakdown). Disabled for 2-4 where
+            syllable-hearing is too abstract for pre-readers; those
+            kids get the whole-word auto-speak on modal open instead.
+            The visible dots between syllables teach letter-sound
+            mapping: kids see "can · yon" and hear each syllable land. */}
+        {onSoundItOut && readAloud && !is2to4 && (
+          <>
+            <div className="vocab-modal-syllables" aria-hidden="true">
+              {readAloud.syllables.map((syl, i) => (
+                <span key={i} className="vocab-modal-syllable">
+                  {syl}
+                </span>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="vocab-modal-sound-it-out"
+              onClick={onSoundItOut}
+            >
+              Sound It Out 🔊
+            </button>
+          </>
         )}
 
         <button

@@ -4338,6 +4338,69 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "soil being patted down",
           "morning rooster crowing",
           "gentle breeze through garden"
+        ],
+        "vocabWords": [
+          {
+            "word": "planted",
+            "emoji": "🌱",
+            "definition_2_4": "Put seeds in dirt to make plants grow.",
+            "definition_4_7": "Put a seed in the ground so it can grow.",
+            "definition_7_10": "To place seeds in soil and care for them so they will grow into plants.",
+            "exampleSentence": "Mom planted flowers in our garden last spring.",
+            "pronunciation": "PLAN-ted"
+          },
+          {
+            "word": "turnip",
+            "emoji": "🥕",
+            "definition_2_4": "A big white round vegetable that grows under the ground.",
+            "definition_4_7": "A white vegetable that grows underground like a carrot.",
+            "definition_7_10": "A round white root vegetable that grows beneath the soil and can be cooked.",
+            "exampleSentence": "The turnip in the grocery store was purple on top.",
+            "pronunciation": "TUR-nip"
+          },
+          {
+            "word": "seed",
+            "emoji": "🌰",
+            "definition_2_4": "A tiny thing that grows into a plant.",
+            "definition_4_7": "The small part of a plant that makes new plants.",
+            "definition_7_10": "A small hard part from a plant that can grow into a new plant when planted.",
+            "exampleSentence": "We found apple seeds inside the fruit we ate.",
+            "pronunciation": "SEED"
+          },
+          {
+            "word": "grew",
+            "emoji": "📏",
+            "definition_2_4": "Got bigger and bigger.",
+            "definition_4_7": "Became bigger or taller over time.",
+            "definition_7_10": "Increased in size or height as time passed, like plants or children do.",
+            "exampleSentence": "The puppy grew into a big dog over the summer.",
+            "pronunciation": "GROO"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "planted",
+            "syllables": [
+              "plan",
+              "ted"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "turnip",
+            "syllables": [
+              "tur",
+              "nip"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "grew",
+            "syllables": [
+              "groo"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -4347,6 +4410,60 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "farmer grunting with effort",
           "boots digging into soil",
           "turnip leaves rustling"
+        ],
+        "vocabWords": [
+          {
+            "word": "enormous",
+            "emoji": "🐘",
+            "definition_2_4": "Super duper big!",
+            "definition_4_7": "Much much bigger than normal things.",
+            "definition_7_10": "Extremely large in size, much bigger than what you would usually expect to see.",
+            "exampleSentence": "The enormous whale was bigger than our whole boat.",
+            "pronunciation": "ee-NOR-mus"
+          },
+          {
+            "word": "pulled",
+            "emoji": "🪢",
+            "definition_2_4": "Used your hands to try to move something toward you.",
+            "definition_4_7": "Tried to move something by grabbing and tugging it.",
+            "definition_7_10": "Used force with your hands or body to try to drag something closer to you.",
+            "exampleSentence": "She pulled the heavy sled through the snow.",
+            "pronunciation": "PULD"
+          },
+          {
+            "word": "farmer",
+            "emoji": "👨‍🌾",
+            "definition_2_4": "A person who grows food on a farm.",
+            "definition_4_7": "Someone who grows plants and takes care of animals.",
+            "definition_7_10": "A person whose job is growing crops and raising animals to make food for people.",
+            "exampleSentence": "The farmer fed corn to his chickens every morning.",
+            "pronunciation": "FAR-mer"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "pulled",
+            "syllables": [
+              "puld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "farmer",
+            "syllables": [
+              "far",
+              "mer"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "bigger",
+            "syllables": [
+              "big",
+              "ger"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -4356,6 +4473,59 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "two people grunting together",
           "soil crunching",
           "turnip leaves shaking"
+        ],
+        "vocabWords": [
+          {
+            "word": "called",
+            "emoji": "📢",
+            "definition_2_4": "Shouted loudly for someone to come.",
+            "definition_4_7": "Yelled out loud to get someone's attention.",
+            "definition_7_10": "Used your voice loudly to ask someone to come and help you with something.",
+            "exampleSentence": "I called my friend to come play outside with me.",
+            "pronunciation": "KALD"
+          },
+          {
+            "word": "woman",
+            "emoji": "👵",
+            "definition_2_4": "A grown-up lady.",
+            "definition_4_7": "An adult person who is female, like mommy.",
+            "definition_7_10": "A female adult person, like a mother, grandmother, or other grown-up lady.",
+            "exampleSentence": "The kind woman helped me find my lost toy.",
+            "pronunciation": "WU-man"
+          },
+          {
+            "word": "Help",
+            "emoji": "🤝",
+            "definition_2_4": "Do something nice to make things easier for someone.",
+            "definition_4_7": "Do something to make a job easier for someone.",
+            "definition_7_10": "Give assistance or support to someone who needs it to complete a difficult task.",
+            "exampleSentence": "Can you help me carry these heavy books?",
+            "pronunciation": "HELP"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "called",
+            "syllables": [
+              "kald"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "woman",
+            "syllables": [
+              "wu",
+              "man"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "pulled",
+            "syllables": [
+              "puld"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -4365,6 +4535,59 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "three people straining and grunting",
           "small girl giggling with effort",
           "soil shifting"
+        ],
+        "vocabWords": [
+          {
+            "word": "little",
+            "emoji": "🤏",
+            "definition_2_4": "Small, not big.",
+            "definition_4_7": "Small in size, like a baby or tiny toy.",
+            "definition_7_10": "Small in size or age, not grown up or not taking up much space.",
+            "exampleSentence": "The little kitten could fit in my hands.",
+            "pronunciation": "LIT-ul"
+          },
+          {
+            "word": "girl",
+            "emoji": "👧",
+            "definition_2_4": "A young person who will grow up to be a woman.",
+            "definition_4_7": "A young female person, like a daughter or sister.",
+            "definition_7_10": "A female child or young person who has not yet become a grown-up woman.",
+            "exampleSentence": "The girl rode her bicycle to school every day.",
+            "pronunciation": "GURL"
+          },
+          {
+            "word": "came",
+            "emoji": "🚶‍♀️",
+            "definition_2_4": "Moved from somewhere else to where you are.",
+            "definition_4_7": "Walked or moved from another place to here.",
+            "definition_7_10": "Arrived at this place after traveling or walking from somewhere else nearby.",
+            "exampleSentence": "My grandma came to visit us for my birthday.",
+            "pronunciation": "KAYM"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "little",
+            "syllables": [
+              "lit",
+              "ul"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "came",
+            "syllables": [
+              "kaym"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "girl",
+            "syllables": [
+              "gurl"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -4374,6 +4597,58 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "dog barking encouragingly",
           "four sets of feet scrambling",
           "turnip creaking slightly"
+        ],
+        "vocabWords": [
+          {
+            "word": "dog",
+            "emoji": "🐕",
+            "definition_2_4": "A furry animal that barks and can be a pet.",
+            "definition_4_7": "A four-legged animal that people keep as pets.",
+            "definition_7_10": "A domesticated animal with four legs and fur that barks and is often kept as a family pet.",
+            "exampleSentence": "Our dog loves to chase balls in the backyard.",
+            "pronunciation": "DAWG"
+          },
+          {
+            "word": "help",
+            "emoji": "🤝",
+            "definition_2_4": "Do something nice to make things easier for someone.",
+            "definition_4_7": "Do something to make a job easier for someone.",
+            "definition_7_10": "Give assistance or support to someone who needs it to complete a difficult task.",
+            "exampleSentence": "I help my dad wash the dishes after dinner.",
+            "pronunciation": "HELP"
+          },
+          {
+            "word": "would",
+            "emoji": "❌",
+            "definition_2_4": "A word that means something will not happen.",
+            "definition_4_7": "A word that tells us something didn't want to happen.",
+            "definition_7_10": "A word used to show that something refused to happen or was not willing to change.",
+            "exampleSentence": "The door would not open even when I pushed hard.",
+            "pronunciation": "WUD"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "dog",
+            "syllables": [
+              "dawg"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "help",
+            "syllables": [
+              "help"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "would",
+            "syllables": [
+              "wud"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -4383,6 +4658,58 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "cat meowing reluctantly",
           "five sets of feet digging in",
           "turnip roots groaning underground"
+        ],
+        "vocabWords": [
+          {
+            "word": "cat",
+            "emoji": "🐱",
+            "definition_2_4": "A soft furry animal that meows and purrs.",
+            "definition_4_7": "A small furry pet that catches mice and purrs.",
+            "definition_7_10": "A small domesticated animal with soft fur that meows, purrs, and is often kept as a pet.",
+            "exampleSentence": "The cat climbed up the tall tree to catch a bird.",
+            "pronunciation": "KAT"
+          },
+          {
+            "word": "pulled",
+            "emoji": "🪢",
+            "definition_2_4": "Used your hands to try to move something toward you.",
+            "definition_4_7": "Tried to move something by grabbing and tugging it.",
+            "definition_7_10": "Used force with your hands or body to try to drag something closer to you.",
+            "exampleSentence": "The horse pulled the wagon down the bumpy road.",
+            "pronunciation": "PULD"
+          },
+          {
+            "word": "come",
+            "emoji": "➡️",
+            "definition_2_4": "Move toward where someone is waiting.",
+            "definition_4_7": "Move from where you are to another place.",
+            "definition_7_10": "Travel or move from your current location to where someone else is waiting for you.",
+            "exampleSentence": "Come to the kitchen when you hear the dinner bell.",
+            "pronunciation": "KUM"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "cat",
+            "syllables": [
+              "kat"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "pulled",
+            "syllables": [
+              "puld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "come",
+            "syllables": [
+              "kum"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -4392,6 +4719,61 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "everyone panting and catching breath",
           "tiny mouse squeaking bravely",
           "gentle wind through turnip leaves"
+        ],
+        "vocabWords": [
+          {
+            "word": "tiny",
+            "emoji": "🐭",
+            "definition_2_4": "Very very small, like a baby's finger.",
+            "definition_4_7": "Much smaller than normal things, really little.",
+            "definition_7_10": "Extremely small in size, much smaller than what you would usually expect to see.",
+            "exampleSentence": "A tiny ant carried a crumb bigger than itself.",
+            "pronunciation": "TY-nee"
+          },
+          {
+            "word": "mouse",
+            "emoji": "🐭",
+            "definition_2_4": "A very small furry animal with a long tail.",
+            "definition_4_7": "A tiny animal with fur and a long skinny tail.",
+            "definition_7_10": "A very small rodent with gray or brown fur, a pointed nose, and a long thin tail.",
+            "exampleSentence": "The mouse ran across the kitchen floor looking for cheese.",
+            "pronunciation": "MOWS"
+          },
+          {
+            "word": "difference",
+            "emoji": "⚖️",
+            "definition_2_4": "Something that makes things change or helps.",
+            "definition_4_7": "When something you do makes things better or different.",
+            "definition_7_10": "A change or improvement that happens because of something you do to help solve a problem.",
+            "exampleSentence": "Watering the plants made a big difference in how they grew.",
+            "pronunciation": "DIF-er-ens"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "tiny",
+            "syllables": [
+              "ty",
+              "nee"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "mouse",
+            "syllables": [
+              "mows"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "difference",
+            "syllables": [
+              "dif",
+              "er",
+              "ens"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -4402,6 +4784,59 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "soil cracking and splitting",
           "turnip roots snapping underground",
           "mouse squeaking with effort"
+        ],
+        "vocabWords": [
+          {
+            "word": "mouse",
+            "emoji": "🐭",
+            "definition_2_4": "A very small furry animal with a long tail.",
+            "definition_4_7": "A tiny animal with fur and a long skinny tail.",
+            "definition_7_10": "A very small rodent with gray or brown fur, a pointed nose, and a long thin tail.",
+            "exampleSentence": "The field mouse built its nest in the tall grass.",
+            "pronunciation": "MOWS"
+          },
+          {
+            "word": "pulled",
+            "emoji": "🪢",
+            "definition_2_4": "Used your hands to try to move something toward you.",
+            "definition_4_7": "Tried to move something by grabbing and tugging it.",
+            "definition_7_10": "Used force with your hands or body to try to drag something closer to you.",
+            "exampleSentence": "We pulled the rope to ring the big church bell.",
+            "pronunciation": "PULD"
+          },
+          {
+            "word": "farmer",
+            "emoji": "👨‍🌾",
+            "definition_2_4": "A person who grows food on a farm.",
+            "definition_4_7": "Someone who grows plants and takes care of animals.",
+            "definition_7_10": "A person whose job is growing crops and raising animals to make food for people.",
+            "exampleSentence": "The busy farmer planted corn in all his fields.",
+            "pronunciation": "FAR-mer"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "mouse",
+            "syllables": [
+              "mows"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "pulled",
+            "syllables": [
+              "puld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "farmer",
+            "syllables": [
+              "far",
+              "mer"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -4412,6 +4847,69 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "everyone tumbling and laughing",
           "soil raining down",
           "joyful cheering"
+        ],
+        "vocabWords": [
+          {
+            "word": "enormous",
+            "emoji": "🐘",
+            "definition_2_4": "Super duper big!",
+            "definition_4_7": "Much much bigger than normal things.",
+            "definition_7_10": "Extremely large in size, much bigger than what you would usually expect to see.",
+            "exampleSentence": "The enormous balloon floated high above the city.",
+            "pronunciation": "ee-NOR-mus"
+          },
+          {
+            "word": "turnip",
+            "emoji": "🥕",
+            "definition_2_4": "A big white round vegetable that grows under the ground.",
+            "definition_4_7": "A white vegetable that grows underground like a carrot.",
+            "definition_7_10": "A round white root vegetable that grows beneath the soil and can be cooked.",
+            "exampleSentence": "Grandpa sliced the turnip to add to our stew.",
+            "pronunciation": "TUR-nip"
+          },
+          {
+            "word": "heap",
+            "emoji": "🗻",
+            "definition_2_4": "A big messy pile of things all mixed up together.",
+            "definition_4_7": "A pile of things all jumbled up together.",
+            "definition_7_10": "A messy pile or stack of things that have fallen together in a disorganized way.",
+            "exampleSentence": "After cleaning my room, I had a heap of toys to put away.",
+            "pronunciation": "HEAP"
+          },
+          {
+            "word": "fell",
+            "emoji": "🤸‍♂️",
+            "definition_2_4": "Dropped down to the ground, not standing up anymore.",
+            "definition_4_7": "Dropped down or tumbled over, usually by accident.",
+            "definition_7_10": "Lost balance and dropped down to a lower level, often suddenly and unexpectedly to the ground.",
+            "exampleSentence": "The leaves fell from the tree when the wind blew hard.",
+            "pronunciation": "FEL"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "enormous",
+            "syllables": [
+              "ee",
+              "nor",
+              "mus"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "heap",
+            "syllables": [
+              "heap"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "fell",
+            "syllables": [
+              "fel"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -4422,6 +4920,67 @@ export const CLASSIC_STORIES_2_4: Story[] = [
           "spoons clinking in bowls",
           "fireplace crackling warmly",
           "contented sighs"
+        ],
+        "vocabWords": [
+          {
+            "word": "turnip",
+            "emoji": "🥕",
+            "definition_2_4": "A big white round vegetable that grows under the ground.",
+            "definition_4_7": "A white vegetable that grows underground like a carrot.",
+            "definition_7_10": "A round white root vegetable that grows beneath the soil and can be cooked.",
+            "exampleSentence": "The farmer's market had fresh turnips for sale.",
+            "pronunciation": "TUR-nip"
+          },
+          {
+            "word": "soup",
+            "emoji": "🍲",
+            "definition_2_4": "Hot liquid food you eat with a spoon.",
+            "definition_4_7": "A hot meal made with water and food mixed together.",
+            "definition_7_10": "A liquid meal made by cooking vegetables, meat, or other ingredients together in water or broth.",
+            "exampleSentence": "Mom made chicken soup when I had a cold.",
+            "pronunciation": "SOOP"
+          },
+          {
+            "word": "bowl",
+            "emoji": "🥣",
+            "definition_2_4": "A round dish you put food in to eat.",
+            "definition_4_7": "A round container that holds food like cereal or soup.",
+            "definition_7_10": "A round, deep dish with curved sides used for serving or eating liquid foods like soup.",
+            "exampleSentence": "I ate my cereal from a big blue bowl.",
+            "pronunciation": "BOHL"
+          },
+          {
+            "word": "night",
+            "emoji": "🌙",
+            "definition_2_4": "When it gets dark outside and time to sleep.",
+            "definition_4_7": "The time when the sun goes down and it's dark.",
+            "definition_7_10": "The time of day when the sun has set and it becomes dark outside, usually when people sleep.",
+            "exampleSentence": "At night we can see the stars and moon in the sky.",
+            "pronunciation": "NYT"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "soup",
+            "syllables": [
+              "soop"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "bowl",
+            "syllables": [
+              "bohl"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "night",
+            "syllables": [
+              "nyt"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       }
     ]

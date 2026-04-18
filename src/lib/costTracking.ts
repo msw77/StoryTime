@@ -21,7 +21,9 @@ export type UsageCategory =
   | "user-story"        // end-user generated a custom story
   | "user-image"        // end-user triggered an image regeneration
   | "user-audio"        // end-user triggered TTS for a story page
+  | "word-audio"        // Sound It Out — per-word TTS via /api/tts-word
   | "classic-generation" // batch script generating a classic story
+  | "reading-science-enrich" // enrich-stories-vocab metadata pass
   | "brand-asset"       // one-off asset (logo, hero illustration)
   | "admin"             // admin-triggered, bucketed separately
   | "unknown";

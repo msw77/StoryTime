@@ -98,6 +98,69 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "river water lapping gently",
           "songbirds in willow trees",
           "tiny rabbit feet pattering on grass"
+        ],
+        "vocabWords": [
+          {
+            "word": "riverbank",
+            "emoji": "🏞️",
+            "definition_2_4": null,
+            "definition_4_7": "The ground right next to a river or stream.",
+            "definition_7_10": "The grassy or muddy edge where the land meets the flowing water of a river.",
+            "exampleSentence": "We had a picnic on the riverbank and watched the boats go by.",
+            "pronunciation": "RIV-er-bank"
+          },
+          {
+            "word": "waistcoat",
+            "emoji": "🦺",
+            "definition_2_4": null,
+            "definition_4_7": "A fancy vest worn over a shirt.",
+            "definition_7_10": "A sleeveless jacket that buttons up the front, worn as part of formal clothing.",
+            "exampleSentence": "The gentleman wore a silk waistcoat to the wedding.",
+            "pronunciation": "WAYST-koht"
+          },
+          {
+            "word": "scurried",
+            "emoji": "🏃",
+            "definition_2_4": null,
+            "definition_4_7": "Ran quickly with short, fast steps.",
+            "definition_7_10": "Moved in a hurried way with small, rapid steps, like a mouse or squirrel.",
+            "exampleSentence": "The children scurried to their seats when the teacher returned.",
+            "pronunciation": "SKUR-eed"
+          },
+          {
+            "word": "clutched",
+            "emoji": "✊",
+            "definition_2_4": null,
+            "definition_4_7": "Held something very tightly in your hand.",
+            "definition_7_10": "Gripped something firmly and tightly, usually because it's important or you're worried.",
+            "exampleSentence": "She clutched her backpack as she walked through the dark forest.",
+            "pronunciation": "KLUCHD"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "waistcoat",
+            "syllables": [
+              "wayst",
+              "koht"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "scurried",
+            "syllables": [
+              "skur",
+              "eed"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "clutched",
+            "syllables": [
+              "kluchd"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -107,6 +170,69 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "distant echoing drip",
           "soft whooshing air",
           "tinkling teacup"
+        ],
+        "vocabWords": [
+          {
+            "word": "darted",
+            "emoji": "⚡",
+            "definition_2_4": null,
+            "definition_4_7": "Moved very quickly in one direction.",
+            "definition_7_10": "Shot forward suddenly and swiftly, like an arrow flying through the air.",
+            "exampleSentence": "The fish darted away when it saw the net coming.",
+            "pronunciation": "DAR-ted"
+          },
+          {
+            "word": "plunged",
+            "emoji": "🤿",
+            "definition_2_4": null,
+            "definition_4_7": "Jumped or fell suddenly into something deep.",
+            "definition_7_10": "Dove or dropped quickly downward, usually into water or a deep space.",
+            "exampleSentence": "The swimmer plunged into the cold lake from the high diving board.",
+            "pronunciation": "PLUNJD"
+          },
+          {
+            "word": "glided",
+            "emoji": "🦢",
+            "definition_2_4": null,
+            "definition_4_7": "Moved smoothly and quietly past something.",
+            "definition_7_10": "Flowed by in a graceful, effortless way, like a swan on still water.",
+            "exampleSentence": "The ice skater glided across the rink without making a sound.",
+            "pronunciation": "GLY-ded"
+          },
+          {
+            "word": "tunnel",
+            "emoji": "🕳️",
+            "definition_2_4": null,
+            "definition_4_7": "A long hole that goes through or under something.",
+            "definition_7_10": "A passage that has been dug underground or through a mountain or hill.",
+            "exampleSentence": "The train went through a dark tunnel under the mountain.",
+            "pronunciation": "TUN-ul"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "plunged",
+            "syllables": [
+              "plunjd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "glided",
+            "syllables": [
+              "gly",
+              "ded"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "tunnel",
+            "syllables": [
+              "tun",
+              "ul"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -116,6 +242,72 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "Alice's soft giggle echoing",
           "faint ticking clock",
           "gentle rustle of falling leaves"
+        ],
+        "vocabWords": [
+          {
+            "word": "floated",
+            "emoji": "🎈",
+            "definition_2_4": null,
+            "definition_4_7": "Moved gently through air or water without sinking.",
+            "definition_7_10": "Drifted along softly and lightly, staying up in the air like a bubble.",
+            "exampleSentence": "The balloon floated high above the trees in the blue sky.",
+            "pronunciation": "FLOH-ted"
+          },
+          {
+            "word": "marmalade",
+            "emoji": "🍊",
+            "definition_2_4": null,
+            "definition_4_7": "A sweet jam made from oranges or other fruits.",
+            "definition_7_10": "A thick, sweet spread made by cooking fruit with sugar, often eaten on toast.",
+            "exampleSentence": "She put orange marmalade on her morning toast and butter.",
+            "pronunciation": "MAR-muh-layd"
+          },
+          {
+            "word": "murmured",
+            "emoji": "🤫",
+            "definition_2_4": null,
+            "definition_4_7": "Spoke very quietly and softly to yourself.",
+            "definition_7_10": "Said something in a low, gentle voice that's barely loud enough to hear.",
+            "exampleSentence": "The baby murmured sleepily before closing her eyes for a nap.",
+            "pronunciation": "MUR-murd"
+          },
+          {
+            "word": "whispery",
+            "emoji": "👻",
+            "definition_2_4": null,
+            "definition_4_7": "Very quiet and soft, like a whisper.",
+            "definition_7_10": "Making gentle, barely-heard sounds that seem mysterious and hushed.",
+            "exampleSentence": "The wind made whispery sounds as it blew through the tall grass.",
+            "pronunciation": "WHIS-per-ee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "marmalade",
+            "syllables": [
+              "mar",
+              "muh",
+              "layd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "murmured",
+            "syllables": [
+              "mur",
+              "murd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "whispery",
+            "syllables": [
+              "whis",
+              "per",
+              "ee"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -125,6 +317,68 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "keys jingling",
           "soft echoing footsteps on marble",
           "distant garden birds"
+        ],
+        "vocabWords": [
+          {
+            "word": "thump",
+            "emoji": "💥",
+            "definition_2_4": null,
+            "definition_4_7": "A loud sound when something heavy hits the ground.",
+            "definition_7_10": "The deep, hollow noise made when something falls or bumps into something else.",
+            "exampleSentence": "We heard a loud thump when the book fell off the shelf.",
+            "pronunciation": "THUMP"
+          },
+          {
+            "word": "heap",
+            "emoji": "🍂",
+            "definition_2_4": null,
+            "definition_4_7": "A big pile of things stacked together.",
+            "definition_7_10": "A large mound or stack of objects that have been gathered in one place.",
+            "exampleSentence": "There was a heap of dirty laundry on the bedroom floor.",
+            "pronunciation": "HEEP"
+          },
+          {
+            "word": "stretched",
+            "emoji": "↔️",
+            "definition_2_4": null,
+            "definition_4_7": "Went on for a long way in one direction.",
+            "definition_7_10": "Extended far into the distance, reaching from one point to another far away.",
+            "exampleSentence": "The beach stretched for miles along the ocean shore.",
+            "pronunciation": "STRECHD"
+          },
+          {
+            "word": "curtain",
+            "emoji": "🪟",
+            "definition_2_4": null,
+            "definition_4_7": "Cloth that hangs down to cover a window or door.",
+            "definition_7_10": "A piece of fabric that can be pulled across to hide or cover something.",
+            "exampleSentence": "She pulled back the curtain to let sunlight into the dark room.",
+            "pronunciation": "KUR-tin"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "stretched",
+            "syllables": [
+              "strechd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "curtain",
+            "syllables": [
+              "kur",
+              "tin"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "heap",
+            "syllables": [
+              "heep"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -135,6 +389,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "glass bottle clinking",
           "liquid sloshing",
           "Alice's surprised gasp"
+        ],
+        "vocabWords": [
+          {
+            "word": "appeared",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Showed up suddenly where it wasn't before.",
+            "definition_7_10": "Came into sight as if by magic, becoming visible when it hadn't been there.",
+            "exampleSentence": "A rainbow appeared in the sky after the storm passed by.",
+            "pronunciation": "uh-PEERD"
+          },
+          {
+            "word": "sniffed",
+            "emoji": "👃",
+            "definition_2_4": null,
+            "definition_4_7": "Breathed in through your nose to smell something.",
+            "definition_7_10": "Drew air through the nostrils to catch the scent or odor of something nearby.",
+            "exampleSentence": "The dog sniffed the flowers in the garden to explore their smells.",
+            "pronunciation": "SNIFD"
+          },
+          {
+            "word": "curious",
+            "emoji": "🤔",
+            "definition_2_4": null,
+            "definition_4_7": "A strange or unusual feeling that makes you wonder.",
+            "definition_7_10": "An odd sensation that seems different from normal and makes you feel puzzled.",
+            "exampleSentence": "She had a curious feeling that someone was watching her from behind.",
+            "pronunciation": "KYOOR-ee-us"
+          },
+          {
+            "word": "shrinking",
+            "emoji": "🔽",
+            "definition_2_4": null,
+            "definition_4_7": "Getting smaller and smaller in size.",
+            "definition_7_10": "Becoming tinier, as if something invisible is making you lose your normal size.",
+            "exampleSentence": "The soap was shrinking every time she used it in the bath.",
+            "pronunciation": "SHRING-king"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "appeared",
+            "syllables": [
+              "uh",
+              "peerd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "curious",
+            "syllables": [
+              "kyoor",
+              "ee",
+              "us"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "shrinking",
+            "syllables": [
+              "shring",
+              "king"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -144,6 +463,72 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "Alice's muffled sniffle",
           "ceiling creaking",
           "crumbs pattering to floor"
+        ],
+        "vocabWords": [
+          {
+            "word": "alas",
+            "emoji": "😔",
+            "definition_2_4": null,
+            "definition_4_7": "A word that shows you're sad about something.",
+            "definition_7_10": "An expression of disappointment or sorrow when things don't work out as hoped.",
+            "exampleSentence": "Alas, the ice cream shop was closed when we got there.",
+            "pronunciation": "uh-LAS"
+          },
+          {
+            "word": "spotted",
+            "emoji": "👁️",
+            "definition_2_4": null,
+            "definition_4_7": "Saw something by looking carefully around you.",
+            "definition_7_10": "Noticed or caught sight of something that might have been hidden or hard to see.",
+            "exampleSentence": "She spotted a cardinal sitting on the fence post in the backyard.",
+            "pronunciation": "SPOT-ed"
+          },
+          {
+            "word": "nibbled",
+            "emoji": "🐭",
+            "definition_2_4": null,
+            "definition_4_7": "Took tiny little bites of something to eat.",
+            "definition_7_10": "Ate something slowly with small, delicate bites, like a mouse or rabbit would.",
+            "exampleSentence": "The rabbit nibbled on the carrot, taking small bites around the edges.",
+            "pronunciation": "NIB-uld"
+          },
+          {
+            "word": "inconvenient",
+            "emoji": "😤",
+            "definition_2_4": null,
+            "definition_4_7": "Something that makes life difficult or annoying.",
+            "definition_7_10": "Causing trouble or problems that make simple tasks much harder than they should be.",
+            "exampleSentence": "The broken elevator was inconvenient for people living on high floors.",
+            "pronunciation": "in-kun-VEEN-yent"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "nibbled",
+            "syllables": [
+              "nib",
+              "uld"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "inconvenient",
+            "syllables": [
+              "in",
+              "kun",
+              "veen",
+              "yent"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "spotted",
+            "syllables": [
+              "spot",
+              "ed"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -153,6 +538,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "gentle splashing",
           "Alice breathing softly",
           "mouse squeak"
+        ],
+        "vocabWords": [
+          {
+            "word": "puddled",
+            "emoji": "💧",
+            "definition_2_4": null,
+            "definition_4_7": "Formed small pools of water on the ground.",
+            "definition_7_10": "Collected into little shallow pools, like rainwater gathering on the sidewalk.",
+            "exampleSentence": "The spilled juice puddled on the kitchen table before we could clean it up.",
+            "pronunciation": "PUD-uld"
+          },
+          {
+            "word": "flooded",
+            "emoji": "🌊",
+            "definition_2_4": null,
+            "definition_4_7": "Filled up completely with water everywhere.",
+            "definition_7_10": "Covered entirely with water that rose up and spread to all corners and spaces.",
+            "exampleSentence": "Heavy rain flooded the streets so cars couldn't drive through them.",
+            "pronunciation": "FLUD-ed"
+          },
+          {
+            "word": "fanned",
+            "emoji": "🪭",
+            "definition_2_4": null,
+            "definition_4_7": "Waved something back and forth to make air move.",
+            "definition_7_10": "Moved an object rapidly to create a breeze and help cool things down.",
+            "exampleSentence": "She fanned herself with a magazine because the room was so hot.",
+            "pronunciation": "FAND"
+          },
+          {
+            "word": "tumbled",
+            "emoji": "🤸",
+            "definition_2_4": null,
+            "definition_4_7": "Fell down in a rolling, spinning way.",
+            "definition_7_10": "Dropped or rolled over and over, usually by accident and without control.",
+            "exampleSentence": "The gymnast tumbled across the mat in a series of perfect flips.",
+            "pronunciation": "TUM-buld"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "flooded",
+            "syllables": [
+              "flud",
+              "ed"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "tumbled",
+            "syllables": [
+              "tum",
+              "buld"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "puddled",
+            "syllables": [
+              "pud",
+              "uld"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -162,6 +611,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "animals chattering happily",
           "Alice's polite voice",
           "soft sand crunching"
+        ],
+        "vocabWords": [
+          {
+            "word": "dripping",
+            "emoji": "💦",
+            "definition_2_4": null,
+            "definition_4_7": "Water falling off in slow drops one by one.",
+            "definition_7_10": "Wet with water that slowly falls drop by drop from something soaked.",
+            "exampleSentence": "His swimsuit was dripping water all over the bathroom floor.",
+            "pronunciation": "DRIP-ing"
+          },
+          {
+            "word": "organised",
+            "emoji": "📋",
+            "definition_2_4": null,
+            "definition_4_7": "Set up and planned an event for everyone.",
+            "definition_7_10": "Arranged and managed an activity, making sure everyone knew what to do.",
+            "exampleSentence": "The teacher organised a field trip to the science museum for her class.",
+            "pronunciation": "OR-guh-nyzd"
+          },
+          {
+            "word": "comfits",
+            "emoji": "🍬",
+            "definition_2_4": null,
+            "definition_4_7": "Old-fashioned candies covered in hard sugar coating.",
+            "definition_7_10": "Sweet treats made by covering nuts or seeds with layers of crystallized sugar.",
+            "exampleSentence": "The old candy shop sold comfits in glass jars on the wooden shelves.",
+            "pronunciation": "KUM-fits"
+          },
+          {
+            "word": "curtseyed",
+            "emoji": "👸",
+            "definition_2_4": null,
+            "definition_4_7": "Bent your knees and bowed politely like a princess.",
+            "definition_7_10": "Made a respectful greeting by bending the knees and lowering the body gracefully.",
+            "exampleSentence": "The little girl curtseyed when she met the queen at the royal palace.",
+            "pronunciation": "KURT-seed"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "organised",
+            "syllables": [
+              "or",
+              "guh",
+              "nyzd"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "curtseyed",
+            "syllables": [
+              "kurt",
+              "seed"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "comfits",
+            "syllables": [
+              "kum",
+              "fits"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -171,6 +685,72 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "Caterpillar's slow exhale",
           "pipe bubbling softly",
           "forest leaves rustling"
+        ],
+        "vocabWords": [
+          {
+            "word": "clearing",
+            "emoji": "🌳",
+            "definition_2_4": null,
+            "definition_4_7": "An open space in the woods with no trees.",
+            "definition_7_10": "A round area in a forest where the trees have been cleared away, creating an open spot.",
+            "exampleSentence": "The campers found a sunny clearing where they could set up their tent.",
+            "pronunciation": "KLEER-ing"
+          },
+          {
+            "word": "perched",
+            "emoji": "🦅",
+            "definition_2_4": null,
+            "definition_4_7": "Sitting on top of something high up.",
+            "definition_7_10": "Resting in a balanced way on the edge or top of something, like a bird on a branch.",
+            "exampleSentence": "The owl perched on the fence post, watching for mice in the grass below.",
+            "pronunciation": "PERCHD"
+          },
+          {
+            "word": "drawled",
+            "emoji": "🐌",
+            "definition_2_4": null,
+            "definition_4_7": "Spoke in a very slow, lazy way.",
+            "definition_7_10": "Talked with words stretched out long and slow, like honey dripping from a spoon.",
+            "exampleSentence": "The cowboy drawled his words as he told stories around the campfire.",
+            "pronunciation": "DRAWLD"
+          },
+          {
+            "word": "mysteriously",
+            "emoji": "🔮",
+            "definition_2_4": null,
+            "definition_4_7": "In a strange way that's hard to understand.",
+            "definition_7_10": "Done in a puzzling, secretive manner that leaves you wondering what it really means.",
+            "exampleSentence": "The old book mysteriously disappeared from the library shelf overnight.",
+            "pronunciation": "mis-TEER-ee-us-lee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "clearing",
+            "syllables": [
+              "kleer",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "perched",
+            "syllables": [
+              "perchd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "mysteriously",
+            "syllables": [
+              "mis",
+              "teer",
+              "ee",
+              "us",
+              "lee"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -181,6 +761,69 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "Cheshire Cat purring",
           "magical shimmering twinkle",
           "distant owl hoot"
+        ],
+        "vocabWords": [
+          {
+            "word": "grinning",
+            "emoji": "😸",
+            "definition_2_4": null,
+            "definition_4_7": "Smiling very wide so you can see teeth.",
+            "definition_7_10": "Showing a big, bright smile that stretches across the whole face with teeth showing.",
+            "exampleSentence": "The boy was grinning after he scored the winning goal for his team.",
+            "pronunciation": "GRIN-ing"
+          },
+          {
+            "word": "striped",
+            "emoji": "🦓",
+            "definition_2_4": null,
+            "definition_4_7": "Having lines of different colors going across something.",
+            "definition_7_10": "Marked with bands or lines of alternating colors, like a zebra or tiger.",
+            "exampleSentence": "She wore a striped shirt with blue and white lines running across it.",
+            "pronunciation": "STRYPD"
+          },
+          {
+            "word": "purred",
+            "emoji": "😺",
+            "definition_2_4": null,
+            "definition_4_7": "Made a soft, rumbling sound like a happy cat.",
+            "definition_7_10": "Spoke in a smooth, gentle voice that sounds like a contented cat's rumble.",
+            "exampleSentence": "The mother purred a lullaby to help her baby fall asleep peacefully.",
+            "pronunciation": "PURD"
+          },
+          {
+            "word": "faded",
+            "emoji": "👻",
+            "definition_2_4": null,
+            "definition_4_7": "Slowly disappeared until you couldn't see it anymore.",
+            "definition_7_10": "Gradually became fainter and fainter until it vanished completely from sight.",
+            "exampleSentence": "The sunset colors faded from the sky as darkness came over the mountains.",
+            "pronunciation": "FAY-ded"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "grinning",
+            "syllables": [
+              "grin",
+              "ing"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "striped",
+            "syllables": [
+              "strypd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "faded",
+            "syllables": [
+              "fay",
+              "ded"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -190,6 +833,69 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "teapots clinking",
           "March Hare chuckling",
           "dormouse snoring softly"
+        ],
+        "vocabWords": [
+          {
+            "word": "squashed",
+            "emoji": "🤏",
+            "definition_2_4": null,
+            "definition_4_7": "Pressed together tightly in a small space.",
+            "definition_7_10": "Crowded together so closely that everyone is pushed up against each other uncomfortably.",
+            "exampleSentence": "All five children were squashed together on the small couch watching TV.",
+            "pronunciation": "SKWASHD"
+          },
+          {
+            "word": "offered",
+            "emoji": "🤲",
+            "definition_2_4": null,
+            "definition_4_7": "Said you would give something to someone else.",
+            "definition_7_10": "Presented or suggested giving something as a gift or act of kindness to another person.",
+            "exampleSentence": "The neighbor offered to help carry the heavy boxes up the stairs.",
+            "pronunciation": "AWF-erd"
+          },
+          {
+            "word": "frowned",
+            "emoji": "😠",
+            "definition_2_4": null,
+            "definition_4_7": "Made an angry or unhappy face with your eyebrows down.",
+            "definition_7_10": "Wrinkled the forehead and pulled the eyebrows together to show displeasure or confusion.",
+            "exampleSentence": "The teacher frowned when she saw that nobody had done their homework.",
+            "pronunciation": "FROWND"
+          },
+          {
+            "word": "polite",
+            "emoji": "🎩",
+            "definition_2_4": null,
+            "definition_4_7": "Acting with good manners and being kind to others.",
+            "definition_7_10": "Showing respect and courtesy in the way you speak and behave toward other people.",
+            "exampleSentence": "It's polite to say 'please' and 'thank you' when asking for something.",
+            "pronunciation": "puh-LYT"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "squashed",
+            "syllables": [
+              "skwashd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "offered",
+            "syllables": [
+              "awf",
+              "erd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "polite",
+            "syllables": [
+              "puh",
+              "lyt"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -199,6 +905,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "teacups clattering",
           "Hatter muttering",
           "dormouse yawning"
+        ],
+        "vocabWords": [
+          {
+            "word": "riddles",
+            "emoji": "🧩",
+            "definition_2_4": null,
+            "definition_4_7": "Tricky questions that are like puzzles to solve.",
+            "definition_7_10": "Brain teasers or word puzzles that challenge you to think cleverly about the answer.",
+            "exampleSentence": "The kids loved solving riddles during the long car trip to grandma's house.",
+            "pronunciation": "RID-ulz"
+          },
+          {
+            "word": "buttered",
+            "emoji": "🧈",
+            "definition_2_4": null,
+            "definition_4_7": "Spread butter on something, usually bread or toast.",
+            "definition_7_10": "Applied a layer of creamy butter to make food taste richer and more delicious.",
+            "exampleSentence": "She buttered her warm biscuit and added a dollop of strawberry jam.",
+            "pronunciation": "BUT-erd"
+          },
+          {
+            "word": "treacle",
+            "emoji": "🍯",
+            "definition_2_4": null,
+            "definition_4_7": "A thick, sweet syrup like honey or molasses.",
+            "definition_7_10": "A heavy, sticky sweetener that pours slowly and has a rich, deep sugary flavor.",
+            "exampleSentence": "The old recipe called for treacle to make the gingerbread extra sweet and moist.",
+            "pronunciation": "TREE-kul"
+          },
+          {
+            "word": "shuffled",
+            "emoji": "🚶",
+            "definition_2_4": null,
+            "definition_4_7": "Moved by sliding your feet without picking them up.",
+            "definition_7_10": "Walked slowly by dragging the feet along the ground instead of taking normal steps.",
+            "exampleSentence": "The sleepy children shuffled to the breakfast table in their pajamas.",
+            "pronunciation": "SHUF-uld"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "riddles",
+            "syllables": [
+              "rid",
+              "ulz"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "treacle",
+            "syllables": [
+              "tree",
+              "kul"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "shuffled",
+            "syllables": [
+              "shuf",
+              "uld"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -208,6 +978,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "creaking wooden door",
           "fountain water splashing",
           "distant garden birds"
+        ],
+        "vocabWords": [
+          {
+            "word": "quarrelled",
+            "emoji": "😤",
+            "definition_2_4": null,
+            "definition_4_7": "Had an angry fight or argument with someone.",
+            "definition_7_10": "Got into a disagreement that involved shouting or harsh words back and forth.",
+            "exampleSentence": "The two friends quarrelled about which movie to watch but made up later.",
+            "pronunciation": "KWAR-uld"
+          },
+          {
+            "word": "budge",
+            "emoji": "🪨",
+            "definition_2_4": null,
+            "definition_4_7": "Move even a tiny bit from where you are.",
+            "definition_7_10": "Shift or change position at all, even the smallest amount possible.",
+            "exampleSentence": "The heavy rock wouldn't budge no matter how hard we tried to push it.",
+            "pronunciation": "BUJ"
+          },
+          {
+            "word": "marvellous",
+            "emoji": "🌟",
+            "definition_2_4": null,
+            "definition_4_7": "Really wonderful and amazing in a special way.",
+            "definition_7_10": "Extraordinarily delightful and impressive, causing wonder and admiration.",
+            "exampleSentence": "The circus performers did marvellous tricks that made the whole audience cheer loudly.",
+            "pronunciation": "MAR-vul-us"
+          },
+          {
+            "word": "nonsense",
+            "emoji": "🤪",
+            "definition_2_4": null,
+            "definition_4_7": "Words or ideas that don't make any sense at all.",
+            "definition_7_10": "Things said or done that are silly, illogical, and completely without meaning or reason.",
+            "exampleSentence": "The toddler babbled nonsense words that sounded funny but meant nothing to adults.",
+            "pronunciation": "NON-sens"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "quarrelled",
+            "syllables": [
+              "kwar",
+              "uld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "marvellous",
+            "syllables": [
+              "mar",
+              "vul",
+              "us"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "nonsense",
+            "syllables": [
+              "non",
+              "sens"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -218,6 +1053,69 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "paintbrushes slapping",
           "trumpets blaring",
           "Queen's booming voice"
+        ],
+        "vocabWords": [
+          {
+            "word": "slipped",
+            "emoji": "🏃‍♀️",
+            "definition_2_4": null,
+            "definition_4_7": "Left quietly without anyone really noticing.",
+            "definition_7_10": "Moved away sneakily and silently, like a shadow escaping when no one is looking.",
+            "exampleSentence": "The cat slipped out the back door while the family was eating dinner.",
+            "pronunciation": "SLIPD"
+          },
+          {
+            "word": "trunk",
+            "emoji": "🌳",
+            "definition_2_4": null,
+            "definition_4_7": "The thick main part of a tree that grows up from roots.",
+            "definition_7_10": "The solid, woody stem of a tree that supports all the branches and leaves above.",
+            "exampleSentence": "The children carved their initials into the trunk of the old oak tree.",
+            "pronunciation": "TRUNGK"
+          },
+          {
+            "word": "stepping",
+            "emoji": "👣",
+            "definition_2_4": null,
+            "definition_4_7": "Walking by putting one foot in front of the other.",
+            "definition_7_10": "Moving forward by lifting each foot and placing it down in a careful, deliberate way.",
+            "exampleSentence": "She was stepping carefully across the icy sidewalk to avoid falling down.",
+            "pronunciation": "STEP-ing"
+          },
+          {
+            "word": "tiptoed",
+            "emoji": "🤫",
+            "definition_2_4": null,
+            "definition_4_7": "Walked very quietly on just your toes.",
+            "definition_7_10": "Moved silently by walking on the tips of the toes to avoid making noise.",
+            "exampleSentence": "The child tiptoed past the sleeping baby's room so she wouldn't wake up.",
+            "pronunciation": "TIP-tohd"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "slipped",
+            "syllables": [
+              "slipd"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "stepping",
+            "syllables": [
+              "step",
+              "ing"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "tiptoed",
+            "syllables": [
+              "tip",
+              "tohd"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -227,6 +1125,72 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "flamingo squawking",
           "hedgehogs grumbling",
           "Queen shouting orders"
+        ],
+        "vocabWords": [
+          {
+            "word": "gardeners",
+            "emoji": "👨‍🌾",
+            "definition_2_4": null,
+            "definition_4_7": "People whose job is to take care of plants and flowers.",
+            "definition_7_10": "Workers who plant, water, and tend to gardens to keep them beautiful and healthy.",
+            "exampleSentence": "The gardeners planted colorful tulips along the walkway in front of the school.",
+            "pronunciation": "GAR-den-erz"
+          },
+          {
+            "word": "procession",
+            "emoji": "👑",
+            "definition_2_4": null,
+            "definition_4_7": "A long line of people walking together in order.",
+            "definition_7_10": "A formal parade where people march one after another in a special ceremony.",
+            "exampleSentence": "The wedding procession walked slowly down the aisle toward the altar.",
+            "pronunciation": "pruh-SESH-un"
+          },
+          {
+            "word": "courtiers",
+            "emoji": "🏰",
+            "definition_2_4": null,
+            "definition_4_7": "Fancy people who live and work in a king's palace.",
+            "definition_7_10": "Elegant nobles and servants who attend the royal court and serve the king or queen.",
+            "exampleSentence": "The courtiers wore silk gowns and jewels when they attended the royal ball.",
+            "pronunciation": "KOR-tee-erz"
+          },
+          {
+            "word": "bellowed",
+            "emoji": "📢",
+            "definition_2_4": null,
+            "definition_4_7": "Shouted very loudly in a deep, angry voice.",
+            "definition_7_10": "Roared or yelled with tremendous force, like a bull or an angry giant would sound.",
+            "exampleSentence": "The coach bellowed instructions to his team from across the noisy football field.",
+            "pronunciation": "BEL-ohd"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "procession",
+            "syllables": [
+              "pruh",
+              "sesh",
+              "un"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "courtiers",
+            "syllables": [
+              "kor",
+              "tee",
+              "erz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "bellowed",
+            "syllables": [
+              "bel",
+              "ohd"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -236,6 +1200,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "gavel pounding",
           "jurors' slate pencils scratching",
           "Queen's sharp command"
+        ],
+        "vocabWords": [
+          {
+            "word": "croquet",
+            "emoji": "🏌️",
+            "definition_2_4": null,
+            "definition_4_7": "A game where you hit balls through hoops with mallets.",
+            "definition_7_10": "An outdoor game played by using wooden hammers to knock balls through wire wickets.",
+            "exampleSentence": "The family played croquet on the lawn using colorful balls and long-handled mallets.",
+            "pronunciation": "kroh-KAY"
+          },
+          {
+            "word": "mallets",
+            "emoji": "🔨",
+            "definition_2_4": null,
+            "definition_4_7": "Wooden hammers with long handles used to hit things.",
+            "definition_7_10": "Tools like hammers but with flat heads, used for striking balls or other objects gently.",
+            "exampleSentence": "The musicians used soft mallets to play the xylophone during the school concert.",
+            "pronunciation": "MAL-its"
+          },
+          {
+            "word": "flamingos",
+            "emoji": "🦩",
+            "definition_2_4": null,
+            "definition_4_7": "Tall pink birds with long necks and skinny legs.",
+            "definition_7_10": "Graceful wading birds known for their bright pink feathers and habit of standing on one leg.",
+            "exampleSentence": "The flamingos at the zoo stood in the shallow water looking for small fish.",
+            "pronunciation": "fluh-MING-gohz"
+          },
+          {
+            "word": "hedgehogs",
+            "emoji": "🦔",
+            "definition_2_4": null,
+            "definition_4_7": "Small animals covered in sharp spines that roll into balls.",
+            "definition_7_10": "Prickly little creatures that protect themselves by curling up into spiky, round balls.",
+            "exampleSentence": "The hedgehogs in the garden eat insects and curl up when they feel scared.",
+            "pronunciation": "HEJ-hawgz"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "croquet",
+            "syllables": [
+              "kroh",
+              "kay"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "flamingos",
+            "syllables": [
+              "fluh",
+              "ming",
+              "gohz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "hedgehogs",
+            "syllables": [
+              "hej",
+              "hawgz"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -245,6 +1274,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "playing cards fluttering in wind",
           "Alice's brave laugh",
           "whirlwind whooshing"
+        ],
+        "vocabWords": [
+          {
+            "word": "trumpet",
+            "emoji": "🎺",
+            "definition_2_4": null,
+            "definition_4_7": "A shiny brass instrument that makes loud, clear music.",
+            "definition_7_10": "A horn-shaped musical instrument that players blow into to create bright, ringing sounds.",
+            "exampleSentence": "The trumpet player stood up to perform a solo during the jazz concert.",
+            "pronunciation": "TRUM-pit"
+          },
+          {
+            "word": "trial",
+            "emoji": "⚖️",
+            "definition_2_4": null,
+            "definition_4_7": "A meeting in court to decide if someone broke the law.",
+            "definition_7_10": "A legal proceeding where evidence is presented to determine if someone is guilty of a crime.",
+            "exampleSentence": "The judge listened carefully to both sides during the important trial.",
+            "pronunciation": "TRY-ul"
+          },
+          {
+            "word": "courtroom",
+            "emoji": "🏛️",
+            "definition_2_4": null,
+            "definition_4_7": "A room where judges decide about crimes and laws.",
+            "definition_7_10": "The formal chamber where legal cases are heard and justice is administered by judges.",
+            "exampleSentence": "Everyone stood up when the judge entered the crowded courtroom.",
+            "pronunciation": "KORT-room"
+          },
+          {
+            "word": "stammered",
+            "emoji": "😰",
+            "definition_2_4": null,
+            "definition_4_7": "Spoke with difficulty, repeating sounds because you're nervous.",
+            "definition_7_10": "Talked in a halting, broken way, struggling to get words out smoothly due to fear.",
+            "exampleSentence": "The shy student stammered when the teacher called on her to read aloud.",
+            "pronunciation": "STAM-erd"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "trumpet",
+            "syllables": [
+              "trum",
+              "pit"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "courtroom",
+            "syllables": [
+              "kort",
+              "room"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "stammered",
+            "syllables": [
+              "stam",
+              "erd"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -254,9 +1347,156 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "gentle river flowing",
           "leaves rustling in breeze",
           "sister's soft laugh"
+        ],
+        "vocabWords": [
+          {
+            "word": "fluttering",
+            "emoji": "🦋",
+            "definition_2_4": null,
+            "definition_4_7": "Moving with quick, light movements like butterfly wings.",
+            "definition_7_10": "Flying or falling with rapid, gentle motions that seem to dance through the air.",
+            "exampleSentence": "The autumn leaves were fluttering down from the trees in the gentle breeze.",
+            "pronunciation": "FLUT-er-ing"
+          },
+          {
+            "word": "jurors",
+            "emoji": "👥",
+            "definition_2_4": null,
+            "definition_4_7": "People chosen to help decide if someone is guilty in court.",
+            "definition_7_10": "Citizens selected to listen to evidence and make important decisions about legal cases.",
+            "exampleSentence": "The twelve jurors discussed the case carefully before reaching their final decision.",
+            "pronunciation": "JOOR-erz"
+          },
+          {
+            "word": "brushed",
+            "emoji": "🧹",
+            "definition_2_4": null,
+            "definition_4_7": "Swept something away with quick movements of your hands.",
+            "definition_7_10": "Wiped or cleared away by making swift, sweeping motions across a surface.",
+            "exampleSentence": "She brushed the crumbs off the table after finishing her sandwich.",
+            "pronunciation": "BRUSHD"
+          },
+          {
+            "word": "pounding",
+            "emoji": "💓",
+            "definition_2_4": null,
+            "definition_4_7": "Beating very hard and fast, like your heart when excited.",
+            "definition_7_10": "Thumping rapidly and forcefully, the way your heart beats during moments of intense emotion.",
+            "exampleSentence": "His heart was pounding with excitement as he stepped onto the stage.",
+            "pronunciation": "POWND-ing"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "fluttering",
+            "syllables": [
+              "flut",
+              "er",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "brushed",
+            "syllables": [
+              "brushd"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "pounding",
+            "syllables": [
+              "pownd",
+              "ing"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       }
-    ]
+    ],
+    "comprehensionQuestions": [
+      {
+        "type": "recall",
+        "question": "What did the White Rabbit say when Alice first saw him running by?",
+        "options": [
+          {
+            "text": "'Oh dear, oh dear! I shall be late!'",
+            "emoji": "⏰",
+            "correct": true
+          },
+          {
+            "text": "'Hello Alice! Follow me down the hole!'",
+            "emoji": "👋",
+            "correct": false
+          },
+          {
+            "text": "'The Queen is looking for you!'",
+            "emoji": "👑",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "inference",
+        "question": "Why do you think Alice kept changing sizes throughout her adventure?",
+        "options": [
+          {
+            "text": "She ate and drank magical things that made her grow and shrink",
+            "emoji": "🧪",
+            "correct": true
+          },
+          {
+            "text": "The Cheshire Cat was playing tricks on her with magic spells",
+            "emoji": "😸",
+            "correct": false
+          },
+          {
+            "text": "She was getting older and younger as time went backwards",
+            "emoji": "⏳",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "connection",
+        "question": "Have you ever had a dream that felt so real you wondered if it actually happened?",
+        "options": [
+          {
+            "text": "Yes, I've had dreams that felt completely real to me",
+            "emoji": "😴",
+            "correct": true
+          },
+          {
+            "text": "Sometimes I wake up confused about what was real",
+            "emoji": "🤔",
+            "correct": true
+          },
+          {
+            "text": "I love dreaming about magical adventures like Alice's",
+            "emoji": "✨",
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "predictionPause": {
+      "atPageIdx": 15,
+      "question": "Alice is on trial and the Queen wants to give her the sentence before the verdict! What do you think will happen next?",
+      "options": [
+        {
+          "text": "Alice will grow bigger and stand up to the Queen",
+          "emoji": "💪"
+        },
+        {
+          "text": "The King will help Alice escape from the courtroom",
+          "emoji": "🏃‍♀️"
+        },
+        {
+          "text": "Alice will wake up and discover it was all a dream",
+          "emoji": "😴"
+        }
+      ]
+    }
   },
   {
     "id": "classic_jungle_book",
@@ -353,6 +1593,68 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "a wolf's gentle huff",
           "a baby's soft laugh",
           "distant owl hooting"
+        ],
+        "vocabWords": [
+          {
+            "word": "prowled",
+            "emoji": "🐺",
+            "definition_2_4": null,
+            "definition_4_7": "To walk quietly and carefully while hunting or searching.",
+            "definition_7_10": "To move stealthily and purposefully, like a hunter stalking through the shadows.",
+            "exampleSentence": "The cat prowled around the kitchen looking for dropped food.",
+            "pronunciation": "PROWLD"
+          },
+          {
+            "word": "pricked",
+            "emoji": "👂",
+            "definition_2_4": null,
+            "definition_4_7": "To stand up straight and alert, ready to listen.",
+            "definition_7_10": "To suddenly become upright and attentive, like when something catches your attention.",
+            "exampleSentence": "The dog's ears pricked when it heard the doorbell ring.",
+            "pronunciation": "PRIKD"
+          },
+          {
+            "word": "plump",
+            "emoji": "👶",
+            "definition_2_4": null,
+            "definition_4_7": "Round and chubby in a healthy, cute way.",
+            "definition_7_10": "Pleasantly full and rounded, like something well-fed and thriving.",
+            "exampleSentence": "The plump strawberries looked delicious in the garden.",
+            "pronunciation": "PLUMP"
+          },
+          {
+            "word": "den",
+            "emoji": "🏠",
+            "definition_2_4": null,
+            "definition_4_7": "A cozy home where wild animals live and sleep.",
+            "definition_7_10": "A sheltered dwelling place where animals raise their young and find safety.",
+            "exampleSentence": "The bear cubs played outside their den in the forest.",
+            "pronunciation": "DEN"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "prowled",
+            "syllables": [
+              "prowld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "starry",
+            "syllables": [
+              "star",
+              "ee"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "gripped",
+            "syllables": [
+              "gripd"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -363,6 +1665,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "wolf's warning snarl",
           "ferns rustling",
           "wind through jungle leaves"
+        ],
+        "vocabWords": [
+          {
+            "word": "roared",
+            "emoji": "🦁",
+            "definition_2_4": null,
+            "definition_4_7": "To make a very loud, scary sound like a lion.",
+            "definition_7_10": "To produce a deep, thunderous sound that echoes with power and threat.",
+            "exampleSentence": "The motorcycle roared as it sped down the street.",
+            "pronunciation": "RORD"
+          },
+          {
+            "word": "lame",
+            "emoji": "🦵",
+            "definition_2_4": null,
+            "definition_4_7": "Having trouble walking because of an injured leg or foot.",
+            "definition_7_10": "Unable to walk normally due to an injury that causes limping or weakness.",
+            "exampleSentence": "The lame horse needed special care from the veterinarian.",
+            "pronunciation": "LAYM"
+          },
+          {
+            "word": "hackles",
+            "emoji": "😡",
+            "definition_2_4": null,
+            "definition_4_7": "The hair on an animal's neck that stands up when angry.",
+            "definition_7_10": "The bristling fur along an animal's neck and shoulders that rises during anger or fear.",
+            "exampleSentence": "The dog's hackles rose when a stranger approached the house.",
+            "pronunciation": "HAK-ulz"
+          },
+          {
+            "word": "lashing",
+            "emoji": "💥",
+            "definition_2_4": null,
+            "definition_4_7": "Moving back and forth quickly and angrily, like a whip.",
+            "definition_7_10": "Striking or swinging violently from side to side in anger or frustration.",
+            "exampleSentence": "The angry cat was lashing its tail while hissing at the dog.",
+            "pronunciation": "LASH-ing"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "settle",
+            "syllables": [
+              "set",
+              "ul"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "narrow",
+            "syllables": [
+              "nar",
+              "oh"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "fury",
+            "syllables": [
+              "fyur",
+              "ee"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -372,6 +1738,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "mother wolf's defiant growl",
           "wolf pups whimpering softly",
           "tiger huffing away into night"
+        ],
+        "vocabWords": [
+          {
+            "word": "courage",
+            "emoji": "💪",
+            "definition_2_4": null,
+            "definition_4_7": "Being brave and not afraid to face scary things.",
+            "definition_7_10": "The strength of heart to face danger or difficulty without backing down.",
+            "exampleSentence": "It took courage for the little girl to speak in front of the whole class.",
+            "pronunciation": "KUR-ij"
+          },
+          {
+            "word": "snarled",
+            "emoji": "😤",
+            "definition_2_4": null,
+            "definition_4_7": "To speak angrily while showing teeth, like an angry dog.",
+            "definition_7_10": "To growl words with fierce anger, baring teeth in a threatening way.",
+            "exampleSentence": "The guard dog snarled at anyone who came near the gate.",
+            "pronunciation": "SNARLD"
+          },
+          {
+            "word": "snorted",
+            "emoji": "🐽",
+            "definition_2_4": null,
+            "definition_4_7": "To make a loud breathing sound through the nose when angry.",
+            "definition_7_10": "To exhale forcefully through the nostrils, usually showing anger or disgust.",
+            "exampleSentence": "The horse snorted when the rider pulled too hard on the reins.",
+            "pronunciation": "SNOR-ted"
+          },
+          {
+            "word": "slunk",
+            "emoji": "🚶",
+            "definition_2_4": null,
+            "definition_4_7": "To move away quietly and ashamed, like sneaking away.",
+            "definition_7_10": "To creep away stealthily, usually in defeat or embarrassment.",
+            "exampleSentence": "The guilty puppy slunk away after chewing up the shoe.",
+            "pronunciation": "SLUNK"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "burning",
+            "syllables": [
+              "burn",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "shadows",
+            "syllables": [
+              "shad",
+              "ohz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "revenge",
+            "syllables": [
+              "ri",
+              "venj"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -381,6 +1811,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "wolves murmuring and panting",
           "wind stirring jungle canopy",
           "a lone panther's soft growl"
+        ],
+        "vocabWords": [
+          {
+            "word": "Council",
+            "emoji": "🏛️",
+            "definition_2_4": null,
+            "definition_4_7": "A group of important animals who meet to make decisions.",
+            "definition_7_10": "A formal gathering of leaders who come together to discuss important matters and make rules.",
+            "exampleSentence": "The student council met to plan the school carnival.",
+            "pronunciation": "KOWN-sil"
+          },
+          {
+            "word": "vouch",
+            "emoji": "✋",
+            "definition_2_4": null,
+            "definition_4_7": "To promise that someone is good and can be trusted.",
+            "definition_7_10": "To give your word as a guarantee that someone is worthy and reliable.",
+            "exampleSentence": "My teacher will vouch for my good behavior at school.",
+            "pronunciation": "VOWCH"
+          },
+          {
+            "word": "velvet",
+            "emoji": "🧸",
+            "definition_2_4": null,
+            "definition_4_7": "Very soft and smooth, like expensive fuzzy cloth.",
+            "definition_7_10": "Having a rich, luxurious softness that feels wonderful to touch.",
+            "exampleSentence": "The velvet curtains felt smooth and elegant.",
+            "pronunciation": "VEL-vet"
+          },
+          {
+            "word": "gleaming",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Shining brightly like polished gold or clean glass.",
+            "definition_7_10": "Reflecting light with a bright, steady glow that catches the eye beautifully.",
+            "exampleSentence": "The gleaming car had just been washed and waxed.",
+            "pronunciation": "GLEE-ming"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "gathered",
+            "syllables": [
+              "gath",
+              "erd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "rumbled",
+            "syllables": [
+              "rum",
+              "buld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "panther",
+            "syllables": [
+              "pan",
+              "ther"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -391,6 +1885,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "child's bubbling laughter",
           "panther's low contented purr",
           "bear's gentle rumble"
+        ],
+        "vocabWords": [
+          {
+            "word": "purred",
+            "emoji": "😸",
+            "definition_2_4": null,
+            "definition_4_7": "To speak in a soft, gentle way like a happy cat.",
+            "definition_7_10": "To speak with a smooth, rumbling voice that sounds content and soothing.",
+            "exampleSentence": "The mother purred softly as she sang her baby to sleep.",
+            "pronunciation": "PURD"
+          },
+          {
+            "word": "shuffled",
+            "emoji": "🐻",
+            "definition_2_4": null,
+            "definition_4_7": "To walk slowly by sliding feet along the ground.",
+            "definition_7_10": "To move forward with dragging, unhurried steps, often showing tiredness or laziness.",
+            "exampleSentence": "The sleepy child shuffled to the bathroom in pajamas.",
+            "pronunciation": "SHUF-uld"
+          },
+          {
+            "word": "yawned",
+            "emoji": "😴",
+            "definition_2_4": null,
+            "definition_4_7": "To open your mouth wide when you're sleepy or bored.",
+            "definition_7_10": "To involuntarily open the mouth wide and breathe deeply, usually from tiredness.",
+            "exampleSentence": "The student yawned during the long, boring lecture.",
+            "pronunciation": "YAWND"
+          },
+          {
+            "word": "accepted",
+            "emoji": "🤗",
+            "definition_2_4": null,
+            "definition_4_7": "To welcome someone and let them become part of your group.",
+            "definition_7_10": "To receive someone willingly and allow them to belong or join your community.",
+            "exampleSentence": "The new student was accepted by her classmates right away.",
+            "pronunciation": "ak-SEP-ted"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "tumbled",
+            "syllables": [
+              "tum",
+              "buld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "among",
+            "syllables": [
+              "uh",
+              "mung"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "laughing",
+            "syllables": [
+              "laf",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -402,6 +1960,69 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "wolves panting as they run",
           "parrots squawking overhead",
           "feet padding on jungle earth"
+        ],
+        "vocabWords": [
+          {
+            "word": "tangled",
+            "emoji": "🌿",
+            "definition_2_4": null,
+            "definition_4_7": "Twisted and knotted together in a messy way.",
+            "definition_7_10": "Twisted into a complicated, knotted mess that's difficult to separate or comb.",
+            "exampleSentence": "After the windy day, my hair was completely tangled.",
+            "pronunciation": "TANG-guld"
+          },
+          {
+            "word": "pleased",
+            "emoji": "😊",
+            "definition_2_4": null,
+            "definition_4_7": "Happy and satisfied with how something turned out.",
+            "definition_7_10": "Feeling contentment and satisfaction, especially when something meets your expectations.",
+            "exampleSentence": "The teacher was pleased with how hard the students worked.",
+            "pronunciation": "PLEESD"
+          },
+          {
+            "word": "thorns",
+            "emoji": "🌹",
+            "definition_2_4": null,
+            "definition_4_7": "Sharp, pointy spikes that grow on some plants like roses.",
+            "definition_7_10": "Needle-like spines that protect plants by pricking anything that tries to harm them.",
+            "exampleSentence": "Be careful of the thorns when you pick those beautiful roses.",
+            "pronunciation": "THORNZ"
+          },
+          {
+            "word": "waterhole",
+            "emoji": "💧",
+            "definition_2_4": null,
+            "definition_4_7": "A small pond where wild animals go to drink water.",
+            "definition_7_10": "A natural pool of water in the wild where animals gather to drink and cool off.",
+            "exampleSentence": "The elephants visited the waterhole every evening at sunset.",
+            "pronunciation": "WAH-ter-hohl"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "rolled",
+            "syllables": [
+              "rohld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "rivers",
+            "syllables": [
+              "riv",
+              "erz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "clever",
+            "syllables": [
+              "klev",
+              "er"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -412,6 +2033,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "boy repeating words",
           "mongoose chittering",
           "leaves rustling in warm breeze"
+        ],
+        "vocabWords": [
+          {
+            "word": "strict",
+            "emoji": "👨‍🏫",
+            "definition_2_4": null,
+            "definition_4_7": "Someone who has rules and makes sure you follow them.",
+            "definition_7_10": "Demanding exact obedience to rules and not allowing mistakes or laziness.",
+            "exampleSentence": "My piano teacher is strict about practicing every single day.",
+            "pronunciation": "STRIKT"
+          },
+          {
+            "word": "grumble",
+            "emoji": "😤",
+            "definition_2_4": null,
+            "definition_4_7": "To complain quietly in a cranky, unhappy way.",
+            "definition_7_10": "To mutter complaints or express dissatisfaction in a low, rumbling voice.",
+            "exampleSentence": "Dad always grumbles about having to mow the lawn on weekends.",
+            "pronunciation": "GRUM-bul"
+          },
+          {
+            "word": "cuffing",
+            "emoji": "🐾",
+            "definition_2_4": null,
+            "definition_4_7": "To tap someone gently with your paw or hand.",
+            "definition_7_10": "To give a light, corrective tap, usually as a gentle form of discipline.",
+            "exampleSentence": "The mother cat was cuffing her kitten for being too rough.",
+            "pronunciation": "KUF-ing"
+          },
+          {
+            "word": "swelled",
+            "emoji": "❤️",
+            "definition_2_4": null,
+            "definition_4_7": "To grow bigger and fuller, especially with good feelings.",
+            "definition_7_10": "To expand with emotion, becoming filled with pride, joy, or other strong feelings.",
+            "exampleSentence": "Her heart swelled with happiness when she saw her family.",
+            "pronunciation": "SWELD"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "hunting",
+            "syllables": [
+              "hunt",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "buffalo",
+            "syllables": [
+              "buf",
+              "uh",
+              "loh"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "creature",
+            "syllables": [
+              "kree",
+              "cher"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -422,6 +2108,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "distant jungle birds settling",
           "leaves whispering",
           "far-off tiger's echoing roar"
+        ],
+        "vocabWords": [
+          {
+            "word": "flowing",
+            "emoji": "🌊",
+            "definition_2_4": null,
+            "definition_4_7": "Moving smoothly like water in a stream or river.",
+            "definition_7_10": "Gliding with graceful, continuous movement, like liquid pouring from a container.",
+            "exampleSentence": "Her long hair was flowing in the gentle breeze.",
+            "pronunciation": "FLOH-ing"
+          },
+          {
+            "word": "swift",
+            "emoji": "⚡",
+            "definition_2_4": null,
+            "definition_4_7": "Very fast and quick, like a racing car.",
+            "definition_7_10": "Moving with great speed and nimbleness, able to change direction quickly.",
+            "exampleSentence": "The swift rabbit escaped from the fox easily.",
+            "pronunciation": "SWIFT"
+          },
+          {
+            "word": "freeze",
+            "emoji": "🧊",
+            "definition_2_4": null,
+            "definition_4_7": "To stop moving completely and stay perfectly still.",
+            "definition_7_10": "To become motionless instantly, like a statue that cannot move at all.",
+            "exampleSentence": "When playing freeze tag, you must freeze until someone unfreezes you.",
+            "pronunciation": "FREEZ"
+          },
+          {
+            "word": "earnest",
+            "emoji": "😠",
+            "definition_2_4": null,
+            "definition_4_7": "Being very serious about something, not just pretending.",
+            "definition_7_10": "Acting with complete seriousness and determination, meaning every word or action.",
+            "exampleSentence": "She made an earnest promise to help her grandmother every week.",
+            "pronunciation": "UR-nest"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "shoulders",
+            "syllables": [
+              "shohl",
+              "derz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "whispered",
+            "syllables": [
+              "whis",
+              "perd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "murmured",
+            "syllables": [
+              "mur",
+              "merd"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -432,6 +2182,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "branches snapping",
           "boy gasping",
           "wind rushing through leaves"
+        ],
+        "vocabWords": [
+          {
+            "word": "dozing",
+            "emoji": "😴",
+            "definition_2_4": null,
+            "definition_4_7": "Sleeping lightly, not in a deep sleep.",
+            "definition_7_10": "Resting in a light sleep where you can easily wake up if something happens.",
+            "exampleSentence": "Grandpa was dozing in his favorite chair after lunch.",
+            "pronunciation": "DOH-zing"
+          },
+          {
+            "word": "seized",
+            "emoji": "✊",
+            "definition_2_4": null,
+            "definition_4_7": "To grab someone or something quickly and tightly.",
+            "definition_7_10": "To take hold of forcefully and suddenly, usually without permission.",
+            "exampleSentence": "The police officer seized the stolen purse from the thief.",
+            "pronunciation": "SEEEZD"
+          },
+          {
+            "word": "cackling",
+            "emoji": "🐔",
+            "definition_2_4": null,
+            "definition_4_7": "Making harsh, loud laughing sounds like a mean witch.",
+            "definition_7_10": "Producing sharp, unpleasant laughter that sounds mocking or wicked.",
+            "exampleSentence": "The old hen was cackling loudly in the farmyard.",
+            "pronunciation": "KAK-ling"
+          },
+          {
+            "word": "thumped",
+            "emoji": "💓",
+            "definition_2_4": null,
+            "definition_4_7": "To beat loudly and quickly, like your heart when scared.",
+            "definition_7_10": "To pound heavily and rapidly, especially describing a frightened heartbeat.",
+            "exampleSentence": "Her heart thumped when she heard footsteps in the dark hallway.",
+            "pronunciation": "THUMPD"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "afternoon",
+            "syllables": [
+              "af",
+              "ter",
+              "noon"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "snatched",
+            "syllables": [
+              "snachd"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "chattering",
+            "syllables": [
+              "chat",
+              "er",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -442,6 +2257,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "bear roaring loudly",
           "python's deep hiss",
           "monkeys screeching in flight"
+        ],
+        "vocabWords": [
+          {
+            "word": "shimmering",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Shining with a soft, moving light like water in sunshine.",
+            "definition_7_10": "Glowing with a gentle, flickering light that seems to dance and move.",
+            "exampleSentence": "The shimmering lake looked like it was covered with diamonds.",
+            "pronunciation": "SHIM-er-ing"
+          },
+          {
+            "word": "coils",
+            "emoji": "🐍",
+            "definition_2_4": null,
+            "definition_4_7": "Long body parts that wrap around in circles, like a snake.",
+            "definition_7_10": "Spiraling loops of a snake's body that can wrap around objects or prey.",
+            "exampleSentence": "The garden hose lay in coils on the garage floor.",
+            "pronunciation": "KOYLZ"
+          },
+          {
+            "word": "scattered",
+            "emoji": "💨",
+            "definition_2_4": null,
+            "definition_4_7": "To run away quickly in all different directions.",
+            "definition_7_10": "To disperse rapidly and randomly, spreading out like leaves in the wind.",
+            "exampleSentence": "The children scattered when the school bell rang for recess.",
+            "pronunciation": "SKAT-erd"
+          },
+          {
+            "word": "swept",
+            "emoji": "🧹",
+            "definition_2_4": null,
+            "definition_4_7": "To pick up quickly and smoothly in one motion.",
+            "definition_7_10": "To lift or carry away with a single, graceful movement.",
+            "exampleSentence": "The wind swept the autumn leaves across the yard.",
+            "pronunciation": "SWEPT"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "message",
+            "syllables": [
+              "mes",
+              "ij"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "python",
+            "syllables": [
+              "py",
+              "thon"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "creatures",
+            "syllables": [
+              "kree",
+              "cherz"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -453,6 +2332,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "tiger's low growl",
           "evening wind sighing",
           "panther's soft warning huff"
+        ],
+        "vocabWords": [
+          {
+            "word": "manhood",
+            "emoji": "👨",
+            "definition_2_4": null,
+            "definition_4_7": "The time when a boy grows up to become a man.",
+            "definition_7_10": "The state of being an adult male, having reached full maturity and responsibility.",
+            "exampleSentence": "His father taught him important lessons about reaching manhood.",
+            "pronunciation": "MAN-hood"
+          },
+          {
+            "word": "crept",
+            "emoji": "🕸️",
+            "definition_2_4": null,
+            "definition_4_7": "To move very slowly and quietly, like sneaking.",
+            "definition_7_10": "To advance stealthily and gradually, often bringing something unwelcome.",
+            "exampleSentence": "The fog crept across the valley as the sun went down.",
+            "pronunciation": "KREPT"
+          },
+          {
+            "word": "whispering",
+            "emoji": "🤫",
+            "definition_2_4": null,
+            "definition_4_7": "To talk very quietly so others can barely hear you.",
+            "definition_7_10": "To speak in hushed tones, usually to share secrets or avoid being overheard.",
+            "exampleSentence": "The students were whispering about the surprise party for their teacher.",
+            "pronunciation": "WHIS-per-ing"
+          },
+          {
+            "word": "restless",
+            "emoji": "😤",
+            "definition_2_4": null,
+            "definition_4_7": "Unable to stay calm or sit still, feeling worried or impatient.",
+            "definition_7_10": "Feeling agitated and unable to remain peaceful, often wanting change or action.",
+            "exampleSentence": "The horse became restless before the thunderstorm arrived.",
+            "pronunciation": "REST-les"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "trouble",
+            "syllables": [
+              "trub",
+              "ul"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "shadow",
+            "syllables": [
+              "shad",
+              "oh"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "divided",
+            "syllables": [
+              "di",
+              "vy",
+              "ded"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -463,6 +2407,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "panther's low comforting rumble",
           "boy's quiet breath",
           "distant night birds"
+        ],
+        "vocabWords": [
+          {
+            "word": "turning",
+            "emoji": "🔄",
+            "definition_2_4": null,
+            "definition_4_7": "Changing their minds to be against someone they used to support.",
+            "definition_7_10": "Switching loyalty or allegiance, becoming hostile to someone once trusted.",
+            "exampleSentence": "The friends were turning against him because of the mean rumors.",
+            "pronunciation": "TURN-ing"
+          },
+          {
+            "word": "stripes",
+            "emoji": "🐅",
+            "definition_2_4": null,
+            "definition_4_7": "A way to talk about the tiger without using his name.",
+            "definition_7_10": "A clever reference to someone based on their most recognizable physical feature.",
+            "exampleSentence": "The stripes on the flag were red, white, and blue.",
+            "pronunciation": "STRYPS"
+          },
+          {
+            "word": "sting",
+            "emoji": "😢",
+            "definition_2_4": null,
+            "definition_4_7": "A sharp, painful feeling that hurts inside your heart.",
+            "definition_7_10": "An intense emotional pain that feels like a physical hurt in your chest.",
+            "exampleSentence": "She felt the sting of embarrassment when she tripped in front of everyone.",
+            "pronunciation": "STING"
+          },
+          {
+            "word": "softened",
+            "emoji": "🥺",
+            "definition_2_4": null,
+            "definition_4_7": "Became gentle and kind, full of caring feelings.",
+            "definition_7_10": "Grew tender and compassionate, showing warmth and understanding instead of hardness.",
+            "exampleSentence": "Her voice softened when she spoke to the crying child.",
+            "pronunciation": "SOF-end"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "single",
+            "syllables": [
+              "sing",
+              "gul"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "demand",
+            "syllables": [
+              "di",
+              "mand"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "village",
+            "syllables": [
+              "vil",
+              "ij"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -473,6 +2481,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "distant village murmurs",
           "a cow lowing far off",
           "boy's quiet breath"
+        ],
+        "vocabWords": [
+          {
+            "word": "ember",
+            "emoji": "🔥",
+            "definition_2_4": null,
+            "definition_4_7": "A small piece of glowing fire, like a hot coal.",
+            "definition_7_10": "A small, glowing fragment of burning wood or coal that stays hot and fiery.",
+            "exampleSentence": "One ember from the campfire landed on the dry grass.",
+            "pronunciation": "EM-ber"
+          },
+          {
+            "word": "borrowed",
+            "emoji": "🤝",
+            "definition_2_4": null,
+            "definition_4_7": "To take something that belongs to someone else for a while.",
+            "definition_7_10": "To temporarily take and use something with the intention of returning it later.",
+            "exampleSentence": "She borrowed her sister's bike to ride to the store.",
+            "pronunciation": "BOR-ohd"
+          },
+          {
+            "word": "gourd",
+            "emoji": "🎃",
+            "definition_2_4": null,
+            "definition_4_7": "A hard shell from a plant that can hold things inside.",
+            "definition_7_10": "A dried, hollow fruit with tough skin that serves as a natural container.",
+            "exampleSentence": "The farmer used a gourd as a water bottle on hot days.",
+            "pronunciation": "GORD"
+          },
+          {
+            "word": "fierce",
+            "emoji": "🔥",
+            "definition_2_4": null,
+            "definition_4_7": "Very strong and powerful, ready to fight or destroy.",
+            "definition_7_10": "Intensely aggressive and wild, showing great strength and dangerous energy.",
+            "exampleSentence": "The fierce storm knocked down trees and power lines.",
+            "pronunciation": "FEERS"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "twilight",
+            "syllables": [
+              "twy",
+              "lyt"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "doorway",
+            "syllables": [
+              "dor",
+              "way"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "feeding",
+            "syllables": [
+              "feed",
+              "ing"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -483,6 +2555,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "wolves whimpering and backing away",
           "tiger's startled grunt",
           "Mowgli's trembling voice"
+        ],
+        "vocabWords": [
+          {
+            "word": "nervous",
+            "emoji": "😰",
+            "definition_2_4": null,
+            "definition_4_7": "Feeling worried and scared about what might happen.",
+            "definition_7_10": "Experiencing anxiety and unease, often accompanied by fidgeting or restlessness.",
+            "exampleSentence": "I felt nervous before giving my presentation to the class.",
+            "pronunciation": "NUR-vus"
+          },
+          {
+            "word": "prowled",
+            "emoji": "🐅",
+            "definition_2_4": null,
+            "definition_4_7": "To walk quietly and carefully while hunting or searching.",
+            "definition_7_10": "To move stealthily and purposefully, like a hunter stalking through the shadows.",
+            "exampleSentence": "The security guard prowled the empty building at night.",
+            "pronunciation": "PROWLD"
+          },
+          {
+            "word": "shrank",
+            "emoji": "😨",
+            "definition_2_4": null,
+            "definition_4_7": "To pull back in fear, becoming smaller or moving away.",
+            "definition_7_10": "To recoil or withdraw in fear, making oneself smaller to avoid danger.",
+            "exampleSentence": "The cat shrank away from the loud vacuum cleaner.",
+            "pronunciation": "SHRANK"
+          },
+          {
+            "word": "flinched",
+            "emoji": "😖",
+            "definition_2_4": null,
+            "definition_4_7": "To pull back quickly when something scares or surprises you.",
+            "definition_7_10": "To make a quick, involuntary movement away from something frightening or painful.",
+            "exampleSentence": "He flinched when the doctor gave him the shot.",
+            "pronunciation": "FLINCHD"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "silence",
+            "syllables": [
+              "sy",
+              "lens"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "flaming",
+            "syllables": [
+              "flay",
+              "ming"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "sorrow",
+            "syllables": [
+              "sor",
+              "oh"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -494,6 +2630,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "wolves breathing softly",
           "panther's gentle purr",
           "Mowgli's quiet sob"
+        ],
+        "vocabWords": [
+          {
+            "word": "swept",
+            "emoji": "🔥",
+            "definition_2_4": null,
+            "definition_4_7": "To move something quickly in one smooth motion.",
+            "definition_7_10": "To move with a broad, swift motion, like brushing or waving something forcefully.",
+            "exampleSentence": "She swept her arm across the table to clear it off.",
+            "pronunciation": "SWEPT"
+          },
+          {
+            "word": "whiskers",
+            "emoji": "😸",
+            "definition_2_4": null,
+            "definition_4_7": "Long, stiff hairs that grow near an animal's nose and mouth.",
+            "definition_7_10": "Sensitive facial hairs that help cats and other animals feel their surroundings.",
+            "exampleSentence": "The cat's whiskers twitched when it smelled the tuna fish.",
+            "pronunciation": "WHIS-kerz"
+          },
+          {
+            "word": "yelped",
+            "emoji": "😵",
+            "definition_2_4": null,
+            "definition_4_7": "To cry out suddenly in pain or surprise.",
+            "definition_7_10": "To make a sharp, high-pitched cry of pain, fear, or startlement.",
+            "exampleSentence": "The dog yelped when it stepped on the sharp thorn.",
+            "pronunciation": "YELPT"
+          },
+          {
+            "word": "faithless",
+            "emoji": "💔",
+            "definition_2_4": null,
+            "definition_4_7": "Not loyal; someone who breaks their promises to you.",
+            "definition_7_10": "Lacking loyalty or trustworthiness, abandoning commitments when it becomes convenient.",
+            "exampleSentence": "The faithless friend told everyone her secret after promising not to.",
+            "pronunciation": "FAYTH-les"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "scattered",
+            "syllables": [
+              "skat",
+              "erd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "remained",
+            "syllables": [
+              "ri",
+              "maynd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "whispered",
+            "syllables": [
+              "whis",
+              "perd"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -504,6 +2704,71 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "wolves howling in chase",
           "dust and wind roaring",
           "Mowgli's triumphant shout"
+        ],
+        "vocabWords": [
+          {
+            "word": "lurked",
+            "emoji": "👁️",
+            "definition_2_4": null,
+            "definition_4_7": "To hide and wait for the right time to attack.",
+            "definition_7_10": "To remain hidden in a threatening way, waiting for an opportunity to strike.",
+            "exampleSentence": "The spider lurked in its web, waiting for flies to get caught.",
+            "pronunciation": "LURKT"
+          },
+          {
+            "word": "ravine",
+            "emoji": "🏔️",
+            "definition_2_4": null,
+            "definition_4_7": "A deep, narrow valley between hills or mountains.",
+            "definition_7_10": "A steep-sided gorge carved by water, forming a natural trap between high walls.",
+            "exampleSentence": "The hikers carefully climbed down into the rocky ravine.",
+            "pronunciation": "ruh-VEEN"
+          },
+          {
+            "word": "thundering",
+            "emoji": "⛈️",
+            "definition_2_4": null,
+            "definition_4_7": "Making very loud, rumbling sounds like a storm.",
+            "definition_7_10": "Producing deep, powerful sounds that echo and boom like thunder in the sky.",
+            "exampleSentence": "The thundering waterfall could be heard from miles away.",
+            "pronunciation": "THUN-der-ing"
+          },
+          {
+            "word": "bully",
+            "emoji": "😠",
+            "definition_2_4": null,
+            "definition_4_7": "Someone who picks on others and tries to hurt or scare them.",
+            "definition_7_10": "A person who uses strength or power to intimidate and harm those who are weaker.",
+            "exampleSentence": "The school bully always picked on the smaller kids at recess.",
+            "pronunciation": "BUL-ee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "certain",
+            "syllables": [
+              "sur",
+              "ten"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "buffalo",
+            "syllables": [
+              "buf",
+              "uh",
+              "loh"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "troubled",
+            "syllables": [
+              "trub",
+              "uld"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -514,6 +2779,70 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "panther's low murmur",
           "leaves falling through shafts of light",
           "birds calling gentle farewells"
+        ],
+        "vocabWords": [
+          {
+            "word": "shoulder",
+            "emoji": "🫂",
+            "definition_2_4": null,
+            "definition_4_7": "The part of your body between your neck and your arm.",
+            "definition_7_10": "The joint where the arm meets the torso, often used for comfort and support.",
+            "exampleSentence": "She rested her head on her mother's shoulder when she was tired.",
+            "pronunciation": "SHOHL-der"
+          },
+          {
+            "word": "purred",
+            "emoji": "😸",
+            "definition_2_4": null,
+            "definition_4_7": "To speak in a soft, gentle way like a happy cat.",
+            "definition_7_10": "To speak with a smooth, rumbling voice that sounds content and soothing.",
+            "exampleSentence": "The grandmother purred gentle words to comfort her grandson.",
+            "pronunciation": "PURD"
+          },
+          {
+            "word": "belong",
+            "emoji": "🏠",
+            "definition_2_4": null,
+            "definition_4_7": "To be in the right place with the right people.",
+            "definition_7_10": "To have your proper place or to be naturally suited for a particular group or location.",
+            "exampleSentence": "She knew she would belong at the new school once she made friends.",
+            "pronunciation": "bi-LONG"
+          },
+          {
+            "word": "muzzle",
+            "emoji": "🐺",
+            "definition_2_4": null,
+            "definition_4_7": "The nose and mouth part of an animal's face.",
+            "definition_7_10": "The projecting snout of an animal, including the nose, mouth, and jaw area.",
+            "exampleSentence": "The dog's wet muzzle touched her hand as it sniffed for treats.",
+            "pronunciation": "MUZ-ul"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "among",
+            "syllables": [
+              "uh",
+              "mung"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "farewell",
+            "syllables": [
+              "fair",
+              "wel"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "elsewhere",
+            "syllables": [
+              "els",
+              "wair"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -524,9 +2853,157 @@ export const CLASSIC_STORIES_7_10: Story[] = [
           "feet crunching on dirt path",
           "soft wind through grass",
           "a distant panther's farewell call"
+        ],
+        "vocabWords": [
+          {
+            "word": "sunrise",
+            "emoji": "🌅",
+            "definition_2_4": null,
+            "definition_4_7": "The time in the morning when the sun comes up.",
+            "definition_7_10": "The daily appearance of the sun above the horizon, marking the beginning of day.",
+            "exampleSentence": "We woke up early to watch the beautiful sunrise over the ocean.",
+            "pronunciation": "SUN-ryz"
+          },
+          {
+            "word": "distant",
+            "emoji": "🏔️",
+            "definition_2_4": null,
+            "definition_4_7": "Very far away, not close to where you are now.",
+            "definition_7_10": "Located at a great distance, requiring significant travel or time to reach.",
+            "exampleSentence": "The distant mountains looked blue and hazy in the morning light.",
+            "pronunciation": "DIS-tent"
+          },
+          {
+            "word": "melted",
+            "emoji": "💨",
+            "definition_2_4": null,
+            "definition_4_7": "To disappear slowly and quietly, like ice turning to water.",
+            "definition_7_10": "To fade away gradually and smoothly, becoming invisible or unnoticeable.",
+            "exampleSentence": "The shy child melted into the crowd and disappeared from sight.",
+            "pronunciation": "MEL-ted"
+          },
+          {
+            "word": "whisper",
+            "emoji": "🌬️",
+            "definition_2_4": null,
+            "definition_4_7": "To make very soft, quiet sounds like the wind.",
+            "definition_7_10": "To produce gentle, barely audible sounds that carry meaning or memory.",
+            "exampleSentence": "The autumn leaves whisper secrets when the wind blows through them.",
+            "pronunciation": "WHIS-per"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "walking",
+            "syllables": [
+              "wawk",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "branches",
+            "syllables": [
+              "bran",
+              "chez"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "forever",
+            "syllables": [
+              "for",
+              "ev",
+              "er"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       }
-    ]
+    ],
+    "comprehensionQuestions": [
+      {
+        "type": "recall",
+        "question": "What did Father Wolf find crawling through the tall grass?",
+        "options": [
+          {
+            "text": "A human baby",
+            "emoji": "👶",
+            "correct": true
+          },
+          {
+            "text": "A baby wolf",
+            "emoji": "🐺",
+            "correct": false
+          },
+          {
+            "text": "A baby tiger",
+            "emoji": "🐅",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "inference",
+        "question": "Why do you think Mowgli had to leave the jungle at the end?",
+        "options": [
+          {
+            "text": "Because he belonged with his own kind",
+            "emoji": "👥",
+            "correct": true
+          },
+          {
+            "text": "Because he was afraid of Shere Khan",
+            "emoji": "😨",
+            "correct": false
+          },
+          {
+            "text": "Because he didn't like the animals anymore",
+            "emoji": "😔",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "connection",
+        "question": "How do you think you would feel if you had to say goodbye to friends who had been like family to you?",
+        "options": [
+          {
+            "text": "Sad but grateful for all the good times",
+            "emoji": "😭",
+            "correct": true
+          },
+          {
+            "text": "Scared but excited for new adventures",
+            "emoji": "😰",
+            "correct": true
+          },
+          {
+            "text": "Proud of how much I had grown and learned",
+            "emoji": "😊",
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "predictionPause": {
+      "atPageIdx": 13,
+      "question": "What do you think will happen when Mowgli faces Shere Khan with the Red Flower?",
+      "options": [
+        {
+          "text": "Shere Khan will run away in fear",
+          "emoji": "🏃"
+        },
+        {
+          "text": "The other wolves will help Mowgli fight",
+          "emoji": "🐺"
+        },
+        {
+          "text": "Mowgli will use the fire to scare everyone",
+          "emoji": "🔥"
+        }
+      ]
+    }
   },
   {
     "id": "classic_wizard_oz",
@@ -2142,7 +4619,10 @@ export const CLASSIC_STORIES_7_10: Story[] = [
         "Page 15",
         "At last, moonlight glimmered on a familiar river. Toad tapped on Rat's little door. Rat flung it open and gasped. 'Toady! You scamp! You scallywag!' But he bundled Toad inside and set hot toast before him. Then Rat's face grew serious. 'I have grim news, old friend. While you were gallivanting, the weasels of the Wild Wood crept in and took Toad Hall.'"
       ],
-      ["Page 16", "Toad's jaw dropped. Toad Hall, his beautiful home, in the paws of weasels! Badger and Mole arrived that very evening, wise faces grave. 'Not to worry,' said Badger, tapping the table. 'I know a secret. There's a tunnel, an old, forgotten passage, that leads right into Toad Hall's pantry. Tomorrow night, the weasels are throwing a great feast. That shall be our moment.'"],
+      [
+        "Page 16",
+        "Toad's jaw dropped. Toad Hall, his beautiful home, in the paws of weasels! Badger and Mole arrived that very evening, wise faces grave. 'Not to worry,' said Badger, tapping the table. 'I know a secret. There's a tunnel, an old, forgotten passage, that leads right into Toad Hall's pantry. Tomorrow night, the weasels are throwing a great feast. That shall be our moment.'"
+      ],
       [
         "Page 17",
         "The next night, armed with stout sticks and brave hearts, the four friends crept through the tunnel. Up they popped into the pantry, right beside the banquet hall. With a tremendous shout they burst in — Badger booming, Rat darting, Mole whooping, Toad hopping! The weasels, taken by surprise, squealed and scattered in every direction. In ten minutes, Toad Hall belonged to Toad once more."
@@ -2401,7 +4881,10 @@ export const CLASSIC_STORIES_7_10: Story[] = [
         "Page 17",
         "Back in Hamelin, the townsfolk walked softly. The Mayor hung his gold chain on a hook and never wore it again. He traveled from door to door, apologizing to every family, learning at last what a promise truly meant. Seasons turned. The fountain froze and thawed and froze. And though the houses felt terribly empty, a small hope glowed in every window — a single candle left burning, waiting, always waiting, for the children to come back."
       ],
-      ["Page 18", "One spring morning, the bells began to ring of themselves. Up the hill road came a long, laughing procession, young men and women now, carrying baskets of apples and books and wonderful new ideas. Behind them walked the piper, smiling his mischievous smile. The town rushed out. Mothers and fathers wept. Children, grown, but still their children, fell into their arms. And Hamelin, from that day on, kept every promise it ever made."]
+      [
+        "Page 18",
+        "One spring morning, the bells began to ring of themselves. Up the hill road came a long, laughing procession, young men and women now, carrying baskets of apples and books and wonderful new ideas. Behind them walked the piper, smiling his mischievous smile. The town rushed out. Mothers and fathers wept. Children, grown, but still their children, fell into their arms. And Hamelin, from that day on, kept every promise it ever made."
+      ]
     ],
     "fullPages": [
       {

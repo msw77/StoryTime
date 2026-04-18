@@ -1776,6 +1776,59 @@ body > * {
 .vocab-modal-dismiss:hover { background: #a44a33; }
 .vocab-modal-dismiss:active { transform: scale(0.97); }
 
+/* Sound It Out — phonetic syllable breakdown shown above the button.
+   Each syllable is its own pill with a centered dot separator between
+   them ("can · yon"). Visual rhythm reinforces what the audio does.
+   Reminiscent of textbook phonics notation without the sterile feel. */
+.vocab-modal-syllables {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 10px 0 6px;
+  font-family: "Georgia", serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: #5c5147;
+  letter-spacing: 0.02em;
+}
+.vocab-modal-syllable {
+  padding: 3px 10px;
+  background: rgba(228, 147, 58, 0.12);
+  border-radius: 8px;
+}
+.vocab-modal-syllable + .vocab-modal-syllable::before {
+  /* Dot separator injected between consecutive syllables via ::before
+     on the later sibling so the dots only appear BETWEEN, not around. */
+  content: "·";
+  color: #c25e45;
+  font-weight: 700;
+  margin: 0 6px 0 -4px;
+  opacity: 0.7;
+}
+.vocab-modal-sound-it-out {
+  background: rgba(194, 94, 69, 0.1);
+  color: #c25e45;
+  border: 1px solid rgba(194, 94, 69, 0.28);
+  border-radius: 999px;
+  padding: 9px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  margin-bottom: 10px;
+  font-family: inherit;
+  /* Keep tap target generous but visually subordinate to "Got it". */
+  min-height: 38px;
+}
+.vocab-modal-sound-it-out:hover {
+  background: rgba(194, 94, 69, 0.18);
+}
+.vocab-modal-sound-it-out:active {
+  transform: scale(0.96);
+}
+
 /* Cozy mode tweaks — dial back brightness so the modal doesn't break
    the warm-dim atmosphere of bedtime reading. */
 .reader.cozy ~ .vocab-modal-backdrop,

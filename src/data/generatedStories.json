@@ -18,6 +18,70 @@
         "sounds": [
           "pages rustling",
           "birds singing outside"
+        ],
+        "vocabWords": [
+          {
+            "word": "crinkled",
+            "emoji": "📜",
+            "definition_2_4": null,
+            "definition_4_7": "Something that has wrinkles and folds in it.",
+            "definition_7_10": "Wrinkled and folded like old paper that has been handled many times.",
+            "exampleSentence": "The crinkled leaves made crunching sounds under my feet.",
+            "pronunciation": "KRIN-kuld"
+          },
+          {
+            "word": "symbols",
+            "emoji": "🔣",
+            "definition_2_4": null,
+            "definition_4_7": "Special marks or pictures that mean something.",
+            "definition_7_10": "Special marks, shapes, or pictures that represent ideas or have hidden meanings.",
+            "exampleSentence": "The traffic symbols on the sign showed where to turn.",
+            "pronunciation": "SIM-bulz"
+          },
+          {
+            "word": "tucked",
+            "emoji": "📖",
+            "definition_2_4": null,
+            "definition_4_7": "Hidden or placed carefully inside something else.",
+            "definition_7_10": "Carefully placed or hidden inside something, like a secret kept safe.",
+            "exampleSentence": "Mom tucked the birthday present under her bed.",
+            "pronunciation": "TUKD"
+          },
+          {
+            "word": "precious",
+            "emoji": "💎",
+            "definition_2_4": null,
+            "definition_4_7": "Something very special and important to you.",
+            "definition_7_10": "Something extremely valuable and dear to your heart that you treasure deeply.",
+            "exampleSentence": "The precious necklace belonged to my great-grandmother.",
+            "pronunciation": "PREH-shus"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "crinkled",
+            "syllables": [
+              "krin",
+              "kuld"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "symbols",
+            "syllables": [
+              "sim",
+              "bulz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "sunshine",
+            "syllables": [
+              "sun",
+              "shyn"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -28,6 +92,62 @@
         "sounds": [
           "leaves rustling",
           "footsteps on soft earth"
+        ],
+        "vocabWords": [
+          {
+            "word": "fluttered",
+            "emoji": "🦋",
+            "definition_2_4": null,
+            "definition_4_7": "Moved quickly and lightly like a butterfly's wings.",
+            "definition_7_10": "Moved with quick, light motions like butterfly wings dancing in the air.",
+            "exampleSentence": "The flag fluttered in the wind on the tall pole.",
+            "pronunciation": "FLUT-erd"
+          },
+          {
+            "word": "inviting",
+            "emoji": "🤗",
+            "definition_2_4": null,
+            "definition_4_7": "Something that looks welcoming and makes you want to come closer.",
+            "definition_7_10": "Looking warm and welcoming, like it's calling you to come and explore.",
+            "exampleSentence": "The cozy living room looked inviting on the cold day.",
+            "pronunciation": "in-VY-ting"
+          },
+          {
+            "word": "sunbeams",
+            "emoji": "☀️",
+            "definition_2_4": null,
+            "definition_4_7": "Bright lines of light that come from the sun.",
+            "definition_7_10": "Rays of golden light that stream down from the sun through trees and clouds.",
+            "exampleSentence": "The sunbeams shone through the window onto my pillow.",
+            "pronunciation": "SUN-beemz"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "fluttered",
+            "syllables": [
+              "flut",
+              "erd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "backpack",
+            "syllables": [
+              "bak",
+              "pak"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "inviting",
+            "syllables": [
+              "in",
+              "vy",
+              "ting"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -38,6 +158,71 @@
         "sounds": [
           "water babbling",
           "stones clicking underfoot"
+        ],
+        "vocabWords": [
+          {
+            "word": "winding",
+            "emoji": "🐍",
+            "definition_2_4": null,
+            "definition_4_7": "Something that curves and turns like a snake.",
+            "definition_7_10": "Curving and twisting in different directions like a snake moving through grass.",
+            "exampleSentence": "The winding road went up and down the mountain.",
+            "pronunciation": "WYN-ding"
+          },
+          {
+            "word": "bubbled",
+            "emoji": "🫧",
+            "definition_2_4": null,
+            "definition_4_7": "Made lots of little round air pockets in water.",
+            "definition_7_10": "Made cheerful gurgling sounds with tiny air bubbles dancing on the surface.",
+            "exampleSentence": "The soda bubbled when I poured it into my glass.",
+            "pronunciation": "BUB-uld"
+          },
+          {
+            "word": "melody",
+            "emoji": "🎵",
+            "definition_2_4": null,
+            "definition_4_7": "A pretty tune or song that sounds nice.",
+            "definition_7_10": "A beautiful sequence of musical sounds that flows together like a gentle song.",
+            "exampleSentence": "The bird sang a sweet melody outside my window.",
+            "pronunciation": "MEL-uh-dee"
+          },
+          {
+            "word": "steady",
+            "emoji": "⚖️",
+            "definition_2_4": null,
+            "definition_4_7": "Not shaky or wobbly, staying balanced and strong.",
+            "definition_7_10": "Firm and balanced without wobbling, like a rock that doesn't move.",
+            "exampleSentence": "Dad kept a steady hand while painting the fence.",
+            "pronunciation": "STED-ee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "winding",
+            "syllables": [
+              "wyn",
+              "ding"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "giggled",
+            "syllables": [
+              "gig",
+              "uld"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "melody",
+            "syllables": [
+              "mel",
+              "uh",
+              "dee"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -48,6 +233,71 @@
         "sounds": [
           "wind through oak leaves",
           "birds calling"
+        ],
+        "vocabWords": [
+          {
+            "word": "ancient",
+            "emoji": "🏛️",
+            "definition_2_4": null,
+            "definition_4_7": "Very, very old from a long time ago.",
+            "definition_7_10": "Extremely old, having lived or existed for many, many years like grandparents' grandparents.",
+            "exampleSentence": "The ancient castle was built hundreds of years ago.",
+            "pronunciation": "AYN-shent"
+          },
+          {
+            "word": "triangle",
+            "emoji": "🔺",
+            "definition_2_4": null,
+            "definition_4_7": "A shape with three sides and three corners.",
+            "definition_7_10": "A shape made of three straight lines that connect to form three pointed corners.",
+            "exampleSentence": "I drew a red triangle on my paper with crayons.",
+            "pronunciation": "TRY-an-gul"
+          },
+          {
+            "word": "velvet",
+            "emoji": "🧸",
+            "definition_2_4": null,
+            "definition_4_7": "A very soft fabric that feels smooth and nice.",
+            "definition_7_10": "An extremely soft, smooth fabric that feels luxurious and gentle against your skin.",
+            "exampleSentence": "The velvet curtains in the theater were deep red.",
+            "pronunciation": "VEL-vet"
+          },
+          {
+            "word": "fingertips",
+            "emoji": "👆",
+            "definition_2_4": null,
+            "definition_4_7": "The very ends of your fingers where you touch things.",
+            "definition_7_10": "The sensitive tips at the end of your fingers that help you feel textures.",
+            "exampleSentence": "I felt the rough bark with my fingertips.",
+            "pronunciation": "FING-er-tips"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "ancient",
+            "syllables": [
+              "ayn",
+              "shent"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "triangle",
+            "syllables": [
+              "try",
+              "an",
+              "gul"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "velvet",
+            "syllables": [
+              "vel",
+              "vet"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -58,6 +308,70 @@
         "sounds": [
           "wind whistling",
           "pebbles shifting"
+        ],
+        "vocabWords": [
+          {
+            "word": "staircase",
+            "emoji": "🪜",
+            "definition_2_4": null,
+            "definition_4_7": "Steps that go up and down to different levels.",
+            "definition_7_10": "A series of steps built for people to climb up or walk down safely.",
+            "exampleSentence": "We climbed the wooden staircase to the second floor.",
+            "pronunciation": "STAIR-kays"
+          },
+          {
+            "word": "steep",
+            "emoji": "⛰️",
+            "definition_2_4": null,
+            "definition_4_7": "Something that goes up at a sharp angle, hard to climb.",
+            "definition_7_10": "Rising at a very sharp angle that makes climbing difficult and challenging.",
+            "exampleSentence": "The steep driveway was hard to ride my bike up.",
+            "pronunciation": "STEEP"
+          },
+          {
+            "word": "imagined",
+            "emoji": "💭",
+            "definition_2_4": null,
+            "definition_4_7": "Pictured something in your mind before seeing it for real.",
+            "definition_7_10": "Created a picture in your mind of how something might look or be.",
+            "exampleSentence": "I imagined what my room would look like painted blue.",
+            "pronunciation": "ih-MAJ-ind"
+          },
+          {
+            "word": "uncertain",
+            "emoji": "🤔",
+            "definition_2_4": null,
+            "definition_4_7": "Not sure about something or feeling a little worried.",
+            "definition_7_10": "Feeling unsure or doubtful about what might happen or what to do next.",
+            "exampleSentence": "I felt uncertain about trying the new playground equipment.",
+            "pronunciation": "un-SUR-ten"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "staircase",
+            "syllables": [
+              "stair",
+              "kays"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "steep",
+            "syllables": [
+              "steep"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "uncertain",
+            "syllables": [
+              "un",
+              "sur",
+              "ten"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -69,6 +383,61 @@
           "deep breathing",
           "boots on stone",
           "backpack swishing"
+        ],
+        "vocabWords": [
+          {
+            "word": "pine",
+            "emoji": "🌲",
+            "definition_2_4": null,
+            "definition_4_7": "A type of tall tree with needles instead of leaves.",
+            "definition_7_10": "A kind of evergreen tree with sharp, thin needles that smells fresh and woodsy.",
+            "exampleSentence": "The pine tree in our yard stays green all winter.",
+            "pronunciation": "PYN"
+          },
+          {
+            "word": "whispered",
+            "emoji": "🤫",
+            "definition_2_4": null,
+            "definition_4_7": "Talked very quietly so only you can hear it.",
+            "definition_7_10": "Spoke in a very soft, quiet voice that's barely louder than breathing.",
+            "exampleSentence": "She whispered the secret in my ear at the library.",
+            "pronunciation": "WHIS-perd"
+          },
+          {
+            "word": "bouncing",
+            "emoji": "⚽",
+            "definition_2_4": null,
+            "definition_4_7": "Moving up and down like a ball that hits the ground.",
+            "definition_7_10": "Moving with a rhythmic up-and-down motion like a ball hitting the ground repeatedly.",
+            "exampleSentence": "The bouncing basketball made a loud noise on the court.",
+            "pronunciation": "BOWN-sing"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "needles",
+            "syllables": [
+              "nee",
+              "dulz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "whispered",
+            "syllables": [
+              "whis",
+              "perd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "bouncing",
+            "syllables": [
+              "bown",
+              "sing"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -79,6 +448,62 @@
         "sounds": [
           "gentle breeze",
           "distant water flowing"
+        ],
+        "vocabWords": [
+          {
+            "word": "wobbly",
+            "emoji": "🍮",
+            "definition_2_4": null,
+            "definition_4_7": "Shaky and unsteady, like jelly that moves when you touch it.",
+            "definition_7_10": "Unsteady and shaking slightly, like something that might fall over or give way.",
+            "exampleSentence": "The wobbly table moved when I put my book on it.",
+            "pronunciation": "WOB-lee"
+          },
+          {
+            "word": "sparkling",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Shining brightly with lots of tiny lights or reflections.",
+            "definition_7_10": "Glittering and twinkling with bright flashes of light like tiny diamonds dancing.",
+            "exampleSentence": "The sparkling snow looked magical in the moonlight.",
+            "pronunciation": "SPAR-kling"
+          },
+          {
+            "word": "models",
+            "emoji": "🏠",
+            "definition_2_4": null,
+            "definition_4_7": "Small copies of bigger things that look just like them.",
+            "definition_7_10": "Miniature versions of real objects made to look exactly like the original but smaller.",
+            "exampleSentence": "Dad built models of airplanes that looked like real ones.",
+            "pronunciation": "MOD-ulz"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "wobbly",
+            "syllables": [
+              "wob",
+              "lee"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "sparkling",
+            "syllables": [
+              "spar",
+              "kling"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "beautiful",
+            "syllables": [
+              "byoo",
+              "tih",
+              "ful"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -90,6 +515,62 @@
           "leaves rustling",
           "heart beating",
           "wood creaking"
+        ],
+        "vocabWords": [
+          {
+            "word": "glinting",
+            "emoji": "💫",
+            "definition_2_4": null,
+            "definition_4_7": "Shining with quick flashes of bright light.",
+            "definition_7_10": "Catching and reflecting light in quick, bright flashes like a mirror in sunlight.",
+            "exampleSentence": "The coins were glinting in the fountain water.",
+            "pronunciation": "GLINT-ing"
+          },
+          {
+            "word": "raced",
+            "emoji": "💓",
+            "definition_2_4": null,
+            "definition_4_7": "Beat very fast because you were excited or scared.",
+            "definition_7_10": "Beat rapidly and forcefully, usually because of strong emotions like excitement or fear.",
+            "exampleSentence": "My heart raced when I saw the surprise party.",
+            "pronunciation": "RAYSD"
+          },
+          {
+            "word": "nestled",
+            "emoji": "🥚",
+            "definition_2_4": null,
+            "definition_4_7": "Resting comfortably in a cozy, safe place.",
+            "definition_7_10": "Settled snugly and securely in a comfortable spot, like a bird in its nest.",
+            "exampleSentence": "The kitten nestled in the soft blanket for a nap.",
+            "pronunciation": "NES-uld"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "glinting",
+            "syllables": [
+              "glint",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "excitement",
+            "syllables": [
+              "ik",
+              "syt",
+              "ment"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "nestled",
+            "syllables": [
+              "nes",
+              "uld"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -100,6 +581,72 @@
         "sounds": [
           "paper crinkling",
           "gentle wind"
+        ],
+        "vocabWords": [
+          {
+            "word": "treasure",
+            "emoji": "💰",
+            "definition_2_4": null,
+            "definition_4_7": "Something very valuable and special that people search for.",
+            "definition_7_10": "Something extremely precious and valuable that brings great joy when discovered.",
+            "exampleSentence": "The pirate buried his treasure on a secret island.",
+            "pronunciation": "TREZH-er"
+          },
+          {
+            "word": "jewels",
+            "emoji": "💎",
+            "definition_2_4": null,
+            "definition_4_7": "Beautiful, shiny stones that cost lots of money.",
+            "definition_7_10": "Precious gemstones that sparkle brilliantly and are worth a great deal of money.",
+            "exampleSentence": "The queen's crown was covered in colorful jewels.",
+            "pronunciation": "JOO-ulz"
+          },
+          {
+            "word": "locket",
+            "emoji": "💝",
+            "definition_2_4": null,
+            "definition_4_7": "A small piece of jewelry that opens to hold pictures inside.",
+            "definition_7_10": "A special necklace pendant that opens like a tiny book to hold photographs or keepsakes.",
+            "exampleSentence": "Grandma's locket had a picture of Grandpa inside it.",
+            "pronunciation": "LOK-et"
+          },
+          {
+            "word": "granddaughter",
+            "emoji": "👧",
+            "definition_2_4": null,
+            "definition_4_7": "A girl who is the daughter of your son or daughter.",
+            "definition_7_10": "A female child who is the daughter of someone's own son or daughter.",
+            "exampleSentence": "My granddaughter loves to bake cookies with me.",
+            "pronunciation": "GRAND-daw-ter"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "treasure",
+            "syllables": [
+              "trezh",
+              "er"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "photographs",
+            "syllables": [
+              "fo",
+              "tuh",
+              "grafs"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "granddaughter",
+            "syllables": [
+              "grand",
+              "daw",
+              "ter"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -111,9 +658,149 @@
           "happy footsteps",
           "leaves whispering",
           "birds celebrating"
+        ],
+        "vocabWords": [
+          {
+            "word": "hugged",
+            "emoji": "🤗",
+            "definition_2_4": null,
+            "definition_4_7": "Held something close to your body with your arms.",
+            "definition_7_10": "Wrapped your arms around something and held it tightly against your body with love.",
+            "exampleSentence": "I hugged my teddy bear before going to sleep.",
+            "pronunciation": "HUGD"
+          },
+          {
+            "word": "congratulations",
+            "emoji": "🎉",
+            "definition_2_4": null,
+            "definition_4_7": "Happy words you say when someone does something wonderful.",
+            "definition_7_10": "Joyful words expressing happiness and praise for someone's success or achievement.",
+            "exampleSentence": "Everyone shouted congratulations when I won the race.",
+            "pronunciation": "kun-grach-uh-LAY-shunz"
+          },
+          {
+            "word": "breeze",
+            "emoji": "🍃",
+            "definition_2_4": null,
+            "definition_4_7": "A gentle wind that feels nice on your skin.",
+            "definition_7_10": "A soft, pleasant wind that moves gently through the air like nature's whisper.",
+            "exampleSentence": "The cool breeze felt wonderful on the hot summer day.",
+            "pronunciation": "BREEZ"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "treasure",
+            "syllables": [
+              "trezh",
+              "er"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "congratulations",
+            "syllables": [
+              "kun",
+              "grach",
+              "uh",
+              "lay",
+              "shunz"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "breeze",
+            "syllables": [
+              "breez"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       }
-    ]
+    ],
+    "comprehensionQuestions": [
+      {
+        "type": "recall",
+        "question": "Where did Mia find the golden map?",
+        "options": [
+          {
+            "text": "In her grandmother's recipe book",
+            "emoji": "📖",
+            "correct": true
+          },
+          {
+            "text": "Under her bed",
+            "emoji": "🛏️",
+            "correct": false
+          },
+          {
+            "text": "In the Whispering Woods",
+            "emoji": "🌲",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "inference",
+        "question": "Why do you think Mia's grandmother left the treasure for her?",
+        "options": [
+          {
+            "text": "Because she wanted to give Mia money",
+            "emoji": "💰",
+            "correct": false
+          },
+          {
+            "text": "Because she loved Mia and wanted to share memories",
+            "emoji": "💕",
+            "correct": true
+          },
+          {
+            "text": "Because she was cleaning out old boxes",
+            "emoji": "📦",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "connection",
+        "question": "How would you feel if you found a special treasure from someone you love?",
+        "options": [
+          {
+            "text": "Happy and loved",
+            "emoji": "😊",
+            "correct": true
+          },
+          {
+            "text": "Excited and grateful",
+            "emoji": "🤗",
+            "correct": true
+          },
+          {
+            "text": "Proud and special",
+            "emoji": "✨",
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "predictionPause": {
+      "atPageIdx": 4,
+      "question": "Mia is looking at the steep, rocky hill and feeling uncertain. What do you think she'll do next?",
+      "options": [
+        {
+          "text": "Turn around and go home",
+          "emoji": "🏠"
+        },
+        {
+          "text": "Take a deep breath and start climbing",
+          "emoji": "⛰️"
+        },
+        {
+          "text": "Sit down and look at the map again",
+          "emoji": "🗺️"
+        }
+      ]
+    }
   },
   "a2": {
     "id": "a2",
@@ -135,6 +822,70 @@
           "seagulls calling",
           "waves lapping",
           "wind in sails"
+        ],
+        "vocabWords": [
+          {
+            "word": "sparkling",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Shining with lots of tiny bright lights like diamonds.",
+            "definition_7_10": "Gleaming with countless small points of light that dance and shimmer like precious gems.",
+            "exampleSentence": "The sparkling snow covered the playground like glitter.",
+            "pronunciation": "SPAR-kling"
+          },
+          {
+            "word": "treasure",
+            "emoji": "💎",
+            "definition_2_4": null,
+            "definition_4_7": "Very special things that are worth a lot to you.",
+            "definition_7_10": "Precious objects or collections that hold great value and meaning to their owner.",
+            "exampleSentence": "Grandma's photo album is her most important treasure.",
+            "pronunciation": "TREZH-ur"
+          },
+          {
+            "word": "compass",
+            "emoji": "🧭",
+            "definition_2_4": null,
+            "definition_4_7": "A special tool that shows you which way to go.",
+            "definition_7_10": "A navigation instrument with a needle that always points north to help you find direction.",
+            "exampleSentence": "The hiker used her compass to find the trail back to camp.",
+            "pronunciation": "KUM-pus"
+          },
+          {
+            "word": "salty",
+            "emoji": "🌊",
+            "definition_2_4": null,
+            "definition_4_7": "Tasting like salt, the way ocean water tastes.",
+            "definition_7_10": "Having the sharp, distinctive flavor of salt that you taste near the sea.",
+            "exampleSentence": "The salty pretzels made me very thirsty.",
+            "pronunciation": "SAWL-tee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "sparkling",
+            "syllables": [
+              "spar",
+              "kling"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "treasure",
+            "syllables": [
+              "trezh",
+              "ur"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "compass",
+            "syllables": [
+              "kum",
+              "pus"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -146,6 +897,70 @@
           "boat creaking",
           "Finn sighing",
           "water splashing"
+        ],
+        "vocabWords": [
+          {
+            "word": "searched",
+            "emoji": "🔍",
+            "definition_2_4": null,
+            "definition_4_7": "Looked everywhere very carefully to find something missing.",
+            "definition_7_10": "Examined every possible place thoroughly and systematically to locate something that was lost.",
+            "exampleSentence": "Mom searched through all the drawers for her car keys.",
+            "pronunciation": "SURCHD"
+          },
+          {
+            "word": "mast",
+            "emoji": "⛵",
+            "definition_2_4": null,
+            "definition_4_7": "The tall pole on a boat that holds up the sail.",
+            "definition_7_10": "A vertical pole or tower on a ship that supports the sails and rigging.",
+            "exampleSentence": "The flag flew proudly from the top of the ship's mast.",
+            "pronunciation": "MAST"
+          },
+          {
+            "word": "precious",
+            "emoji": "💖",
+            "definition_2_4": null,
+            "definition_4_7": "Very special and important to you, worth caring about.",
+            "definition_7_10": "Extremely valuable and dear to your heart, something you would never want to lose.",
+            "exampleSentence": "The teddy bear was precious because it was a gift from grandpa.",
+            "pronunciation": "PRESH-us"
+          },
+          {
+            "word": "collection",
+            "emoji": "📚",
+            "definition_2_4": null,
+            "definition_4_7": "A group of special things you keep together.",
+            "definition_7_10": "An assortment of similar objects gathered and preserved together over time.",
+            "exampleSentence": "Sarah has a collection of stickers from different countries.",
+            "pronunciation": "kuh-LEK-shun"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "searched",
+            "syllables": [
+              "surchd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "precious",
+            "syllables": [
+              "presh",
+              "us"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "collection",
+            "syllables": [
+              "kuh",
+              "lek",
+              "shun"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -157,6 +972,61 @@
           "dock creaking",
           "gentle waves",
           "distant laughter"
+        ],
+        "vocabWords": [
+          {
+            "word": "spotted",
+            "emoji": "👀",
+            "definition_2_4": null,
+            "definition_4_7": "Saw someone or something from far away.",
+            "definition_7_10": "Noticed or caught sight of someone or something, often from a distance.",
+            "exampleSentence": "I spotted my friend across the crowded playground.",
+            "pronunciation": "SPOT-ed"
+          },
+          {
+            "word": "dock",
+            "emoji": "🛟",
+            "definition_2_4": null,
+            "definition_4_7": "A wooden platform where boats can stop by the water.",
+            "definition_7_10": "A structure extending into water where boats can tie up for loading or unloading.",
+            "exampleSentence": "We sat on the dock and watched the ducks swim by.",
+            "pronunciation": "DOCK"
+          },
+          {
+            "word": "tackle",
+            "emoji": "🎣",
+            "definition_2_4": null,
+            "definition_4_7": "Special tools and equipment used for catching fish.",
+            "definition_7_10": "Fishing gear including hooks, lines, weights, and lures used to catch fish.",
+            "exampleSentence": "Dad organized his tackle before our fishing trip.",
+            "pronunciation": "TAK-ul"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "spotted",
+            "syllables": [
+              "spot",
+              "ed"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "fishing",
+            "syllables": [
+              "fish",
+              "ing"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "tackle",
+            "syllables": [
+              "tak",
+              "ul"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -168,6 +1038,72 @@
           "waves washing ashore",
           "sand patting",
           "seabirds calling"
+        ],
+        "vocabWords": [
+          {
+            "word": "sandcastle",
+            "emoji": "🏰",
+            "definition_2_4": null,
+            "definition_4_7": "A castle shape made out of wet sand at the beach.",
+            "definition_7_10": "A sculptural structure built from sand, usually resembling a fortress or palace.",
+            "exampleSentence": "The kids built an amazing sandcastle with towers and walls.",
+            "pronunciation": "SAND-kas-ul"
+          },
+          {
+            "word": "frowning",
+            "emoji": "😔",
+            "definition_2_4": null,
+            "definition_4_7": "Making a sad or unhappy face with your mouth turned down.",
+            "definition_7_10": "Showing displeasure or disappointment by turning the corners of your mouth downward.",
+            "exampleSentence": "Mom was frowning when she saw the messy kitchen.",
+            "pronunciation": "FROWN-ing"
+          },
+          {
+            "word": "creation",
+            "emoji": "🎨",
+            "definition_2_4": null,
+            "definition_4_7": "Something you make or build with your own hands.",
+            "definition_7_10": "An original work or object that someone has made, built, or brought into existence.",
+            "exampleSentence": "The art teacher admired each student's colorful creation.",
+            "pronunciation": "kree-AY-shun"
+          },
+          {
+            "word": "decorate",
+            "emoji": "🌟",
+            "definition_2_4": null,
+            "definition_4_7": "Make something prettier by adding special things to it.",
+            "definition_7_10": "Add ornamental or beautiful elements to enhance the appearance of something.",
+            "exampleSentence": "We will decorate the birthday cake with sprinkles and candles.",
+            "pronunciation": "DEK-oh-rate"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "sandcastle",
+            "syllables": [
+              "sand",
+              "kas",
+              "ul"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "frowning",
+            "syllables": [
+              "frown",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "creation",
+            "syllables": [
+              "kree",
+              "ay",
+              "shun"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -179,6 +1115,70 @@
           "stones plopping",
           "echo under pier",
           "gentle water movement"
+        ],
+        "vocabWords": [
+          {
+            "word": "pier",
+            "emoji": "🌉",
+            "definition_2_4": null,
+            "definition_4_7": "A long wooden walkway that goes out over the water.",
+            "definition_7_10": "A structure extending from shore into water, supported by pillars underneath.",
+            "exampleSentence": "Fishermen cast their lines from the end of the pier.",
+            "pronunciation": "PEER"
+          },
+          {
+            "word": "sinking",
+            "emoji": "⬇️",
+            "definition_2_4": null,
+            "definition_4_7": "Going down under the water instead of floating on top.",
+            "definition_7_10": "Descending below the surface of water due to weight or lack of buoyancy.",
+            "exampleSentence": "The heavy rock was sinking to the bottom of the pond.",
+            "pronunciation": "SINK-ing"
+          },
+          {
+            "word": "echoing",
+            "emoji": "📢",
+            "definition_2_4": null,
+            "definition_4_7": "When sounds bounce back and you hear them again.",
+            "definition_7_10": "Sound waves reflecting off surfaces and returning to create a repeated audio effect.",
+            "exampleSentence": "Our voices were echoing in the empty gymnasium.",
+            "pronunciation": "EK-oh-ing"
+          },
+          {
+            "word": "planks",
+            "emoji": "🪵",
+            "definition_2_4": null,
+            "definition_4_7": "Long flat pieces of wood used for building things.",
+            "definition_7_10": "Rectangular boards of wood that are typically used in construction or flooring.",
+            "exampleSentence": "The carpenter measured the planks before building the fence.",
+            "pronunciation": "PLANKS"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "sinking",
+            "syllables": [
+              "sink",
+              "ing"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "echoing",
+            "syllables": [
+              "ek",
+              "oh",
+              "ing"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "planks",
+            "syllables": [
+              "planks"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -190,6 +1190,63 @@
           "Finn's excited gasp",
           "seagulls in distance",
           "water lapping"
+        ],
+        "vocabWords": [
+          {
+            "word": "suddenly",
+            "emoji": "💡",
+            "definition_2_4": null,
+            "definition_4_7": "Something that happens very fast when you don't expect it.",
+            "definition_7_10": "An event or realization that occurs quickly and unexpectedly, without warning.",
+            "exampleSentence": "Suddenly, the lights went out during the storm.",
+            "pronunciation": "SUD-en-lee"
+          },
+          {
+            "word": "brightened",
+            "emoji": "😊",
+            "definition_2_4": null,
+            "definition_4_7": "Became happy and cheerful, like when you smile big.",
+            "definition_7_10": "Became more cheerful, optimistic, or filled with joy and positive energy.",
+            "exampleSentence": "Her face brightened when she saw the surprise party.",
+            "pronunciation": "BRYT-end"
+          },
+          {
+            "word": "wonderful",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Really, really good and exciting, making you feel great.",
+            "definition_7_10": "Extraordinarily good or remarkable in a way that fills you with delight and amazement.",
+            "exampleSentence": "We had a wonderful time at the amusement park.",
+            "pronunciation": "WUN-der-ful"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "suddenly",
+            "syllables": [
+              "sud",
+              "en",
+              "lee"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "brightened",
+            "syllables": [
+              "bryt",
+              "end"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "wonderful",
+            "syllables": [
+              "wun",
+              "der",
+              "ful"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -201,6 +1258,71 @@
           "fish splashing",
           "net swishing through water",
           "children laughing"
+        ],
+        "vocabWords": [
+          {
+            "word": "reef",
+            "emoji": "🪸",
+            "definition_2_4": null,
+            "definition_4_7": "A place underwater with colorful rocks where fish like to live.",
+            "definition_7_10": "An underwater ridge of coral or rock where marine life gathers and thrives.",
+            "exampleSentence": "Snorkelers love to explore the coral reef to see tropical fish.",
+            "pronunciation": "REEF"
+          },
+          {
+            "word": "coral",
+            "emoji": "🪸",
+            "definition_2_4": null,
+            "definition_4_7": "Colorful underwater creatures that look like pretty rocks or plants.",
+            "definition_7_10": "Marine organisms that form hard, colorful structures creating underwater gardens and habitats.",
+            "exampleSentence": "The bright orange coral swayed gently in the ocean current.",
+            "pronunciation": "KOR-ul"
+          },
+          {
+            "word": "wiggling",
+            "emoji": "🐠",
+            "definition_2_4": null,
+            "definition_4_7": "Moving back and forth quickly in a squiggly way.",
+            "definition_7_10": "Making small, rapid movements from side to side in an undulating motion.",
+            "exampleSentence": "The puppy was wiggling with excitement when we came home.",
+            "pronunciation": "WIG-ling"
+          },
+          {
+            "word": "silvery",
+            "emoji": "💫",
+            "definition_2_4": null,
+            "definition_4_7": "Shiny and bright like the color of silver metal.",
+            "definition_7_10": "Having the lustrous, metallic appearance and color of polished silver.",
+            "exampleSentence": "The silvery moon reflected perfectly on the calm lake.",
+            "pronunciation": "SIL-ver-ee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "coral",
+            "syllables": [
+              "kor",
+              "ul"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "wiggling",
+            "syllables": [
+              "wig",
+              "ling"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "silvery",
+            "syllables": [
+              "sil",
+              "ver",
+              "ee"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -212,6 +1334,61 @@
           "shells clinking",
           "footsteps in sand",
           "waves on shore"
+        ],
+        "vocabWords": [
+          {
+            "word": "gathered",
+            "emoji": "🤲",
+            "definition_2_4": null,
+            "definition_4_7": "Collected and picked up things to put them together.",
+            "definition_7_10": "Collected multiple items from different places and brought them together in one location.",
+            "exampleSentence": "We gathered wildflowers to make a beautiful bouquet.",
+            "pronunciation": "GATH-erd"
+          },
+          {
+            "word": "driftwood",
+            "emoji": "🪵",
+            "definition_2_4": null,
+            "definition_4_7": "Pieces of wood that float in the ocean and wash up on beaches.",
+            "definition_7_10": "Wood that has been washed ashore by waves after floating in the ocean.",
+            "exampleSentence": "The artist used smooth driftwood to create a sculpture.",
+            "pronunciation": "DRIFT-wood"
+          },
+          {
+            "word": "sparkled",
+            "emoji": "💎",
+            "definition_2_4": null,
+            "definition_4_7": "Shined with lots of tiny bright lights like stars.",
+            "definition_7_10": "Gleamed with small points of light that twinkled and danced brilliantly.",
+            "exampleSentence": "The diamond ring sparkled under the jewelry store lights.",
+            "pronunciation": "SPAR-kuld"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "gathered",
+            "syllables": [
+              "gath",
+              "erd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "driftwood",
+            "syllables": [
+              "drift",
+              "wood"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "sparkled",
+            "syllables": [
+              "spar",
+              "kuld"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -223,6 +1400,62 @@
           "stones skipping on water",
           "counting voices",
           "gentle splashes"
+        ],
+        "vocabWords": [
+          {
+            "word": "champion",
+            "emoji": "🏆",
+            "definition_2_4": null,
+            "definition_4_7": "Someone who is really, really good at doing something special.",
+            "definition_7_10": "A person who has become exceptionally skilled or successful at a particular activity.",
+            "exampleSentence": "Maria became the spelling bee champion after years of practice.",
+            "pronunciation": "CHAM-pee-un"
+          },
+          {
+            "word": "magical",
+            "emoji": "🪄",
+            "definition_2_4": null,
+            "definition_4_7": "Something amazing and wonderful that seems like magic.",
+            "definition_7_10": "Possessing a special, enchanting quality that creates wonder and amazement.",
+            "exampleSentence": "The first snowfall of winter felt magical to the children.",
+            "pronunciation": "MAJ-ih-kul"
+          },
+          {
+            "word": "bounce",
+            "emoji": "⚽",
+            "definition_2_4": null,
+            "definition_4_7": "When something hits and jumps back up into the air.",
+            "definition_7_10": "The action of rebounding or springing back after hitting a surface.",
+            "exampleSentence": "The basketball will bounce high if you drop it on concrete.",
+            "pronunciation": "BOWNSS"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "champion",
+            "syllables": [
+              "cham",
+              "pee",
+              "un"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "magical",
+            "syllables": [
+              "maj",
+              "ih",
+              "kul"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "bounce",
+            "syllables": [
+              "bownss"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -234,9 +1467,149 @@
           "friends chatting happily",
           "gentle evening waves",
           "seabirds settling for night"
+        ],
+        "vocabWords": [
+          {
+            "word": "adventures",
+            "emoji": "🗺️",
+            "definition_2_4": null,
+            "definition_4_7": "Exciting trips or experiences where fun things happen.",
+            "definition_7_10": "Thrilling journeys or experiences filled with discovery, excitement, and memorable moments.",
+            "exampleSentence": "Our family camping trip was full of outdoor adventures.",
+            "pronunciation": "ad-VEN-churz"
+          },
+          {
+            "word": "glowing",
+            "emoji": "🌅",
+            "definition_2_4": null,
+            "definition_4_7": "Shining with a warm, soft light like a cozy fire.",
+            "definition_7_10": "Emitting a steady, warm radiance that illuminates with gentle, pleasant light.",
+            "exampleSentence": "The glowing fireflies danced in the summer evening air.",
+            "pronunciation": "GLOW-ing"
+          },
+          {
+            "word": "realized",
+            "emoji": "💭",
+            "definition_2_4": null,
+            "definition_4_7": "Suddenly understood something important that you didn't know before.",
+            "definition_7_10": "Came to understand or become aware of something significant through thought or experience.",
+            "exampleSentence": "I realized I had forgotten my lunch when I opened my empty backpack.",
+            "pronunciation": "REE-uh-lyzd"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "adventures",
+            "syllables": [
+              "ad",
+              "ven",
+              "churz"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "glowing",
+            "syllables": [
+              "glow",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "realized",
+            "syllables": [
+              "ree",
+              "uh",
+              "lyzd"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       }
-    ]
+    ],
+    "comprehensionQuestions": [
+      {
+        "type": "recall",
+        "question": "What was in Captain Finn's treasure chest that went missing?",
+        "options": [
+          {
+            "text": "Colorful shells, sea glass, and his compass",
+            "emoji": "🐚",
+            "correct": true
+          },
+          {
+            "text": "Gold coins and silver jewelry",
+            "emoji": "💰",
+            "correct": false
+          },
+          {
+            "text": "Maps and fishing equipment",
+            "emoji": "🗺️",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "inference",
+        "question": "Why do you think Finn decided to help his friends instead of looking for his treasure?",
+        "options": [
+          {
+            "text": "He saw they were sad and wanted to make them happy",
+            "emoji": "💝",
+            "correct": true
+          },
+          {
+            "text": "He forgot about his missing treasure completely",
+            "emoji": "🤔",
+            "correct": false
+          },
+          {
+            "text": "He was too tired to keep searching his boat",
+            "emoji": "😴",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "connection",
+        "question": "How do you feel when you help a friend who is sad?",
+        "options": [
+          {
+            "text": "Happy and proud that I could make them smile",
+            "emoji": "😊",
+            "correct": true
+          },
+          {
+            "text": "Good inside, like I did something important",
+            "emoji": "💖",
+            "correct": true
+          },
+          {
+            "text": "Excited to see them feeling better",
+            "emoji": "🌟",
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "predictionPause": {
+      "atPageIdx": 5,
+      "question": "What do you think Captain Finn will do with his compass to help his friends?",
+      "options": [
+        {
+          "text": "Use it to find the best fishing spots for Maya",
+          "emoji": "🐟"
+        },
+        {
+          "text": "Guide them to places where they can find what they need",
+          "emoji": "🧭"
+        },
+        {
+          "text": "Give it to one of his friends to keep",
+          "emoji": "🎁"
+        }
+      ]
+    }
   },
   "a3": {
     "id": "a3",
@@ -379,6 +1752,70 @@
         "sounds": [
           "birds chirping",
           "paintbrush swishing"
+        ],
+        "vocabWords": [
+          {
+            "word": "wagon",
+            "emoji": "🛒",
+            "definition_2_4": "A cart with wheels you can pull or ride in.",
+            "definition_4_7": "A small cart with four wheels that you pull with a handle.",
+            "definition_7_10": "A wheeled vehicle that children can ride in or use to carry toys and other things around.",
+            "exampleSentence": "Dad loaded the groceries into the wagon at the store.",
+            "pronunciation": "WAG-un"
+          },
+          {
+            "word": "paints",
+            "emoji": "🎨",
+            "definition_2_4": "Puts color on something with a brush.",
+            "definition_4_7": "Uses a brush and colors to make something look different.",
+            "definition_7_10": "Applies liquid color with brushes or other tools to change how something looks or to create art.",
+            "exampleSentence": "Mom paints pictures of flowers on her easel.",
+            "pronunciation": "PAYNTS"
+          },
+          {
+            "word": "silver",
+            "emoji": "✨",
+            "definition_2_4": "A shiny gray color like a spoon.",
+            "definition_4_7": "A bright, shiny color that looks like metal spoons.",
+            "definition_7_10": "A metallic color that gleams and reflects light, similar to coins or jewelry made from precious metal.",
+            "exampleSentence": "The silver necklace sparkled in the sunlight.",
+            "pronunciation": "SIL-ver"
+          },
+          {
+            "word": "rocket",
+            "emoji": "🚀",
+            "definition_2_4": "A fast ship that flies to space.",
+            "definition_4_7": "A spacecraft that shoots up high into the sky.",
+            "definition_7_10": "A powerful vehicle designed to travel through space by shooting flames from its bottom to push upward.",
+            "exampleSentence": "The rocket blasted off from the launch pad with a loud roar.",
+            "pronunciation": "ROCK-et"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "wagon",
+            "syllables": [
+              "wag",
+              "un"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "rocket",
+            "syllables": [
+              "rock",
+              "et"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "silver",
+            "syllables": [
+              "sil",
+              "ver"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -389,6 +1826,52 @@
         "sounds": [
           "pillow fluffing",
           "gentle breeze"
+        ],
+        "vocabWords": [
+          {
+            "word": "climbs",
+            "emoji": "🧗",
+            "definition_2_4": "Gets up into something high.",
+            "definition_4_7": "Goes up or gets into something using hands and feet.",
+            "definition_7_10": "Moves upward or gets into something by using arms, legs, or stepping motions to reach a higher place.",
+            "exampleSentence": "The cat climbs up the tall tree in our backyard.",
+            "pronunciation": "KLYMZ"
+          },
+          {
+            "word": "pillow",
+            "emoji": "🛏️",
+            "definition_2_4": "A soft thing you put your head on.",
+            "definition_4_7": "A soft cushion you rest your head on when sleeping.",
+            "definition_7_10": "A soft, stuffed cushion designed to support your head and neck while resting or sleeping comfortably.",
+            "exampleSentence": "I hug my favorite pillow when I watch movies on the couch.",
+            "pronunciation": "PIL-oh"
+          },
+          {
+            "word": "purple",
+            "emoji": "💜",
+            "definition_2_4": "A color made from red and blue mixed together.",
+            "definition_4_7": "A color that looks like grapes or some flowers.",
+            "definition_7_10": "A rich color created by mixing red and blue, often seen in violets, plums, and royal clothing.",
+            "exampleSentence": "The purple grapes taste sweet and juicy in the summer.",
+            "pronunciation": "PUR-pul"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "climbs",
+            "syllables": [
+              "klymz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "purple",
+            "syllables": [
+              "pur",
+              "pul"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -399,6 +1882,53 @@
         "sounds": [
           "grass swishing",
           "wagon wheels turning"
+        ],
+        "vocabWords": [
+          {
+            "word": "space",
+            "emoji": "🌌",
+            "definition_2_4": "The big dark place where stars live.",
+            "definition_4_7": "The area high above Earth where rockets fly to.",
+            "definition_7_10": "The vast empty area beyond Earth's atmosphere where planets, stars, and spaceships travel through darkness.",
+            "exampleSentence": "Astronauts wear special suits when they travel through space.",
+            "pronunciation": "SPAYS"
+          },
+          {
+            "word": "pushes",
+            "emoji": "👐",
+            "definition_2_4": "Uses hands or feet to move something away.",
+            "definition_4_7": "Uses force to make something move in a direction.",
+            "definition_7_10": "Applies pressure with hands, feet, or body to move an object away from oneself or in a specific direction.",
+            "exampleSentence": "Tommy pushes the heavy box across the floor to his room.",
+            "pronunciation": "PUSH-ez"
+          },
+          {
+            "word": "grassy",
+            "emoji": "🌱",
+            "definition_2_4": "Covered with lots of green grass.",
+            "definition_4_7": "A place that has grass growing all over it.",
+            "definition_7_10": "An area covered with green grass plants that create a soft, natural carpet across the ground.",
+            "exampleSentence": "We had a picnic on the grassy field behind the school.",
+            "pronunciation": "GRAS-ee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "pushes",
+            "syllables": [
+              "push",
+              "ez"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "grassy",
+            "syllables": [
+              "gras",
+              "ee"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -410,6 +1940,52 @@
           "wind whooshing",
           "happy laughter",
           "wheels spinning"
+        ],
+        "vocabWords": [
+          {
+            "word": "faster",
+            "emoji": "💨",
+            "definition_2_4": "Moving more quick than before.",
+            "definition_4_7": "Going quicker and quicker, not slow anymore.",
+            "definition_7_10": "Moving at an increasingly rapid pace, gaining speed and covering more distance in less time.",
+            "exampleSentence": "The horse runs faster when it sees the finish line ahead.",
+            "pronunciation": "FAS-ter"
+          },
+          {
+            "word": "flies",
+            "emoji": "🌬️",
+            "definition_2_4": "Moves through the air really fast.",
+            "definition_4_7": "Moves quickly through the air like a bird does.",
+            "definition_7_10": "Travels rapidly through the air, either by floating, being blown, or moving with swift motion like birds.",
+            "exampleSentence": "The paper airplane flies across the classroom and lands on the desk.",
+            "pronunciation": "FLYZ"
+          },
+          {
+            "word": "speeds",
+            "emoji": "⚡",
+            "definition_2_4": "Goes really, really fast.",
+            "definition_4_7": "Moves very quickly from one place to another.",
+            "definition_7_10": "Travels at a very rapid pace, moving much faster than normal walking or regular movement.",
+            "exampleSentence": "The race car speeds around the track trying to win first place.",
+            "pronunciation": "SPEEDZ"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "faster",
+            "syllables": [
+              "fas",
+              "ter"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "speeds",
+            "syllables": [
+              "speedz"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -420,6 +1996,43 @@
         "sounds": [
           "wheels rattling",
           "wind rushing"
+        ],
+        "vocabWords": [
+          {
+            "word": "steeper",
+            "emoji": "⛰️",
+            "definition_2_4": "Going down like a big slide.",
+            "definition_4_7": "Slanting down more sharply than she thought it would.",
+            "definition_7_10": "Having a sharper downward angle or slope that makes things roll or slide down much faster than expected.",
+            "exampleSentence": "The steeper trail made hiking down the mountain more challenging for the family.",
+            "pronunciation": "STEEP-er"
+          },
+          {
+            "word": "thought",
+            "emoji": "💭",
+            "definition_2_4": "What was in her mind before.",
+            "definition_4_7": "Something she believed or expected would happen.",
+            "definition_7_10": "An idea or belief that someone had in their mind about how something would be or work.",
+            "exampleSentence": "I thought the movie would be scary, but it was actually funny.",
+            "pronunciation": "THAWT"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "steeper",
+            "syllables": [
+              "steep",
+              "er"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "thought",
+            "syllables": [
+              "thawt"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -430,6 +2043,53 @@
         "sounds": [
           "petals rustling",
           "flowers brushing wagon"
+        ],
+        "vocabWords": [
+          {
+            "word": "pretty",
+            "emoji": "🌸",
+            "definition_2_4": "Nice to look at and beautiful.",
+            "definition_4_7": "Something that looks beautiful and makes you smile.",
+            "definition_7_10": "Attractive and pleasing to look at, having colors, shapes, or features that create a lovely appearance.",
+            "exampleSentence": "The pretty butterfly landed gently on the colorful garden roses.",
+            "pronunciation": "PRIT-ee"
+          },
+          {
+            "word": "flowers",
+            "emoji": "🌼",
+            "definition_2_4": "Colorful parts of plants that smell good.",
+            "definition_4_7": "The colorful, pretty parts that grow on plants and trees.",
+            "definition_7_10": "The beautiful, often fragrant parts of plants that bloom in various colors to attract bees and other insects.",
+            "exampleSentence": "We picked fresh flowers from the garden to put in a vase.",
+            "pronunciation": "FLOW-erz"
+          },
+          {
+            "word": "petals",
+            "emoji": "🌺",
+            "definition_2_4": "The soft colored pieces of a flower.",
+            "definition_4_7": "The colorful parts that make up the outside of flowers.",
+            "definition_7_10": "The individual colored segments that form the outer part of a flower, often soft and delicate to touch.",
+            "exampleSentence": "Rose petals feel smooth and smell sweet when you touch them gently.",
+            "pronunciation": "PET-ulz"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "flowers",
+            "syllables": [
+              "flow",
+              "erz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "petals",
+            "syllables": [
+              "pet",
+              "ulz"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -441,6 +2101,51 @@
           "sand crunching",
           "water splashing",
           "ducks quacking"
+        ],
+        "vocabWords": [
+          {
+            "word": "slows",
+            "emoji": "🐌",
+            "definition_2_4": "Goes not fast anymore.",
+            "definition_4_7": "Starts moving more slowly than it was before.",
+            "definition_7_10": "Gradually reduces speed or pace, moving more gently and taking more time to cover the same distance.",
+            "exampleSentence": "The train slows down as it approaches the busy station platform.",
+            "pronunciation": "SLOHZ"
+          },
+          {
+            "word": "soft",
+            "emoji": "☁️",
+            "definition_2_4": "Not hard, feels nice to touch.",
+            "definition_4_7": "Something gentle and comfortable that doesn't feel rough.",
+            "definition_7_10": "Having a smooth, gentle texture that feels pleasant and cushioning rather than firm or scratchy when touched.",
+            "exampleSentence": "The soft blanket keeps me warm and cozy during cold winter nights.",
+            "pronunciation": "SAWFT"
+          },
+          {
+            "word": "sand",
+            "emoji": "🏖️",
+            "definition_2_4": "Tiny bits of rock you find at beaches.",
+            "definition_4_7": "Very small pieces of rock that feel grainy.",
+            "definition_7_10": "Countless tiny grains of weathered rock and minerals that create beaches, deserts, and playground surfaces.",
+            "exampleSentence": "Children love to build castles in the sand at the beach.",
+            "pronunciation": "SAND"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "slows",
+            "syllables": [
+              "slohz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "sand",
+            "syllables": [
+              "sand"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -451,6 +2156,45 @@
         "sounds": [
           "gentle water lapping",
           "contented sigh"
+        ],
+        "vocabWords": [
+          {
+            "word": "amazing",
+            "emoji": "🤩",
+            "definition_2_4": "Something really, really wonderful and fun.",
+            "definition_4_7": "So good and exciting that it makes you very happy.",
+            "definition_7_10": "Extraordinarily wonderful, exciting, or impressive in a way that fills you with delight and positive surprise.",
+            "exampleSentence": "The amazing fireworks show lit up the entire night sky with brilliant colors.",
+            "pronunciation": "uh-MAYZ-ing"
+          },
+          {
+            "word": "sunshine",
+            "emoji": "☀️",
+            "definition_2_4": "Bright warm light that comes from the sun.",
+            "definition_4_7": "The warm, bright light that the sun gives us.",
+            "definition_7_10": "The radiant light and warmth that comes from the sun, creating brightness and pleasant temperatures during the day.",
+            "exampleSentence": "Morning sunshine streams through my bedroom window and wakes me up naturally.",
+            "pronunciation": "SUN-shyn"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "amazing",
+            "syllables": [
+              "uh",
+              "mayz",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "sunshine",
+            "syllables": [
+              "sun",
+              "shyn"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -462,6 +2206,44 @@
           "footsteps in grass",
           "wagon bumping",
           "deep breaths"
+        ],
+        "vocabWords": [
+          {
+            "word": "pulls",
+            "emoji": "🪢",
+            "definition_2_4": "Uses hands to bring something closer.",
+            "definition_4_7": "Uses strength to drag or bring something toward you.",
+            "definition_7_10": "Applies force to move an object closer by grasping and drawing it in your direction with steady effort.",
+            "exampleSentence": "Dad pulls the sled up the snowy hill so we can ride down again.",
+            "pronunciation": "POOLZ"
+          },
+          {
+            "word": "excited",
+            "emoji": "🎉",
+            "definition_2_4": "Feeling very happy and can't wait.",
+            "definition_4_7": "Feeling so happy that you can barely wait for something.",
+            "definition_7_10": "Feeling energetic enthusiasm and eager anticipation about something wonderful that is going to happen or that you want to do.",
+            "exampleSentence": "Maya feels excited about her birthday party and all the friends coming over.",
+            "pronunciation": "ik-SYT-ed"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "pulls",
+            "syllables": [
+              "poolz"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "excited",
+            "syllables": [
+              "ik",
+              "syt",
+              "ed"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -473,6 +2255,46 @@
           "happy giggling",
           "birds singing",
           "breeze blowing"
+        ],
+        "vocabWords": [
+          {
+            "word": "adventure",
+            "emoji": "🗺️",
+            "definition_2_4": "A fun trip where exciting things happen.",
+            "definition_4_7": "An exciting journey where you do new and fun things.",
+            "definition_7_10": "An exciting experience or journey that involves exploration, discovery, and often some element of risk or the unknown.",
+            "exampleSentence": "Our family camping adventure included hiking trails and roasting marshmallows by the fire.",
+            "pronunciation": "ad-VEN-cher"
+          },
+          {
+            "word": "happily",
+            "emoji": "😊",
+            "definition_2_4": "In a way that shows you feel good and glad.",
+            "definition_4_7": "Doing something while feeling joyful and content inside.",
+            "definition_7_10": "In a manner that shows joy, satisfaction, and positive emotions while doing or saying something with cheerful enthusiasm.",
+            "exampleSentence": "The children happily played together in the park until it was time for dinner.",
+            "pronunciation": "HAP-i-lee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "adventure",
+            "syllables": [
+              "ad",
+              "ven",
+              "cher"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "happily",
+            "syllables": [
+              "hap",
+              "i",
+              "lee"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       }
     ]
