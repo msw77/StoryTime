@@ -1,112 +1,344 @@
 {
+  "_schema": "One narrator voice per story (default nova). Characters don't get their own voice or speed — they get 'instructions' that tell gpt-4o-mini-tts how the narrator should INFLECT (pitch / tone / emotion only) when voicing that character. Pacing stays consistent throughout — a parent reading aloud doesn't speed up and slow down per character.",
+  "_pacingRule": "Every narrator direction must end with 'Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.' Character flex instructions must describe pitch/tone/emotion ONLY. Never write 'slow', 'fast', 'quick', 'measured', 'drawn-out' (length), etc. in either.",
   "classic_three_little_pigs": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive with natural warmth. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "pip": "alloy",
-      "pat": "alloy",
-      "penny": "shimmer",
-      "wolf": "onyx",
-      "pigs": "alloy"
+      "pip": "Same storyteller voice, lifted brighter and slightly cheerful-lazy — playing a carefree young piglet.",
+      "pat": "Same storyteller voice, softer and a touch yawny — playing a sleepy young piglet.",
+      "penny": "Same storyteller voice, bright and determined — playing a sensible little piglet.",
+      "pigs": "Same storyteller voice, lifted bright and playful — playing the piglets together.",
+      "wolf": "Same storyteller voice, dropped low with a growly, smirking villain inflection — playing a cartoonish big-bad wolf for young kids. Playful, not frightening."
     }
   },
   "classic_goldilocks": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice, a touch whimsical. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "goldilocks": "shimmer",
-      "papa bear": "onyx",
-      "papa": "onyx",
-      "mama bear": "fable",
-      "mama": "fable",
-      "baby bear": "alloy",
-      "baby": "alloy"
+      "goldilocks": "Same storyteller voice, lifted higher and a little impulsive — playing a curious, bossy young girl.",
+      "papa bear": "Same storyteller voice, dropped deep and rumbly — playing a big, gruff-but-kind papa bear.",
+      "papa": "Same storyteller voice, dropped deep and rumbly — playing a big, gruff-but-kind papa bear.",
+      "mama bear": "Same storyteller voice, softened and motherly — playing a warm, gentle mama bear.",
+      "mama": "Same storyteller voice, softened and motherly — playing a warm, gentle mama bear.",
+      "baby bear": "Same storyteller voice, lifted high and piping — playing a sweet, eager baby bear.",
+      "baby": "Same storyteller voice, lifted high and piping — playing a sweet, eager baby bear."
     }
   },
   "classic_tortoise_hare": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice with a touch of humor and anticipation. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "hare": "echo",
-      "tortoise": "fable",
-      "animals": "alloy"
+      "hare": "Same storyteller voice, lifted brighter and cocky — playing a showoff young athlete.",
+      "tortoise": "Same storyteller voice, lowered and calmly confident — playing a wise old tortoise.",
+      "animals": "Same storyteller voice, brighter and excited — playing the cheering animal spectators."
     }
   },
   "classic_ugly_duckling": {
-    "narrator": "nova",
+    "narrator": "Tender bedtime storyteller voice — a little wistful for the sad parts, radiant at the transformation. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "duckling": "alloy",
-      "grey duckling": "alloy",
-      "ducklings": "shimmer",
-      "yellow ducklings": "shimmer",
-      "swans": "fable",
-      "swan": "fable"
+      "duckling": "Same storyteller voice, softer and shy — playing a lonely, gentle young duckling.",
+      "grey duckling": "Same storyteller voice, softer and shy — playing a lonely, gentle young duckling.",
+      "ducklings": "Same storyteller voice, lifted bright and chirpy — playing the cheerful baby ducks together.",
+      "yellow ducklings": "Same storyteller voice, lifted bright and chirpy — playing the cheerful baby ducks together.",
+      "swans": "Same storyteller voice, elegant and graceful — playing the kind, regal swans.",
+      "swan": "Same storyteller voice, elegant and graceful — playing a kind, regal swan."
     }
   },
   "classic_red_riding_hood": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice with a touch of suspense for the woods and brightness for the happy ending. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "little red": "shimmer",
-      "red": "shimmer",
-      "mom": "fable",
-      "mother": "fable",
-      "wolf": "onyx",
-      "woodcutter": "echo"
+      "little red": "Same storyteller voice, lifted bright and polite — playing a sweet, curious young girl.",
+      "red": "Same storyteller voice, lifted bright and polite — playing a sweet, curious young girl.",
+      "mom": "Same storyteller voice, softened and loving — playing a warm mother.",
+      "mother": "Same storyteller voice, softened and loving — playing a warm mother.",
+      "wolf": "Same storyteller voice, dropped low with a sly, smirking villain inflection — playing a playful big-bad wolf. Not genuinely scary for young kids.",
+      "woodcutter": "Same storyteller voice, lowered and steady — playing a strong, kind heroic woodcutter."
     }
   },
   "classic_billy_goats_gruff": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice with playful rhythm for the trip-trap of the goats crossing. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "troll": "onyx",
-      "little goat": "shimmer",
-      "littlest": "shimmer",
-      "middle goat": "alloy",
-      "middle": "alloy",
-      "big goat": "echo",
-      "great big": "echo",
-      "goats": "alloy"
+      "troll": "Same storyteller voice, dropped low and rumbly — playing a grumpy storybook troll. Playful, not frightening.",
+      "little goat": "Same storyteller voice, lifted tiny and piping — playing a timid-but-brave little goat.",
+      "littlest": "Same storyteller voice, lifted tiny and piping — playing a timid-but-brave little goat.",
+      "middle goat": "Same storyteller voice, playful and a little braver — playing a medium-sized goat.",
+      "middle": "Same storyteller voice, playful and a little braver — playing a medium-sized goat.",
+      "big goat": "Same storyteller voice, dropped deep and commanding — playing a large, fearless billy goat.",
+      "great big": "Same storyteller voice, dropped deep and commanding — playing a large, fearless billy goat.",
+      "goats": "Same storyteller voice, playful and steady — playing the goats together."
     }
   },
   "classic_little_red_hen": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice with a hint of gentle exasperation — leaning into the humor of the repetition. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "hen": "shimmer",
-      "little red hen": "shimmer",
-      "cat": "alloy",
-      "dog": "echo",
-      "duck": "fable"
+      "hen": "Same storyteller voice, brisk and cheerful, a little exasperated — playing a hardworking little hen.",
+      "little red hen": "Same storyteller voice, brisk and cheerful, a little exasperated — playing a hardworking little hen.",
+      "cat": "Same storyteller voice, drawling and bored — playing a lazy cat.",
+      "dog": "Same storyteller voice, lowered and lazy — playing a relaxed, easygoing dog.",
+      "duck": "Same storyteller voice, prim and refined — playing a slightly vain, proper duck."
     }
   },
   "classic_jack_beanstalk": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice, adventurous energy with a touch of suspense for the giant scenes. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "jack": "alloy",
-      "man": "fable",
-      "old man": "fable",
-      "giant": "onyx",
-      "mother": "shimmer",
-      "mom": "shimmer"
+      "jack": "Same storyteller voice, lifted bright and eager — playing a brave, curious young boy.",
+      "man": "Same storyteller voice, refined and a little mysterious — playing a wise old stranger.",
+      "old man": "Same storyteller voice, refined and a little mysterious — playing a wise old stranger.",
+      "giant": "Same storyteller voice, dropped huge and rumbly — playing a booming storybook giant. Playfully terrifying, not frightening.",
+      "mother": "Same storyteller voice, softened and a little worried — playing Jack's tired but loving mother.",
+      "mom": "Same storyteller voice, softened and a little worried — playing Jack's tired but loving mother."
     }
   },
   "classic_gingerbread_man": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice with a playful chase energy. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "gingerbread man": "alloy",
-      "gingerbread": "alloy",
-      "old man": "echo",
-      "old woman": "fable",
-      "cow": "fable",
-      "horse": "echo",
-      "fox": "onyx"
+      "gingerbread man": "Same storyteller voice, giggly and mischievous, taunting — playing a cheeky runaway gingerbread man.",
+      "gingerbread": "Same storyteller voice, giggly and mischievous, taunting — playing a cheeky runaway gingerbread man.",
+      "old man": "Same storyteller voice, warm and a little breathless — playing a kind old grandfather.",
+      "old woman": "Same storyteller voice, warm and gentle — playing a kind old grandmother.",
+      "cow": "Same storyteller voice, lowered and a little lazy — playing a friendly cow.",
+      "horse": "Same storyteller voice, steady and a little huffy — playing a strong horse.",
+      "fox": "Same storyteller voice, slick and sly — playing a clever smooth-talking fox with mischief underneath."
     }
   },
   "classic_enormous_turnip": {
-    "narrator": "nova",
+    "narrator": "Warm bedtime storyteller voice with a pulling rhythm for the 'heave and ho'. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
     "characters": {
-      "farmer": "echo",
-      "old farmer": "echo",
-      "wife": "fable",
-      "granddaughter": "shimmer",
-      "dog": "alloy",
-      "cat": "alloy",
-      "mouse": "shimmer"
+      "farmer": "Same storyteller voice, warm and earthy, a little gruff but kind — playing a jolly old farmer.",
+      "old farmer": "Same storyteller voice, warm and earthy, a little gruff but kind — playing a jolly old farmer.",
+      "wife": "Same storyteller voice, warm and cheerful — playing a friendly old farmer's wife.",
+      "granddaughter": "Same storyteller voice, lifted bright and cheerful — playing a sweet young girl, eager to help.",
+      "dog": "Same storyteller voice, eager and bouncy — playing a happy playful dog.",
+      "cat": "Same storyteller voice, aloof — playing a lazy cat.",
+      "mouse": "Same storyteller voice, lifted tiny and piping — playing a small-but-mighty mouse."
+    }
+  },
+  "classic_cinderella": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear, gentle, and expressive, with a touch of wonder. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "cinderella": "Same storyteller voice, lifted softer and brighter with a gentle, hopeful sweetness — playing a kind young girl.",
+      "ella": "Same storyteller voice, lifted softer and brighter with a gentle, hopeful sweetness — playing a kind young girl.",
+      "mother": "Same storyteller voice, warmed and tender, almost whispered with love — playing a loving mother's parting wish.",
+      "father": "Same storyteller voice, lowered and kindly, with a fatherly warmth — playing a gentle father.",
+      "stepmother": "Same storyteller voice, cooled and crisp with a clipped, haughty edge — playing a stern, dismissive stepmother.",
+      "greta": "Same storyteller voice, lifted high and prissy with a vain, show-offy lilt — playing a silly, snooty stepsister.",
+      "mina": "Same storyteller voice, pinched and nasal with a bratty pout — playing a silly, snooty stepsister.",
+      "prince": "Same storyteller voice, warmed and bright with a kind, hopeful gentleness — playing a sweet young prince.",
+      "doves": "Same storyteller voice, lifted airy and cooing with a soft sing-song — playing gentle magical doves."
+    }
+  },
+  "classic_rapunzel": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, with a hint of wonder for the fairy-tale mood. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "husband": "Same storyteller voice, softened and a little worried — playing a gentle, loving husband who feels in over his head.",
+      "witch": "Same storyteller voice, lowered and crisp with a firm, stern schoolteacher edge — playing a strict but not truly scary guardian.",
+      "rapunzel": "Same storyteller voice, lifted bright and curious with a singsong sweetness — playing a kind, sheltered young girl full of wonder.",
+      "prince": "Same storyteller voice, a touch warmer and more gallant with a gentle smile in it — playing a kind, respectful young traveler."
+    }
+  },
+  "classic_elves_shoemaker": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, full of gentle wonder. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "hans": "Same storyteller voice, warmed with a soft lower tone and kind gentleness — playing a humble, good-hearted shoemaker.",
+      "greta": "Same storyteller voice, lifted a touch brighter with a tender, motherly warmth — playing the shoemaker's caring wife."
+    }
+  },
+  "classic_thumbelina": {
+    "narrator": "Warm bedtime storyteller voice — a gentle parent reading aloud, clear and expressive with a touch of wonder. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "woman": "Same storyteller voice, lifted soft and tender with motherly warmth — playing the kind woman who wishes for a child.",
+      "thumbelina": "Same storyteller voice, lifted tiny and bright with sweet curiosity — playing a brave, gentle thumb-sized girl.",
+      "toad": "Same storyteller voice, dropped low with a croaky, silly, bumbling tone — playing a goofy marsh toad, comic not scary.",
+      "butterfly": "Same storyteller voice, lifted airy and light with a fluttery cheerful lilt — playing a friendly white butterfly.",
+      "beetle": "Same storyteller voice, bright and haughty with a puffed-up prim tone — playing a fussy shiny beetle.",
+      "mouse": "Same storyteller voice, warm and grandmotherly with a cozy practical tone — playing the kindly field mouse.",
+      "swallow": "Same storyteller voice, lifted light and melodic with a grateful chirpy warmth — playing a gentle rescued swallow.",
+      "prince": "Same storyteller voice, soft and bright with a tender welcoming smile in it — playing the tiny flower prince."
+    }
+  },
+  "classic_puss_in_boots": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, with a twinkle of mischief for this clever tale. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "puss": "Same storyteller voice, lifted brighter with a sly, silky, mischievous purr — playing a clever trickster cat who always has a plan.",
+      "thomas": "Same storyteller voice, softened to a gentle, earnest young tone — playing a kindhearted young man who is sweetly unsure of himself.",
+      "king": "Same storyteller voice, dropped warmer and rounder with a jolly regal lilt — playing a kindly, easily impressed king.",
+      "ogre": "Same storyteller voice, dropped low and booming with a proud, boastful rumble — playing a big, showy ogre who loves to brag.",
+      "farmers": "Same storyteller voice, brightened with a cheery country warmth — playing friendly farm folk eager to help."
+    }
+  },
+  "classic_snow_queen": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud with a gentle, expressive tone, soft and clear, full of wonder. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "kai": "Same storyteller voice, lifted a touch brighter and boyish — playing a cheerful young boy, turning chilly and flat when under the Snow Queen's spell, then warm and bright again at the end.",
+      "gerda": "Same storyteller voice, lifted a little higher and gentler, full of heart and determination — playing a brave, loving young girl.",
+      "snow queen": "Same storyteller voice, dropped cool and airy with a hushed, dreamy whisper — playing a mysterious icy lady, elegant rather than scary.",
+      "crow": "Same storyteller voice, tilted into a bright, slightly raspy, excited croak — playing a clever chatty crow.",
+      "old woman": "Same storyteller voice, softened warm and grandmotherly — playing a kind, cozy gardener.",
+      "roses": "Same storyteller voice, hushed into a feather-light whispery chorus — playing gentle talking flowers.",
+      "robber girl": "Same storyteller voice, lifted bright and scrappy with a playful grin in the tone — playing a wild-hearted but kind little robber.",
+      "reindeer": "Same storyteller voice, deepened soft and warm with a gentle hush — playing a kind wise reindeer."
+    }
+  },
+  "classic_rumpelstiltskin": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, full of gentle wonder. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "miller": "Same storyteller voice, puffed up and boastful with a rounded fatherly tone — playing a proud miller stretching the truth.",
+      "king": "Same storyteller voice, dropped deeper and grander with a greedy, booming quality — playing a demanding royal king.",
+      "elsa": "Same storyteller voice, lifted softer and higher with a gentle, tender warmth — playing a kind young woman who becomes a loving mother.",
+      "rumpelstiltskin": "Same storyteller voice, pitched higher and crinkled with a sly, giggly, mischievous lilt — playing a tricky little magical man, playful and cartoonish, not frightening."
+    }
+  },
+  "classic_pinocchio": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear, tender, and expressive. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "geppetto": "Same storyteller voice, softened and aged with gentle fatherly warmth — playing a kind old woodcarver who loves his little puppet boy.",
+      "pinocchio": "Same storyteller voice, lifted bright and squeaky with wide-eyed curiosity — playing an innocent wooden puppet boy discovering the world.",
+      "jiminy": "Same storyteller voice, lifted high and chirpy with a cheerful chiming lilt — playing a tiny helpful cricket conscience.",
+      "fox": "Same storyteller voice, smoothed silky and sly with a sing-song smirk — playing a cartoonish trickster fox.",
+      "cat": "Same storyteller voice, raspy and purring with mischievous swagger — playing a cartoonish trickster cat sidekick.",
+      "showman": "Same storyteller voice, dropped low and booming with a big rumbly theatrical warmth — playing a gruff but soft-hearted puppet showman.",
+      "fisherman": "Same storyteller voice, lowered to a hushed weathered whisper — playing a kindly old seaside fisherman sharing news.",
+      "fairy": "Same storyteller voice, lifted airy and gentle with a sparkling, kind lilt — playing a magical blue fairy."
+    }
+  },
+  "classic_aladdin": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, rich with wonder for a faraway tale. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "aladdin": "Same storyteller voice, lifted brighter and youthful with a kind, curious warmth — playing a good-hearted young hero.",
+      "magician": "Same storyteller voice, dropped lower with a sly, silky, smirking tone — playing a cartoonish tricky villain for young kids, mischievous but not frightening.",
+      "mother": "Same storyteller voice, softened and gentle with motherly warmth — playing Aladdin's loving mother.",
+      "ring-genie": "Same storyteller voice, lifted to a light, twinkly, friendly tone — playing a small helpful magical spirit.",
+      "lamp-genie": "Same storyteller voice, dropped deep and round with a booming but jolly warmth — playing a giant cheerful magical helper.",
+      "badr": "Same storyteller voice, lifted to a graceful, clever, kind tone — playing a brave clever princess.",
+      "princess": "Same storyteller voice, lifted to a graceful, clever, kind tone — playing a brave clever princess."
+    }
+  },
+  "classic_bremen_musicians": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, cheerful and expressive with a twinkle of humor. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "donkey": "Same storyteller voice, dropped lower with a friendly, hearty, slightly braying warmth — playing a kindly old donkey with a big dreamer's heart.",
+      "dog": "Same storyteller voice, softened and droopy with a sighing, tired-but-gentle tone — playing a shaggy old hound dog.",
+      "cat": "Same storyteller voice, lifted with a silky, grumbly-purring edge — playing a scruffy old cat with attitude.",
+      "rooster": "Same storyteller voice, lifted bright and bold with a proud, trumpet-like sparkle — playing a showy red rooster.",
+      "robber": "Same storyteller voice, pitched comically high and quavery with cartoonish fright — playing a silly, not-scary robber."
+    }
+  },
+  "classic_alice_wonderland": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, with a sense of curious wonder perfect for a dreamy adventure. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "alice": "Same storyteller voice, lifted brighter and lighter with polite curiosity and a touch of spirited pluck — playing a thoughtful, wondering eight-year-old girl.",
+      "rabbit": "Same storyteller voice, pitched higher and thinner with a fretful, flustered squeak — playing the worried White Rabbit who is always behind schedule.",
+      "caterpillar": "Same storyteller voice, dropped low and drawled with an aloof, dreamy smokiness — playing the languid, mysterious blue Caterpillar.",
+      "cat": "Same storyteller voice, pitched smooth and silky with a playful purring lilt — playing the grinning, riddling Cheshire Cat.",
+      "hatter": "Same storyteller voice, tilted bright and nonsensical with an eccentric lilt, like a delighted eccentric — playing the merry Mad Hatter.",
+      "queen": "Same storyteller voice, pushed louder and boomed with haughty, red-faced indignation, playful and cartoonish not frightening — playing the blustery Queen of Hearts.",
+      "gardeners": "Same storyteller voice, hushed and whispery with a guilty, hurried quiver — playing the anxious playing-card gardeners.",
+      "sister": "Same storyteller voice, softened warm and gentle with affectionate calm — playing Alice's kindly older sister."
+    }
+  },
+  "classic_jungle_book": {
+    "narrator": "Warm, literary storyteller voice — a parent reading a beloved adventure at bedtime, expressive and rich with wonder, comfortable with longer sentences and gentle emotion. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "mowgli": "Same storyteller voice, lifted brighter and younger, bold and curious with a touch of wild innocence — playing a fearless jungle boy growing into a young man.",
+      "fatherwolf": "Same storyteller voice, dropped deeper and gruff but kindly, with quiet wonder — playing a steady, protective wolf father.",
+      "raksha": "Same storyteller voice, warmer and fiercely protective, with a low smoldering edge — playing a devoted mother wolf who fears nothing.",
+      "sherekhan": "Same storyteller voice, lowered to a velvety, smirking growl with a sneering lilt — playing a proud, vain tiger villain for older children; menacing but storybook, never truly frightening.",
+      "akela": "Same storyteller voice, aged and gravelly with wise calm — playing the noble grey leader of the wolf pack.",
+      "bagheera": "Same storyteller voice, smooth and velvety, warm as dark honey with a hint of amusement and deep affection — playing a wise, elegant black panther.",
+      "baloo": "Same storyteller voice, rounded and rumbly, a bit sleepy and grumbly-fond — playing a kindly old bear teacher who loves his pupil.",
+      "monkeys": "Same storyteller voice, lifted high and scatterbrained, giggling and boastful, tumbling over itself — playing the foolish chattering Bandar-log as a chorus."
+    }
+  },
+  "classic_wizard_oz": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, with a touch of wonder for a classic adventure. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "dorothy": "Same storyteller voice, lifted brighter and earnest — playing a kind, brave young girl far from home.",
+      "uncle henry": "Same storyteller voice, dropped lower and gruff with urgency — playing a weathered farmer in a sudden storm.",
+      "aunt em": "Same storyteller voice, softened with relief and tender love — playing a warm-hearted farm auntie.",
+      "good witch": "Same storyteller voice, lifted gentle and melodic — playing a kind, reassuring fairy-like figure.",
+      "scarecrow": "Same storyteller voice, lightened and slightly wobbly, with a shy hopeful lilt — playing a bashful straw fellow longing for brains.",
+      "tin woodman": "Same storyteller voice, softened and airy with a tender ache — playing a gentle metal man longing for a heart.",
+      "tin man": "Same storyteller voice, softened and airy with a tender ache — playing a gentle metal man longing for a heart.",
+      "lion": "Same storyteller voice, dropped deeper but trembling and teary — playing a big timid lion who secretly wishes to be brave.",
+      "guardian": "Same storyteller voice, made formal and dignified with a ceremonial flourish — playing a proud city gatekeeper.",
+      "wizard": "Same storyteller voice, one moment booming and grand, the next small, apologetic, and flustered — playing a pretend sorcerer who is really just an ordinary man.",
+      "glinda": "Same storyteller voice, lifted warm and luminous with quiet wisdom — playing a kind good witch who reveals a secret.",
+      "witch": "Same storyteller voice, pinched and sly with a cranky rasp — playing a cartoonish wicked witch for young readers, never frightening."
+    }
+  },
+  "classic_treasure_island": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud with rich expression, suited for a seafaring adventure; slightly hushed during suspense and bright during wonder. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "jim": "Same storyteller voice, lifted lighter and younger with earnest curiosity and a trace of boyish wonder — playing a brave twelve-year-old boy.",
+      "billy": "Same storyteller voice, dropped low and gravelly with a rum-roughened growl and wary gleam — playing a weathered old sea-dog with secrets.",
+      "silver": "Same storyteller voice, warmed into a hearty, rolling charm with a twinkle that hides something sharper underneath — playing a jolly pirate cook who is also a dangerous rogue.",
+      "livesey": "Same storyteller voice, softened into calm, thoughtful warmth with gentlemanly clarity — playing a kind country doctor.",
+      "squire": "Same storyteller voice, puffed up louder and rounder with booming cheerful enthusiasm — playing a blustering, adventurous country squire.",
+      "smollett": "Same storyteller voice, straightened into crisp, steady captain's tone with proud warmth — playing a no-nonsense naval captain.",
+      "ben": "Same storyteller voice, thinned into a raspy, excited, slightly cracked whisper with flickers of delight — playing a marooned man who hasn't spoken in years.",
+      "mother": "Same storyteller voice, gentled into soft maternal warmth with a flutter of worry — playing Jim's caring mother."
+    }
+  },
+  "classic_rip_van_winkle": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, with a touch of old-world twinkle suited to Washington Irving's gentle humor. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "rip": "Same storyteller voice, softened with a good-natured, slightly sleepy warmth — playing a kind, easy-going fellow who finds himself bewildered in a changed world.",
+      "judith": "Same storyteller voice, lifted into a gentle, tender young-woman warmth — playing Rip's grown daughter overflowing with wonder and love.",
+      "villagers": "Same storyteller voice, made plainer and more everyday with a curious, small-town lilt — playing a chorus of puzzled townsfolk."
+    }
+  },
+  "classic_secret_garden": {
+    "narrator": "Warm bedtime storyteller voice — like a gentle grandparent reading by firelight, expressive, rich with quiet wonder, savoring each image. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "mary": "Same storyteller voice, lifted to a clipped, serious English child's tone — a little sharp and frowny at first, softening into wonder — playing lonely, stubborn Mary.",
+      "martha": "Same storyteller voice, warmer and brighter with a gentle Yorkshire lilt — playing the cheerful, kind housemaid.",
+      "ben": "Same storyteller voice, lowered gruff and craggy with a Yorkshire roughness — playing the grumpy but fond old gardener.",
+      "dickon": "Same storyteller voice, bright and open with a warm Yorkshire roll — playing the sunny moor boy who loves all creatures.",
+      "colin": "Same storyteller voice, thin and fretful at first growing stronger and brighter — playing the pale, proud, awakening boy.",
+      "craven": "Same storyteller voice, dropped low and tender with a weary, gentle warmth — playing Colin's grieving father.",
+      "father": "Same storyteller voice, dropped low and tender with a weary, gentle warmth — playing Colin's grieving father."
+    }
+  },
+  "classic_perseus_medusa": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud an old Greek myth with wonder and clarity, expressive but unhurried. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "perseus": "Same storyteller voice, lifted brighter and youthful with an earnest, brave warmth — playing a kind-hearted teenage hero who speaks from the heart.",
+      "danaë": "Same storyteller voice, softened and tender with gentle motherly warmth — playing Perseus's loving mother.",
+      "danae": "Same storyteller voice, softened and tender with gentle motherly warmth — playing Perseus's loving mother.",
+      "polydectes": "Same storyteller voice, dropped lower with a sly, smirking, silky inflection — playing a scheming but cartoonish king for children.",
+      "athena": "Same storyteller voice, steadied into a calm, wise, kind resonance — playing a noble goddess of wisdom.",
+      "hermes": "Same storyteller voice, lifted light and playful with a mischievous twinkle — playing a cheerful messenger god.",
+      "andromeda": "Same storyteller voice, softened with gentle courage and relief — playing a kind-hearted princess.",
+      "nymphs": "Same storyteller voice, hushed and airy with a whispery, welcoming warmth — playing gentle forest spirits."
+    }
+  },
+  "classic_robin_hood": {
+    "narrator": "Warm, storybook voice like a village bard beside a crackling fire — rich, twinkling, English-folk flavour, fond of every character. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "robin": "Same storyteller voice, lifted brighter with a mischievous, confident grin in the tone — playing a quick-witted, kind-hearted young outlaw hero.",
+      "john": "Same storyteller voice, dropped deep and rumbling with a big warm booming chuckle underneath — playing a hulking, good-natured giant loyal to his friends.",
+      "tuck": "Same storyteller voice, rounded and hearty with a belly-laugh bounce and a twinkling jolly warmth — playing a merry, plump friar with a mischievous streak.",
+      "marian": "Same storyteller voice, lifted clear and bright with a brave, silvery confidence — playing a clever, spirited noblewoman who chooses freedom.",
+      "sheriff": "Same storyteller voice, pinched sharp and nasal with a sneering, snooty villain edge — playing a cartoonish, scheming sheriff that children will love to boo.",
+      "miller": "Same storyteller voice, softened and thin with a trembling gratitude — playing a weary, kind-hearted village miller moved to tears."
+    }
+  },
+  "classic_wind_willows": {
+    "narrator": "Warm English storyteller voice, like a grandparent reading a cozy riverside tale by the fire — expressive, affectionate, with a twinkle of humor. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "toad": "Same storyteller voice, lifted brighter and puffed up with theatrical self-importance and bouncy enthusiasm — playing a boastful, lovable, hobby-mad gentleman toad.",
+      "rat": "Same storyteller voice, tinged with a fond, sensible, slightly worried warmth — playing a practical, kind-hearted water rat.",
+      "ratty": "Same storyteller voice, tinged with a fond, sensible, slightly worried warmth — playing a practical, kind-hearted water rat.",
+      "badger": "Same storyteller voice, dropped low and gravelly with steady, dignified authority — playing a wise, gruff but kind old badger."
+    }
+  },
+  "classic_pied_piper": {
+    "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive, with a hint of wonder and gentle mystery suited to a classic fairytale. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
+    "characters": {
+      "piper": "Same storyteller voice, smoothed to a softer, silvery tone with a sly, kindly sparkle — playing a mysterious traveling musician who is gentle yet knowing.",
+      "mayor": "Same storyteller voice, puffed up and plummy with a blustery self-important waver — playing a pompous round-bellied town Mayor.",
+      "baker": "Same storyteller voice, hearty and gruff, warm and bothered — playing a flour-dusted town baker.",
+      "weaver": "Same storyteller voice, higher and exasperated with a sharp edge of distress — playing a fretful town weaver.",
+      "children": "Same storyteller voice, lifted bright and breathless with eager wonder — playing a chorus of delighted Hamelin children.",
+      "townspeople": "Same storyteller voice, roughened into a grumbling shared chorus — playing the worried and angry townsfolk of Hamelin."
     }
   }
 }
