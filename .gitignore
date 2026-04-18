@@ -145,3 +145,4 @@ vite.config.ts.timestamp-*
 model-comparison/
 scripts/test-image-gen.mjs
 scripts/compare-image-models.mjs
+highlight-drift-report.json
