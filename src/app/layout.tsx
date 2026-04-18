@@ -42,16 +42,24 @@ export const metadata: Metadata = {
     "Personalized AI-generated stories with narration, word highlighting, and illustrations for kids ages 2-10.",
 };
 
+// Dev preview auth bypass. When NEXT_PUBLIC_DEV_AUTH_BYPASS=1 is set in
+// dev, we skip ClerkProvider entirely — no Clerk client script loads,
+// no network call to clerk.accounts.dev — so the Claude Code preview
+// browser (which blocks all non-localhost URLs) can render the page.
+// Gated by NODE_ENV to make absolutely sure this never ships to prod.
+const DEV_AUTH_BYPASS =
+  process.env.NODE_ENV === "development" &&
+  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider>
-      <html lang="en" className={`${inter.variable} ${fraunces.variable} ${caveat.variable}`}>
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+  const html = (
+    <html lang="en" className={`${inter.variable} ${fraunces.variable} ${caveat.variable}`}>
+      <body>{children}</body>
+    </html>
   );
+  return DEV_AUTH_BYPASS ? html : <ClerkProvider>{html}</ClerkProvider>;
 }

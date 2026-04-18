@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+import { SignInButton, UserButton } from "@/components/shared/ClerkSafe";
 import { Story } from "@/types/story";
 import { ALL_STORIES } from "@/data/stories";
 import { GENRES } from "@/data/genres";
@@ -14,6 +15,7 @@ import { LoadingScreen } from "@/components/builder/LoadingScreen";
 import { VoiceModal } from "@/components/shared/VoiceModal";
 import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
+import { ManageKidsScreen } from "@/components/shared/ManageKidsScreen";
 import { useEffectsPref } from "@/hooks/useEffectsPref";
 import { loadDraft, clearDraft } from "@/lib/draftStory";
 import { generateStoryFlow, type GenerateStoryFormValues } from "@/lib/generateStory";
@@ -35,13 +37,41 @@ interface ReadingHistoryEntry {
   story_color: string;
   is_generated: boolean;
   started_at: string;
+  child_profile_id?: string | null;
 }
 
 const FREE_STORY_LIMIT = 5;
 
+// ── Dev preview auth bypass ──────────────────────────────────────────
+// Set NEXT_PUBLIC_DEV_AUTH_BYPASS=1 in .env.local to skip Clerk entirely
+// (dev only). Lets the Claude Code preview browser load the home page
+// without redirecting to Clerk's hosted sign-in — which the preview tool
+// blocks because it only permits localhost URLs. Gated by NODE_ENV so it
+// can't accidentally ship to prod even if the env var leaks through. The
+// bypass injects a mock premium user + a single mock child profile.
+const DEV_AUTH_BYPASS =
+  process.env.NODE_ENV === "development" &&
+  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+
+// Wrapper around Clerk's useUser that returns a mock signed-in state in
+// bypass mode. Because DEV_AUTH_BYPASS is a module-level constant (not
+// runtime state), the branch picked here is stable across every render
+// — React's rules-of-hooks are satisfied even though useUser isn't
+// always called. In bypass mode useUser is never invoked, which is
+// important because ClerkProvider is also skipped in that mode and the
+// real hook would throw without a provider in the tree.
+function useAuthState(): { isLoaded: boolean; isSignedIn: boolean } {
+  if (DEV_AUTH_BYPASS) {
+    return { isLoaded: true, isSignedIn: true };
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const clerk = useUser();
+  return { isLoaded: !!clerk.isLoaded, isSignedIn: !!clerk.isSignedIn };
+}
+
 export default function Home() {
-  const { isLoaded: clerkLoaded, isSignedIn } = useUser();
-  const [screen, setScreen] = useState<"profiles" | "library" | "reader" | "builder" | "loading">("profiles");
+  const { isLoaded: clerkLoaded, isSignedIn } = useAuthState();
+  const [screen, setScreen] = useState<"profiles" | "library" | "reader" | "builder" | "loading" | "manage-kids">("profiles");
   const [cur, setCur] = useState<Story | null>(null);
   const [stories, setStories] = useState<Story[]>(ALL_STORIES);
   const [showVoice, setShowVoice] = useState(false);
@@ -101,7 +131,10 @@ export default function Home() {
     setLoaded(true);
   }, []);
 
-  // When signed in, fetch user + profiles from our API routes
+  // When signed in, fetch user + profiles from our API routes. In dev
+  // bypass mode this still runs — the API helpers resolve the bypass
+  // user id from Supabase, so the preview sees real profiles, stories,
+  // and reading history rather than mock data.
   useEffect(() => {
     if (!isSignedIn) return;
 
@@ -214,6 +247,51 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Failed to create profile:", err);
+    }
+  };
+
+  // Delete a child profile AND all their saved stories (the API does
+  // the cascade server-side). Confirmation lives in the UI. If the
+  // deleted profile was active, we fall back to another profile or
+  // bounce back to the profile-picker screen.
+  const handleDeleteProfile = async (profileId: string) => {
+    try {
+      const res = await fetch(`/api/profiles?id=${profileId}`, { method: "DELETE" });
+      if (!res.ok) return;
+      setProfiles((prev) => prev.filter((p) => p.id !== profileId));
+      // Drop the deleted kid's custom stories from local state so the
+      // library reflects the deletion immediately.
+      setStories((prev) => prev.filter((s) => s.childProfileId !== profileId));
+      setReadingHistory((prev) => prev.filter((h) => h.child_profile_id !== profileId));
+      if (activeProfile?.id === profileId) {
+        const remaining = profiles.filter((p) => p.id !== profileId);
+        if (remaining.length > 0) {
+          setActiveProfile(remaining[0]);
+        } else {
+          setActiveProfile(null);
+          setScreen("profiles");
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete profile:", err);
+    }
+  };
+
+  // Update a child profile's age from the Manage Kids screen. Only age
+  // is editable — name + avatar are locked once created.
+  const handleUpdateProfileAge = async (profileId: string, newAge: number) => {
+    try {
+      const res = await fetch(`/api/profiles?id=${profileId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ age: newAge }),
+      });
+      if (!res.ok) return;
+      const updated = (await res.json()) as ChildProfile;
+      setProfiles((prev) => prev.map((p) => (p.id === profileId ? updated : p)));
+      if (activeProfile?.id === profileId) setActiveProfile(updated);
+    } catch (err) {
+      console.error("Failed to update profile age:", err);
     }
   };
 
@@ -569,6 +647,7 @@ export default function Home() {
           profiles={profiles}
           onSelect={handleSelectProfile}
           onCreate={handleCreateProfile}
+          onDelete={handleDeleteProfile}
         />
       </div>
     );
@@ -588,7 +667,9 @@ export default function Home() {
           isPremium={isPremium}
           freeStoryLimit={FREE_STORY_LIMIT}
           activeProfile={activeProfile}
-          onSwitchProfile={handleBackToProfiles}
+          profiles={profiles}
+          onSwitchProfile={() => setScreen("manage-kids")}
+          onSwitchProfileDirect={setActiveProfile}
           newStoryTitles={newStoryIds}
         />
       )}
@@ -618,6 +699,38 @@ export default function Home() {
           onDetach={detachGeneration}
         />
       )}
+      {screen === "manage-kids" && (
+        <ManageKidsScreen
+          profiles={profiles}
+          storyCounts={stories.reduce((acc, s) => {
+            if (s.childProfileId) {
+              acc[s.childProfileId] = (acc[s.childProfileId] ?? 0) + 1;
+            }
+            return acc;
+          }, {} as Record<string, number>)}
+          onBack={() => setScreen("library")}
+          // On the manage screen, creating a kid should NOT bounce back
+          // to the library — stay on the manage screen so the parent can
+          // continue adding kids or editing ages.
+          onCreate={async (name, age, emoji) => {
+            try {
+              const res = await fetch("/api/profiles", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, age, avatar_emoji: emoji }),
+              });
+              if (res.ok) {
+                const profile = await res.json();
+                setProfiles((prev) => [...prev, profile]);
+              }
+            } catch (err) {
+              console.error("Failed to create profile from manage screen:", err);
+            }
+          }}
+          onDelete={handleDeleteProfile}
+          onUpdateAge={handleUpdateProfileAge}
+        />
+      )}
       {toast && (
         <div className="toast" role="status" aria-live="polite">
           {toast}
@@ -633,17 +746,10 @@ export default function Home() {
         show={showVoice}
         onClose={() => setShowVoice(false)}
         isClassic={!!cur?.isClassic}
-        voiceMode={speech.voiceMode}
-        setVoiceMode={speech.setVoiceMode}
         aiVoice={speech.aiVoice}
         setAiVoice={speech.setAiVoice}
         aiSpeed={speech.aiSpeed}
         setAiSpeed={speech.setAiSpeed}
-        allVoices={speech.allVoices}
-        voice={speech.voice}
-        setVoice={speech.setVoice}
-        rate={speech.rate}
-        setRate={speech.setRate}
       />
     </div>
   );
