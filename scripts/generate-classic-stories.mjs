@@ -559,6 +559,7 @@ for (const def of storiesToGenerate) {
 
     // Remove any prior version and append the new one
     const idx = merged.findIndex((s) => s.id === story.id);
+    const wasRegen = idx >= 0;
     if (idx >= 0) merged[idx] = story;
     else merged.push(story);
 
@@ -568,6 +569,19 @@ for (const def of storiesToGenerate) {
     writeTsFile(merged);
     writeVoiceMap(voiceMap);
 
+    // Regen-cascade: if we overwrote an existing story, its prior
+    // audio + images were generated against the OLD text. The reader
+    // would then play audio that doesn't match the displayed text
+    // (caught by a user report on 2026-04-18 Emperor regen). Clear
+    // those derived artifacts so the next run of generate-classic-
+    // audio.mjs and generate-classic-images.mjs regenerates them
+    // fresh. Pure metadata (text-only) regens via enrich-stories-
+    // vocab.mjs don't trigger this — they go through a different
+    // script that never touches audio/images refs.
+    if (wasRegen && FORCE) {
+      invalidateDerivedArtifacts(story.id);
+    }
+
     completed++;
     console.log(`✓ ${story.pages.length} pages`);
   } catch (err) {
@@ -576,6 +590,34 @@ for (const def of storiesToGenerate) {
   }
 
   await new Promise((r) => setTimeout(r, 1000));
+}
+
+// Null the story's entries in storyAudio.json and remove from
+// storyImages.json so the next audio/image generator run treats them
+// as fresh. Non-destructive to the files for OTHER stories — we load,
+// mutate one key, and write back.
+function invalidateDerivedArtifacts(storyId) {
+  const audioPath = join(ROOT, "src", "data", "storyAudio.json");
+  const imgPath = join(ROOT, "src", "data", "storyImages.json");
+  try {
+    if (existsSync(audioPath)) {
+      const audio = JSON.parse(readFileSync(audioPath, "utf-8"));
+      if (audio[storyId]) {
+        audio[storyId] = audio[storyId].map(() => null);
+        writeFileSync(audioPath, JSON.stringify(audio, null, 2));
+      }
+    }
+    if (existsSync(imgPath)) {
+      const imgs = JSON.parse(readFileSync(imgPath, "utf-8"));
+      if (imgs[storyId]) {
+        delete imgs[storyId];
+        writeFileSync(imgPath, JSON.stringify(imgs, null, 2));
+      }
+    }
+    console.log(`    (invalidated audio + images for ${storyId} — rerun generate-classic-audio + generate-classic-images)`);
+  } catch (err) {
+    console.warn(`    warning: could not invalidate artifacts: ${err.message}`);
+  }
 }
 
 console.log("");
