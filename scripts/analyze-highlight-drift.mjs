@@ -51,9 +51,135 @@ const stories = JSON.parse(
   readFileSync(join(__dirname, "..", "src", "data", "generatedStories.json"), "utf-8")
 );
 
-// ── Reconciliation (mirrors useSpeech.ts lines 639-667) ──────────────
-// Builds timingToDisplay[] mapping Whisper-token-index → display-word-index
-// using character-offset alignment with letter-digit-only cleaning.
+// ── Reconciliation v2 (mirrors src/lib/wordTimings.ts) ───────────────
+// Produces per-display-word start times, interpolating orphan words
+// between nearest real anchors so the highlight never skips. We still
+// surface the raw structural counts (orphans, pileups, char-sum deltas)
+// for visibility — they're now "would-have-been-skipped" events
+// rather than "will-be-skipped" events.
+function reconcileV2(displayText, whisperTimings, audioDurationSec) {
+  const cleanChars = (w) => (w || "").replace(/[^\p{L}\p{N}]/gu, "");
+  const displayWords = displayText.split(/\s+/).filter(Boolean);
+  const displayLen = displayWords.length;
+  if (displayLen === 0) {
+    return {
+      displayWords: [],
+      displayStartTimes: [],
+      isAnchor: [],
+      orphanCount: 0,
+      pileupCount: 0,
+    };
+  }
+  const displayCharLens = new Array(displayLen);
+  const displayCharStarts = new Array(displayLen);
+  let p = 0;
+  for (let i = 0; i < displayLen; i++) {
+    displayCharStarts[i] = p;
+    displayCharLens[i] = cleanChars(displayWords[i]).length;
+    p += displayCharLens[i];
+  }
+  const displayMidpoints = displayCharStarts.map(
+    (s, i) => s + displayCharLens[i] / 2
+  );
+  const displayAnchorStart = new Array(displayLen).fill(null);
+  const displayTokenCount = new Array(displayLen).fill(0);
+  let cursor = 0;
+  let di = 0;
+  for (let i = 0; i < whisperTimings.length; i++) {
+    const cleanLen = cleanChars(whisperTimings[i].word).length;
+    if (cleanLen > 0) {
+      while (di + 1 < displayLen && displayCharStarts[di + 1] <= cursor) di++;
+    }
+    displayTokenCount[di]++;
+    if (displayAnchorStart[di] === null) {
+      displayAnchorStart[di] = whisperTimings[i].start;
+    }
+    cursor += cleanLen;
+  }
+  const anchorIdxs = [];
+  for (let i = 0; i < displayLen; i++) {
+    if (displayAnchorStart[i] !== null) anchorIdxs.push(i);
+  }
+  const displayStartTimes = new Array(displayLen);
+  const isAnchor = new Array(displayLen);
+  if (anchorIdxs.length === 0) {
+    const total = audioDurationSec ?? displayLen * 0.2;
+    for (let i = 0; i < displayLen; i++) {
+      displayStartTimes[i] = (i / displayLen) * total;
+      isAnchor[i] = false;
+    }
+    return {
+      displayWords,
+      displayStartTimes,
+      isAnchor,
+      orphanCount: displayLen,
+      pileupCount: 0,
+    };
+  }
+  let nextCursor = 0;
+  for (let i = 0; i < displayLen; i++) {
+    if (displayAnchorStart[i] !== null) {
+      displayStartTimes[i] = displayAnchorStart[i];
+      isAnchor[i] = true;
+      continue;
+    }
+    isAnchor[i] = false;
+    let prevAnchor = -1;
+    for (let a = anchorIdxs.length - 1; a >= 0; a--) {
+      if (anchorIdxs[a] <= i) {
+        prevAnchor = anchorIdxs[a];
+        break;
+      }
+    }
+    while (nextCursor < anchorIdxs.length && anchorIdxs[nextCursor] <= i) {
+      nextCursor++;
+    }
+    const nextAnchor =
+      nextCursor < anchorIdxs.length ? anchorIdxs[nextCursor] : -1;
+    if (prevAnchor === -1 && nextAnchor === -1) {
+      displayStartTimes[i] = 0;
+    } else if (prevAnchor === -1) {
+      displayStartTimes[i] = displayAnchorStart[nextAnchor];
+    } else if (nextAnchor === -1) {
+      const prevTime = displayAnchorStart[prevAnchor];
+      const endTime =
+        audioDurationSec !== undefined && audioDurationSec > prevTime
+          ? audioDurationSec
+          : prevTime + (displayLen - prevAnchor) * 0.2;
+      const totalSpan =
+        displayMidpoints[displayLen - 1] +
+        displayCharLens[displayLen - 1] / 2 -
+        displayMidpoints[prevAnchor];
+      const myOff = displayMidpoints[i] - displayMidpoints[prevAnchor];
+      const frac = totalSpan > 0 ? myOff / totalSpan : 0;
+      displayStartTimes[i] = prevTime + (endTime - prevTime) * frac;
+    } else {
+      const prevTime = displayAnchorStart[prevAnchor];
+      const nextTime = displayAnchorStart[nextAnchor];
+      const totalSpan =
+        displayMidpoints[nextAnchor] - displayMidpoints[prevAnchor];
+      const myOff = displayMidpoints[i] - displayMidpoints[prevAnchor];
+      const frac = totalSpan > 0 ? myOff / totalSpan : 0;
+      displayStartTimes[i] = prevTime + (nextTime - prevTime) * frac;
+    }
+  }
+  for (let i = 1; i < displayLen; i++) {
+    if (displayStartTimes[i] <= displayStartTimes[i - 1]) {
+      displayStartTimes[i] = displayStartTimes[i - 1] + 0.001;
+    }
+  }
+  const orphanCount = displayLen - anchorIdxs.length;
+  const pileupCount = displayTokenCount.filter((c) => c >= 3).length;
+  return {
+    displayWords,
+    displayStartTimes,
+    isAnchor,
+    orphanCount,
+    pileupCount,
+  };
+}
+
+// ── Reconciliation v1 (the pre-2026-04-18 algorithm; kept for compare) ─
 function reconcile(displayText, whisperTimings) {
   const allWords = displayText.split(/\s+/).filter(Boolean);
   const timings = whisperTimings;
@@ -201,6 +327,16 @@ const allIssues = [];
 const storyStats = {};
 let totalPages = 0;
 let cleanPages = 0;
+// v2 interpolation metrics: how much SYNTHETIC time each orphan got.
+// Big gaps (>800ms of synthetic per orphan) still look janky even with
+// interpolation — the highlight crawls through a stretch with no real
+// anchor. Small gaps (<200ms) are imperceptible. We want to know both.
+let v2TotalOrphans = 0;
+let v2TotalInterpSeconds = 0;
+let v2MaxInterpSpan = 0;
+let v2OrphansOver500 = 0;
+let v2OrphansOver1000 = 0;
+const v2BadInterpPages = [];
 
 for (const storyId of Object.keys(audio)) {
   if (STORY_FILTER && storyId !== STORY_FILTER) continue;
@@ -241,6 +377,49 @@ for (const storyId of Object.keys(audio)) {
         storyStats[storyId].totalSeverity += iss.severity;
       }
     }
+
+    // ── v2 pass: run the new reconciler and measure residual impact ──
+    const v2 = reconcileV2(textSrc, page.wordTimings, page.duration);
+    v2TotalOrphans += v2.orphanCount;
+    // Measure max interpolated gap on this page: look for runs of
+    // consecutive non-anchor words and sum the time they span.
+    let worstSpan = 0;
+    let runStart = -1;
+    for (let i = 0; i < v2.isAnchor.length; i++) {
+      if (!v2.isAnchor[i]) {
+        if (runStart === -1) runStart = i;
+      } else if (runStart !== -1) {
+        const spanStart = runStart === 0 ? 0 : v2.displayStartTimes[runStart - 1];
+        const spanEnd = v2.displayStartTimes[i];
+        const span = spanEnd - spanStart;
+        v2TotalInterpSeconds += span;
+        if (span > worstSpan) worstSpan = span;
+        // Per-orphan drift: span / (orphansInRun + 1)
+        const runLen = i - runStart;
+        const perOrphan = span / (runLen + 1);
+        if (perOrphan > 0.5) v2OrphansOver500 += runLen;
+        if (perOrphan > 1.0) v2OrphansOver1000 += runLen;
+        runStart = -1;
+      }
+    }
+    // Handle run running to end of page
+    if (runStart !== -1) {
+      const spanStart = runStart === 0 ? 0 : v2.displayStartTimes[runStart - 1];
+      const spanEnd = v2.displayStartTimes[v2.isAnchor.length - 1];
+      const span = spanEnd - spanStart;
+      v2TotalInterpSeconds += span;
+      if (span > worstSpan) worstSpan = span;
+    }
+    if (worstSpan > v2MaxInterpSpan) v2MaxInterpSpan = worstSpan;
+    if (worstSpan > 2.0) {
+      v2BadInterpPages.push({
+        storyId,
+        pageIdx: pi,
+        title: storyDef.title,
+        worstSpan,
+        orphanCount: v2.orphanCount,
+      });
+    }
   }
 }
 
@@ -262,9 +441,30 @@ for (const iss of allIssues) {
 // ── Report ───────────────────────────────────────────────────────────
 console.log("\n═══ WORD-HIGHLIGHT DRIFT ANALYSIS ═══\n");
 console.log(`Corpus: ${Object.keys(audio).length} stories, ${totalPages} pages`);
-console.log(`Clean pages: ${cleanPages} (${((cleanPages / totalPages) * 100).toFixed(1)}%)`);
+console.log(`Clean pages (no structural issues): ${cleanPages} (${((cleanPages / totalPages) * 100).toFixed(1)}%)`);
 console.log(`Pages with issues: ${totalPages - cleanPages}`);
 console.log(`Total issues flagged: ${allIssues.length}\n`);
+
+console.log("── RECONCILER V2 (with orphan-time interpolation) ──");
+console.log(`  Orphan words still flagged structurally:  ${v2TotalOrphans}`);
+console.log(`  * but now none are SKIPPED — all have synthetic timings`);
+console.log(`  Total synthetic timing coverage:          ${v2TotalInterpSeconds.toFixed(1)}s across corpus`);
+console.log(`  Worst single-run synthetic span:          ${v2MaxInterpSpan.toFixed(2)}s`);
+console.log(`  Orphans with >500ms of synthetic time:    ${v2OrphansOver500}`);
+console.log(`  Orphans with >1000ms of synthetic time:   ${v2OrphansOver1000}`);
+console.log(`  Pages with >2s interpolated spans:        ${v2BadInterpPages.length}`);
+if (v2BadInterpPages.length > 0) {
+  console.log("  Worst interp-span pages:");
+  v2BadInterpPages
+    .sort((a, b) => b.worstSpan - a.worstSpan)
+    .slice(0, 8)
+    .forEach((p) =>
+      console.log(
+        `    ${p.storyId} p${p.pageIdx + 1} "${p.title}" — ${p.worstSpan.toFixed(2)}s, ${p.orphanCount} orphans`
+      )
+    );
+}
+console.log("");
 
 console.log("── TEXT PATTERN PREVALENCE (on pages with issues) ──");
 for (const [k, v] of Object.entries(patternCounts)) {

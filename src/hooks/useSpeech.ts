@@ -7,6 +7,7 @@ import {
   emitSample,
   resetSequence,
 } from "@/lib/highlightDiagnostics";
+import { reconcileTimings, findDisplayIndexAtTime } from "@/lib/wordTimings";
 
 // ─── Browser voice helpers ───────────────────────────────────────────
 
@@ -634,51 +635,22 @@ export function useSpeech(): SpeechControls {
 
     // Word highlighting alignment.
     //
-    // Whisper's word array and our display word array don't always count the
-    // same number of items — Whisper sometimes splits punctuation into its
-    // own token ("mat", "."), while the display splits the raw text on
-    // whitespace and gets a single "mat." token. Previously we compensated
-    // with linear scaling (Math.round(preciseIdx / timingsLen * displayLen))
-    // but that formula introduced a systematic ~1-word lag in the middle of
-    // sentences whenever Whisper had more tokens, producing the "audio ahead
-    // of highlighted words" bug.
+    // Phase 1a (2026-04-18): reconciliation logic now lives in
+    // src/lib/wordTimings.ts. Key upgrade — instead of building a
+    // (whisperIdx → displayIdx) map and chasing Whisper tokens in the
+    // RAF loop, we precompute `displayStartTimes[i]` directly: the audio
+    // time at which display word i should light up. Orphan words (ones
+    // no Whisper token maps to) get interpolated between the nearest
+    // real anchors on either side, weighted by cleaned-char position,
+    // so the highlight NEVER skips a word — it just moves through
+    // orphan runs at synthetic-but-plausible timings.
     //
-    // Fix: precompute a direct mapping from Whisper token index → display
-    // word index by aligning characters. We strip everything but letters and
-    // digits from both sides, then walk the concatenated streams and assign
-    // each Whisper token to whichever display word's character range it
-    // falls into. This is O(n) once at play-start, and the hot loop is then
-    // just an array lookup with no rounding — so whatever Whisper says, that
-    // word is what we highlight.
-    const timingsLen = timings.length;
+    // The RAF loop then just binary-searches this array each frame,
+    // which is both simpler and handles the 586 orphan events that the
+    // offline analyzer flagged across the corpus.
     const displayLen = allWords.length;
-    const timingToDisplay: number[] = new Array(timingsLen);
-    {
-      // Char-offset where each display word's "clean" letters begin.
-      const displayStarts: number[] = new Array(displayLen);
-      let pos = 0;
-      for (let i = 0; i < displayLen; i++) {
-        displayStarts[i] = pos;
-        pos += allWords[i].replace(/[^\p{L}\p{N}]/gu, "").length;
-      }
-      // Walk Whisper tokens accumulating chars; assign each to the display
-      // word whose range contains the cursor. Punctuation-only Whisper
-      // tokens contribute 0 chars and should *stay* on the previous display
-      // word (because visually the comma belongs with the word before it).
-      // To enforce that, we only advance `di` when the current token has
-      // real letter/digit content — otherwise a 0-char token sitting on an
-      // equality boundary would jump the highlight one word early.
-      let cursor = 0;
-      let di = 0;
-      for (let i = 0; i < timingsLen; i++) {
-        const cleanLen = (timings[i].word || "").replace(/[^\p{L}\p{N}]/gu, "").length;
-        if (cleanLen > 0) {
-          while (di + 1 < displayLen && displayStarts[di + 1] <= cursor) di++;
-        }
-        timingToDisplay[i] = di;
-        cursor += cleanLen;
-      }
-    }
+    const reconciled = reconcileTimings(text, timings, audio.duration || undefined);
+    const displayStartTimes = reconciled.displayStartTimes;
 
     const trackWords = () => {
       // Epoch check on every frame — if we've been superseded, this RAF
@@ -698,21 +670,13 @@ export function useSpeech(): SpeechControls {
       if (!audio.paused) {
         const currentTime = audio.currentTime;
 
-        // Find the last Whisper token whose start has been reached. Note:
-        // audio.currentTime advances in the audio's own timeline regardless
-        // of playbackRate, and Whisper timings were computed at 1.0 speed,
-        // so this stays correct whether we're playing at 0.85, 0.92, or 1.0.
-        let whisperIdx = 0;
-        for (let i = 0; i < timingsLen; i++) {
-          if (currentTime >= timings[i].start) {
-            whisperIdx = i;
-          } else {
-            break;
-          }
-        }
-
-        const displayIdx = timingsLen === 0 ? 0 : timingToDisplay[whisperIdx];
-        const clampedIdx = Math.min(Math.max(displayIdx, 0), displayLen - 1);
+        // Binary-search displayStartTimes[] for the last index whose
+        // start <= currentTime. audio.currentTime is in the audio's own
+        // timeline regardless of playbackRate, and Whisper timings were
+        // computed at 1.0 speed, so this stays correct across 0.85x →
+        // 1.15x playback without any rate-aware math.
+        const idx = findDisplayIndexAtTime(displayStartTimes, currentTime);
+        const clampedIdx = Math.min(Math.max(idx, 0), displayLen - 1);
         setWordIndex(clampedIdx);
 
         // Phase-0 diagnostics: emit a sample only when the highlight
@@ -721,16 +685,21 @@ export function useSpeech(): SpeechControls {
         if (
           isDiagnosticsEnabled() &&
           clampedIdx !== lastEmittedDisplayIdx &&
-          timingsLen > 0
+          displayLen > 0
         ) {
           lastEmittedDisplayIdx = clampedIdx;
-          const timing = timings[whisperIdx];
+          // With the new reconciler the "whisper token" for a given
+          // display word is ambiguous (could be real or interpolated).
+          // For diagnostics we report the start time we used and flag
+          // whether it was a real anchor; the overlay treats drift as
+          // (audioTime - chosenStart).
+          const chosenStart = displayStartTimes[clampedIdx] ?? 0;
           emitSample({
             displayIdx: clampedIdx,
             displayWord: allWords[clampedIdx] ?? "",
-            whisperIdx,
-            whisperWord: timing?.word ?? "",
-            whisperStart: timing?.start ?? 0,
+            whisperIdx: -1, // sentinel: not a direct whisper token anymore
+            whisperWord: reconciled.isAnchor[clampedIdx] ? "(anchor)" : "(interp)",
+            whisperStart: chosenStart,
             audioTime: currentTime,
             playbackRate: audio.playbackRate,
             storyId,
