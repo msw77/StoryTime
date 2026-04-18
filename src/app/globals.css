@@ -2766,12 +2766,12 @@ body > * {
   50% { transform: scale(1.15); }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   HOME PAGE REDESIGN — editorial magazine/streaming-service layout.
+/* ===================================================================
+   HOME PAGE REDESIGN -- editorial magazine/streaming-service layout.
    Hero + horizontal rails + kid-picker dropdown. Replaces the old
    filter-row + grid on the main library view. Browse-by-filter lives
    under the "All Stories" subview (top-right magnifier icon).
-   ═══════════════════════════════════════════════════════════════════ */
+   =================================================================== */
 
 /* Header tweak on the home view — bring the logo + controls onto one
    clean baseline. Reuses .header spacing for the subviews. */

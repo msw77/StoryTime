@@ -97,19 +97,33 @@ export default function CostDashboard() {
     };
   }, [period]);
 
-  // Allocate flat costs into the selected period so the total reflects
-  // amortized infra spend, not just the monthly subscription invoice.
+  // Allocate flat costs into the selected period. For each flat cost
+  // row, compute the overlap between the period window and the row's
+  // own active window (started_on → ended_on || now), then multiply
+  // by the per-day amortized rate. This keeps the math honest: a row
+  // seeded today contributes 0 days to a 30-day or YTD period, and
+  // "All Time" never exceeds YTD because the active window is what
+  // bounds both.
   const flatInPeriod = useMemo(() => {
     if (!data) return 0;
-    const days = periodDays(period);
+    const { start: periodStartMs, end: periodEndMs } = periodBoundsMs(
+      period,
+      data.flatCosts.rows,
+    );
+    const DAY = 86_400_000;
     return data.flatCosts.rows.reduce((sum, r) => {
+      const rowStart = new Date(r.started_on).getTime();
+      const rowEnd = r.ended_on ? new Date(r.ended_on).getTime() : Date.now();
+      const overlapStart = Math.max(rowStart, periodStartMs);
+      const overlapEnd = Math.min(rowEnd, periodEndMs);
+      const activeDays = Math.max(0, (overlapEnd - overlapStart) / DAY);
       const perDay =
         r.cadence === "monthly"
           ? r.cost_cents / 30
           : r.cadence === "yearly"
             ? r.cost_cents / 365
             : r.cost_cents;
-      return sum + perDay * days;
+      return sum + perDay * activeDays;
     }, 0);
   }, [data, period]);
 
@@ -236,21 +250,38 @@ export default function CostDashboard() {
   );
 }
 
-function periodDays(p: Period): number {
+// Returns the absolute millisecond bounds of the selected period.
+// "all" uses the earliest flat_cost started_on as the window start, so
+// the amortized total reflects true historical spend and can never be
+// less than a shorter sub-period like YTD.
+function periodBoundsMs(
+  p: Period,
+  flatRows: Array<{ started_on: string }>,
+): { start: number; end: number } {
+  const now = Date.now();
+  const DAY = 86_400_000;
   switch (p) {
-    case "today":
-      return 1;
-    case "week":
-      return 7;
-    case "month":
-      return 30;
-    case "ytd": {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), 0, 1);
-      return Math.max(1, Math.ceil((now.getTime() - start.getTime()) / 86400000));
+    case "today": {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      return { start: d.getTime(), end: now };
     }
-    case "all":
-      return 30; // amortize against 30d window — we don't know "app lifetime"
+    case "week":
+      return { start: now - 7 * DAY, end: now };
+    case "month":
+      return { start: now - 30 * DAY, end: now };
+    case "ytd": {
+      const d = new Date();
+      return { start: new Date(d.getFullYear(), 0, 1).getTime(), end: now };
+    }
+    case "all": {
+      // Earliest flat-cost start. Fallback to 5 years ago if none exist.
+      const earliest = flatRows.reduce(
+        (min, r) => Math.min(min, new Date(r.started_on).getTime()),
+        now,
+      );
+      return { start: earliest, end: now };
+    }
   }
 }
 

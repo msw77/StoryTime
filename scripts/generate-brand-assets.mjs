@@ -30,6 +30,7 @@ import { fal } from "@fal-ai/client";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -349,6 +350,17 @@ async function generateOne(asset) {
   if (!data?.images?.length) {
     throw new Error(`No image returned for ${asset.filename}`);
   }
+
+  // Fire-and-forget cost log for this fal call.
+  logApiUsage({
+    provider: "fal",
+    operation: "image-generation",
+    model: "fal-ai/nano-banana-2",
+    imagesGenerated: data.images.length,
+    category: "brand-assets",
+    metadata: { filename: asset.filename, description: asset.description },
+  });
+
   return data.images[0].url;
 }
 

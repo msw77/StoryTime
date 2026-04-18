@@ -20,6 +20,7 @@ import OpenAI from "openai";
 import { readFileSync, writeFileSync, existsSync, mkdirSync, createReadStream } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -288,6 +289,14 @@ async function generateSegmentAudio(text, persona) {
   if (persona.instructions) req.instructions = persona.instructions;
   if (persona.speed && persona.speed !== 1.0) req.speed = persona.speed;
   const ttsResponse = await openai.audio.speech.create(req);
+  // Fire-and-forget TTS cost log (charged per input character).
+  logApiUsage({
+    provider: "openai",
+    operation: "tts",
+    model: TTS_MODEL,
+    inputChars: text.length,
+    category: "classic-generation",
+  });
   return Buffer.from(await ttsResponse.arrayBuffer());
 }
 
@@ -330,6 +339,14 @@ async function generateMultiVoicePageAudio(storyId, pageIndex, text, narrator, c
     file: createReadStream(audioPath),
     response_format: "verbose_json",
     timestamp_granularities: ["word"],
+  });
+
+  // Fire-and-forget Whisper cost log (charged by audio minute).
+  logApiUsage({
+    provider: "openai",
+    operation: "whisper",
+    audioSeconds: whisperResponse.duration ?? 0,
+    category: "classic-generation",
   });
 
   const wordTimings = (whisperResponse.words || []).map((w) => ({

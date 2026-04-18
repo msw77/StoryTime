@@ -12,6 +12,7 @@ import { fal } from "@fal-ai/client";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -414,6 +415,15 @@ async function generateImage(scene, mood, storyId) {
     });
     const data = result.data;
     if (!data.images || data.images.length === 0) throw new Error("No image returned (edit mode)");
+    // Fire-and-forget cost log — batch script so category is classic-generation.
+    logApiUsage({
+      provider: "fal",
+      operation: "image-generation",
+      model: EDIT_MODEL_ID,
+      imagesGenerated: data.images.length,
+      category: "classic-generation",
+      metadata: { story: storyId, mode: "edit" },
+    });
     return data.images[0].url;
   }
 
@@ -440,6 +450,14 @@ async function generateImage(scene, mood, storyId) {
   if (!data.images || data.images.length === 0) {
     throw new Error("No image returned");
   }
+  logApiUsage({
+    provider: "fal",
+    operation: "image-generation",
+    model: MODEL_ID,
+    imagesGenerated: data.images.length,
+    category: "classic-generation",
+    metadata: { story: storyId },
+  });
   return data.images[0].url;
 }
 

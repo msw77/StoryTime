@@ -13,6 +13,7 @@ import OpenAI from "openai";
 import { readFileSync, writeFileSync, existsSync, mkdirSync, createReadStream } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -61,6 +62,16 @@ async function generatePageAudio(storyId, pageIndex, text) {
 
   const audioBuffer = Buffer.from(await ttsResponse.arrayBuffer());
 
+  // Fire-and-forget cost log for TTS call (priced by input char count).
+  logApiUsage({
+    provider: "openai",
+    operation: "tts",
+    model: "tts-1",
+    inputChars: text.length,
+    category: "builtin-generation",
+    metadata: { storyId, pageIndex, voice: VOICE },
+  });
+
   // Save MP3 file
   const storyDir = join(AUDIO_DIR, storyId);
   if (!existsSync(storyDir)) mkdirSync(storyDir, { recursive: true });
@@ -73,6 +84,15 @@ async function generatePageAudio(storyId, pageIndex, text) {
     file: createReadStream(audioPath),
     response_format: "verbose_json",
     timestamp_granularities: ["word"],
+  });
+
+  // Fire-and-forget Whisper cost log (priced by audio minute).
+  logApiUsage({
+    provider: "openai",
+    operation: "whisper",
+    audioSeconds: whisperResponse.duration ?? 0,
+    category: "builtin-generation",
+    metadata: { storyId, pageIndex },
   });
 
   const wordTimings = (whisperResponse.words || []).map((w) => ({

@@ -12,6 +12,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -196,6 +197,17 @@ Return valid JSON only, no other text:
     model: "claude-sonnet-4-20250514",
     max_tokens: 4096,
     messages: [{ role: "user", content: prompt }],
+  });
+
+  // Fire-and-forget cost log for this Claude call.
+  logApiUsage({
+    provider: "anthropic",
+    operation: "story-generation",
+    model: "claude-sonnet-4-20250514",
+    inputTokens: response.usage?.input_tokens ?? 0,
+    outputTokens: response.usage?.output_tokens ?? 0,
+    category: "builtin-generation",
+    metadata: { storyId: def.id, title: def.title, genre: def.genre, age: def.age },
   });
 
   const textContent = response.content.find((c) => c.type === "text");

@@ -12,6 +12,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -57,6 +58,17 @@ Reply with ONLY the character descriptions, nothing else. Format: "CharacterName
     }],
   });
 
+  // Fire-and-forget cost log for character-description call.
+  logApiUsage({
+    provider: "anthropic",
+    operation: "character-description",
+    model: "claude-sonnet-4-20250514",
+    inputTokens: response.usage?.input_tokens ?? 0,
+    outputTokens: response.usage?.output_tokens ?? 0,
+    category: "builtin-generation",
+    metadata: { storyId: story.id, title: story.title },
+  });
+
   const text = response.content.find(c => c.type === "text");
   return text?.text?.trim() || `${story.hero}, a ${story.heroType}`;
 }
@@ -100,6 +112,17 @@ async function generateImage(scene, mood, genre, title, characterDesc) {
   if (!data.images || data.images.length === 0) {
     throw new Error("No image returned");
   }
+
+  // Fire-and-forget cost log for this fal image call.
+  logApiUsage({
+    provider: "fal",
+    operation: "image-generation",
+    model: "fal-ai/nano-banana-2",
+    imagesGenerated: data.images.length,
+    category: "builtin-generation",
+    metadata: { title, genre, mood },
+  });
+
   return data.images[0].url;
 }
 

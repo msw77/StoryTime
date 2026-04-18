@@ -7,6 +7,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -203,6 +204,19 @@ Return valid JSON only, no other text:
     model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
     messages: [{ role: "user", content: prompt }],
+  });
+
+  // Fire-and-forget cost log for this Claude call.
+  // Pricing map uses base model key; haiku-4-5 pricing is the same across
+  // dated snapshots so we normalize to "claude-haiku-4-5".
+  logApiUsage({
+    provider: "anthropic",
+    operation: "story-generation",
+    model: "claude-haiku-4-5",
+    inputTokens: response.usage?.input_tokens ?? 0,
+    outputTokens: response.usage?.output_tokens ?? 0,
+    category: "history-generation",
+    metadata: { storyId: def.id, title: def.title, age: def.age },
   });
 
   const textContent = response.content.find((c) => c.type === "text");

@@ -21,6 +21,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { logApiUsage } from "./lib/cost-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -371,6 +372,18 @@ async function generateStory(def) {
     output_config: { effort: "high" },
     system: systemPrompt,
     messages: [{ role: "user", content: userPrompt }],
+  });
+
+  // Fire-and-forget cost log. Writes into the shared api_usage table so
+  // the admin dashboard shows batch-script spend alongside in-app spend.
+  logApiUsage({
+    provider: "anthropic",
+    operation: "story-generation",
+    model: MODEL,
+    inputTokens: response.usage?.input_tokens ?? 0,
+    outputTokens: response.usage?.output_tokens ?? 0,
+    category: "classic-generation",
+    metadata: { story: def.id, age: AGE },
   });
 
   const textBlock = response.content.find((c) => c.type === "text");
