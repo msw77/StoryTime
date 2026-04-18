@@ -1466,9 +1466,13 @@ body > * {
    inset slightly from the padding edges so it doesn't touch the
    rounded corners.
 
-   No CSS transition on width — we're already updating at ~60Hz so any
-   transition would lag behind the audio cursor instead of tracking it. */
-.story-text .word.active::after {
+   Phase 4 refinement: the ::after exists on EVERY word (default
+   opacity: 0) rather than only on .active. This lets us transition
+   opacity when the class flips off, so the underline fades away
+   gracefully instead of vanishing — matching the 0.25s background
+   fade-out on the .active state. Inactive pseudos with opacity: 0
+   cost essentially nothing to render (browsers skip them). */
+.story-text .word::after {
   content: "";
   position: absolute;
   left: 4px; /* matches .word padding-left */
@@ -1478,11 +1482,37 @@ body > * {
   background: #c25e45; /* brand terracotta accent */
   border-radius: 2px;
   transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+  pointer-events: none;
+  /* Opacity transition on deactivation; scaleX has no transition
+     because during playback we want the underline to track audio at
+     60Hz — a transition on scaleX would lag behind the voice. */
+  transition: opacity 0.2s ease;
+}
+.story-text .word.active::after {
+  opacity: 1;
   transform: scaleX(var(--word-progress, 0));
   /* A hair of opacity fade on the head of the underline so it feels
      like a pen nib, not a hard-cut bar. */
   box-shadow: 0 0 2px rgba(194, 94, 69, 0.35);
-  pointer-events: none;
+}
+
+/* ── Phase 4: reduced-motion respect ─────────────────────────────────
+   Users with prefers-reduced-motion set have explicitly asked for less
+   movement. Disable the active-word scale breath and the sweep-underline
+   transform animation (the underline still appears as a static bar so
+   the kid can see which word is being read, but it doesn't track the
+   audio in real time — less movement, same read-along utility). */
+@media (prefers-reduced-motion: reduce) {
+  .story-text .word { transition: background 0.15s linear; }
+  .story-text .word.active {
+    transform: none;
+  }
+  .story-text .word.active::after {
+    /* Static underline that spans the whole word, no sweep. */
+    transform: scaleX(1);
+  }
 }
 
 /* Reading-lamp spotlight REMOVED — was dimming non-active words when
