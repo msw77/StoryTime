@@ -1494,6 +1494,72 @@ body > * {
   color: #c25e45;
 }
 
+/* ── iOS Add-to-Home-Screen install prompt ──────────────────────────
+   Bottom-pinned banner that teaches iPhone/iPad Safari users to
+   install the app via Share → Add to Home Screen. Hidden entirely
+   on non-iOS, on Chrome iOS / in-app browsers (where the gesture
+   doesn't exist), and once the user dismisses. See
+   src/components/shared/IOSInstallPrompt.tsx. */
+.ios-install-prompt {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  padding: 14px 44px 14px 16px;
+  background: #fff9e8;
+  border: 1px solid rgba(194, 94, 69, 0.18);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(42, 39, 34, 0.15);
+  z-index: 1100;
+  max-width: 420px;
+  margin: 0 auto;
+  animation: ios-install-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+  /* Bottom inset for iPhone home-bar safe area — otherwise the banner
+     sits flush against the bottom gesture zone and gets swiped on
+     accidentally. */
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+@keyframes ios-install-in {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.ios-install-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #7d6a55;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+.ios-install-close:hover { background: rgba(194, 94, 69, 0.08); }
+.ios-install-title {
+  font-family: var(--font-heading, Georgia), serif;
+  font-size: 15px;
+  font-weight: 700;
+  font-style: italic;
+  color: #2a2722;
+  margin-bottom: 4px;
+}
+.ios-install-body {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #5c5147;
+}
+.ios-install-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #c25e45;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.ios-install-share svg { vertical-align: -2px; }
+
 /* ── Error boundary fallback ─────────────────────────────────────────
    Calm, warm crash screen. The kid sees "something popped" — soft
    language — not a stack trace. Matches the rest of the app's cream
