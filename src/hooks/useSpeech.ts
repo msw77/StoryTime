@@ -518,6 +518,32 @@ export function useSpeech(): SpeechControls {
     setLoading(false);
   }, []);
 
+  // ─── Pause / Resume ───────────────────────────────────────────────
+  // Companion to stop() — these leave state intact. Used by the Word
+  // Glow modal (and any future features like Prediction Pause) to
+  // quiet the narrator temporarily without resetting playback. Safe
+  // to call when nothing is playing.
+  //
+  // Note: RAF loop already gates word-index updates on audio.paused,
+  // so pausing the element is enough; we don't need to tear down the
+  // tracking loop. When resume() runs, audio.currentTime picks up
+  // exactly where it stopped and the highlight re-syncs automatically.
+  const pause = useCallback(() => {
+    const a = audioRef.current;
+    if (a && !a.paused) {
+      try { a.pause(); } catch { /* ignore */ }
+    }
+  }, []);
+  const resume = useCallback(() => {
+    const a = audioRef.current;
+    if (a && a.paused) {
+      // play() returns a promise; swallow rejections (e.g. browser
+      // autoplay policy blocks if the user didn't interact) so a
+      // failed resume never surfaces as an unhandled rejection.
+      void a.play().catch(() => { /* ignore */ });
+    }
+  }, []);
+
   // ─── Set story context (called by ReaderScreen) ───────────────────
 
   const setStoryContext = useCallback((storyId?: string, pageIdx?: number) => {
@@ -942,7 +968,8 @@ export function useSpeech(): SpeechControls {
   }, [stop]);
 
   return {
-    speaking, wordIndex, wordProgress, words, speak, stop, loading, prefetch,
+    speaking, wordIndex, wordProgress, words, speak, stop, pause, resume,
+    loading, prefetch,
     voiceMode, setVoiceMode,
     aiVoice, setAiVoice, aiSpeed, setAiSpeed,
     voice, setVoice, rate, setRate, allVoices,

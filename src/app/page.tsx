@@ -681,6 +681,7 @@ export default function Home() {
           sfx={sfx}
           onSave={cur.generated ? handleSaveStory : undefined}
           effectsEnabled={effectsEnabled}
+          childProfileId={activeProfile?.id ?? null}
         />
       )}
       {screen === "builder" && (

@@ -330,13 +330,13 @@
     }
   },
   "classic_emperors_new_clothes": {
-    "narrator": "Warm bedtime storyteller voice, a parent reading aloud, clear and expressive with a twinkle of humor. Maintain a natural, steady storytelling pace throughout, do not speed up or slow down.",
+    "narrator": "Warm bedtime storyteller voice, a parent reading aloud, clear and expressive with a gentle twinkle of humor. Maintain a natural, steady storytelling pace throughout, do not speed up or slow down.",
     "characters": {
-      "emperor": "Same storyteller voice, puffed up and grand with a slightly silly pompous lilt, playing a vain but good-hearted emperor.",
-      "tailors": "Same storyteller voice, hushed and sly with a sugary smirk, playing two sneaky trickster tailors.",
-      "adviser": "Same storyteller voice, gentle and creaky with a nervous wobble, playing a kindly old palace adviser.",
-      "child": "Same storyteller voice, lifted bright and clear like a small honest kid, playing the truthful little girl.",
-      "townsfolk": "Same storyteller voice, warm and chatty with a murmuring crowd flavor, playing cheerful townspeople."
+      "emperor": "Same storyteller voice, lifted slightly higher and puffed up with vain pride, turning softer and embarrassed near the end.",
+      "tailors": "Same storyteller voice, hushed and slippery with a sly sing-song charm, playing two sneaky trickster tailors.",
+      "minister": "Same storyteller voice, dropped a little lower and wobbly with age, playing a worried old royal advisor.",
+      "child": "Same storyteller voice, lifted bright and clear with cheerful honesty, playing a truthful little kid.",
+      "crowd": "Same storyteller voice, warm and rolling like many voices blending together, playing townspeople cheering and then laughing."
     }
   }
 }

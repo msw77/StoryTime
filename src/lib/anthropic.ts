@@ -21,6 +21,22 @@ interface StoryRequest {
   duration: string;
 }
 
+interface GeneratedVocabWord {
+  word: string;
+  emoji: string;
+  definition_2_4: string | null;
+  definition_4_7: string;
+  definition_7_10: string;
+  exampleSentence: string;
+  pronunciation: string;
+}
+
+interface GeneratedReadAloudWord {
+  word: string;
+  syllables: string[];
+  phonicsLevel: "easy" | "intermediate" | "hard";
+}
+
 interface GeneratedPage {
   label: string;
   text: string;
@@ -30,6 +46,21 @@ interface GeneratedPage {
   /** Set on the first page of each chapter for Medium/Long stories;
    *  omitted/null on every other page. */
   chapterTitle?: string | null;
+  // Science-of-Reading extensions (Word Glow, Sound It Out, Read It Yourself)
+  vocabWords?: GeneratedVocabWord[];
+  readAloudWords?: GeneratedReadAloudWord[];
+}
+
+interface GeneratedComprehensionQuestion {
+  type: "recall" | "inference" | "connection";
+  question: string;
+  options: Array<{ text: string; emoji: string; correct: boolean }>;
+}
+
+interface GeneratedPredictionPause {
+  atPageIdx: number;
+  question: string;
+  options: Array<{ text: string; emoji: string }>;
 }
 
 interface GeneratedStory {
@@ -37,6 +68,9 @@ interface GeneratedStory {
   emoji: string;
   characterDescription: string;
   pages: GeneratedPage[];
+  // Science-of-Reading story-level fields
+  comprehensionQuestions?: GeneratedComprehensionQuestion[];
+  predictionPause?: GeneratedPredictionPause;
 }
 
 // Map duration to target words and words-per-page based on age
@@ -159,6 +193,60 @@ CHAPTERS:
 ` : ""}
 For each page, provide an illustration prompt in the "scene" field. EVERY scene prompt MUST start with the full character description so the character looks identical on every page. Then describe the setting, action, and details.
 
+IMPORTANT — READING-SCIENCE FIELDS (required):
+In addition to the narrative fields, generate reading-science metadata
+for each page and each story. These power features that actively help
+the child learn to read (Word Glow vocabulary, Sound It Out
+syllabification, end-of-story comprehension questions).
+
+vocabWords (3-5 per page):
+- Pick words just above the kid's comfortable reading level —
+  challenging but reachable from context. Favor concrete nouns, vivid
+  verbs, sensory adjectives.
+- Avoid words a kid that age will already know from daily life
+  ("house", "happy", "ran", "mom").
+- For each word: { word, emoji, definition_2_4, definition_4_7,
+  definition_7_10, exampleSentence, pronunciation }
+- definition_2_4: null for the 2-4 band (too young for text).
+- definition_4_7: one sentence, 8-14 words, everyday language.
+- definition_7_10: one sentence, 12-20 words, slightly richer; may
+  include a light metaphor.
+- exampleSentence: one sentence using the word in a DIFFERENT context
+  from the story's sentence.
+- pronunciation: capitalized syllabic form, e.g. "CAN-yun", "eh-KOH".
+- emoji: one emoji that evokes the word's meaning.
+
+readAloudWords (2-3 per page, can overlap with vocabWords):
+- Words suitable for the child to sound out or attempt to read.
+- { word, syllables (PHONETIC not orthographic), phonicsLevel }
+- syllables: how the word is SPOKEN. "table" → ["tay", "bul"], NOT
+  ["ta", "ble"]. Single-syllable words have a one-element array.
+- phonicsLevel: 'easy' (CVC, short vowels) | 'intermediate' (long
+  vowels, digraphs, r-controlled) | 'hard' (irregular, multi-syll,
+  schwa patterns). Age 4-7 should mostly get 'easy'-'intermediate';
+  age 7-10 can handle 'intermediate'-'hard'.
+
+comprehensionQuestions (story-level):
+- 2-3 questions for age 4-7; 3 questions for age 7-10. OMIT this field
+  entirely for age 2-4 (too young for MCQ comprehension).
+- Each question: { type, question, options: [{text, emoji, correct}] }
+- type: 'recall' (what literally happened) | 'inference' (why/how) |
+  'connection' (ties to the child's own experience).
+- Exactly 3 options per question.
+- For recall/inference: exactly ONE option has correct: true.
+- For connection questions: ALL options have correct: true (there are
+  no wrong answers about the child's own feelings).
+- Questions are WARM and CONVERSATIONAL — never quiz-style, never
+  "Which of the following best describes..."
+- Each option has a matching emoji as visual anchor.
+
+predictionPause (story-level, optional — include for ages 4-7 and 7-10):
+- Exactly 1 per story. OMIT this field for age 2-4.
+- Pick the page with the most "what happens next" tension (usually
+  mid-story, after setup but before climax).
+- { atPageIdx (0-indexed), question, options: [{text, emoji}] }
+- options: 2-3 plausible predictions. No correct field — all valid.
+
 Return valid JSON only, no other text:
 {
   "title": "...",
@@ -170,10 +258,44 @@ Return valid JSON only, no other text:
       "text": "story text for this page...",
       "scene": "illustration prompt: [character description repeated here] + what the picture should show",
       "mood": "peaceful|exciting|funny|mysterious|warm|triumphant",
-      "sounds": ["birds chirping", "wind rustling"]${chapterCount > 0 ? `,
+      "sounds": ["birds chirping", "wind rustling"],
+      "vocabWords": [
+        {
+          "word": "canyon",
+          "emoji": "🏜️",
+          "definition_2_4": null,
+          "definition_4_7": "A very deep valley with tall rocky walls.",
+          "definition_7_10": "A deep, narrow valley between cliffs, often carved by a river over millions of years.",
+          "exampleSentence": "We hiked along the edge of the canyon and heard our echoes bounce back.",
+          "pronunciation": "CAN-yun"
+        }
+      ],
+      "readAloudWords": [
+        { "word": "canyon", "syllables": ["can", "yun"], "phonicsLevel": "intermediate" }
+      ]${chapterCount > 0 ? `,
       "chapterTitle": "A Short Chapter Title (only on the first page of each chapter; omit or null on other pages)"` : ""}
     }
-  ]
+  ],
+  "comprehensionQuestions": [
+    {
+      "type": "recall",
+      "question": "What did Mia find in her grandmother's book?",
+      "options": [
+        { "text": "A crinkled map", "emoji": "🗺️", "correct": true },
+        { "text": "A small key", "emoji": "🗝️", "correct": false },
+        { "text": "A letter", "emoji": "✉️", "correct": false }
+      ]
+    }
+  ],
+  "predictionPause": {
+    "atPageIdx": 4,
+    "question": "What do you think Mia will do next?",
+    "options": [
+      { "text": "Keep following the map", "emoji": "🚶‍♀️" },
+      { "text": "Run back home", "emoji": "🏠" },
+      { "text": "Ask the fox for help", "emoji": "🦊" }
+    ]
+  }
 }`;
 
   const anthropic = getClient();

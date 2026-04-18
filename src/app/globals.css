@@ -1452,6 +1452,189 @@ body > * {
   box-shadow: 0 1px 6px rgba(194, 94, 69, 0.28);
 }
 
+/* ── Word Glow — tap-to-define vocabulary words ──────────────────────
+   Science-of-Reading: Pillar 4 (Vocabulary).
+   The AI flags 3–5 vocabulary words per page at story-generation time.
+   Those get a subtle visual cue so the child knows "this word has a
+   secret you can tap". Deliberately understated — a 1px dotted
+   terracotta underline at 40% opacity is just enough to be noticed on
+   a second read, not a permanent "look at me" badge that breaks
+   narrative flow on the first read.
+
+   IMPORTANT: the underline is `text-decoration`, which renders INSIDE
+   the word's padding box. Pair with `text-underline-offset` so the
+   line sits a couple pixels below the baseline, not jammed against
+   descenders like the "g" in "giggle". cursor: pointer + hover state
+   signals tappability on desktop; tap feedback (background bump) works
+   on touch. */
+.story-text .word.vocab-word {
+  text-decoration: underline dotted rgba(194, 94, 69, 0.55);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.story-text .word.vocab-word:hover:not(.active) {
+  background: rgba(194, 94, 69, 0.08);
+}
+.story-text .word.vocab-word:active:not(.active) {
+  background: rgba(194, 94, 69, 0.14);
+}
+/* When a vocab word is ALSO the active word, the honey highlight wins
+   — the dotted underline would compete with the strong background. */
+.story-text .word.vocab-word.active {
+  text-decoration: none;
+}
+/* Reduced-motion path: keep dots subtle, no hover flash. */
+@media (prefers-reduced-motion: reduce) {
+  .story-text .word.vocab-word:hover:not(.active) {
+    background: transparent;
+  }
+}
+
+/* ── Word Glow modal ─────────────────────────────────────────────────
+   Slide-up bottom sheet on mobile, centered on desktop. Backdrop
+   dims the reader just enough to shift focus without hiding the
+   page text entirely — the kid stays in the story's context while
+   learning the word. */
+.vocab-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(42, 39, 34, 0.35);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1200;
+  animation: vocab-backdrop-in 0.2s ease-out;
+}
+@media (min-width: 600px) {
+  .vocab-modal-backdrop { align-items: center; }
+}
+.vocab-modal {
+  background: #fdf8ea;
+  border-radius: 18px 18px 0 0;
+  padding: 24px 22px 20px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 -8px 28px rgba(42, 39, 34, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: vocab-modal-in 0.26s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@media (min-width: 600px) {
+  .vocab-modal { border-radius: 18px; max-width: 420px; }
+}
+@keyframes vocab-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes vocab-modal-in {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.vocab-modal-emoji {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 10px;
+  /* Gentle breathing so the emoji feels alive, not static. */
+  animation: vocab-emoji-float 2.6s ease-in-out infinite;
+}
+@keyframes vocab-emoji-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+.vocab-modal-word-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.vocab-modal-word {
+  font-family: var(--serif, Georgia, serif);
+  font-size: 30px;
+  font-weight: 600;
+  color: #2a2722;
+  margin: 0;
+  /* Nudge up slightly to balance with the speaker button. */
+  line-height: 1.1;
+}
+.vocab-modal-hear-btn {
+  background: rgba(194, 94, 69, 0.1);
+  border: 1px solid rgba(194, 94, 69, 0.25);
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.vocab-modal-hear-btn:hover {
+  background: rgba(194, 94, 69, 0.18);
+}
+.vocab-modal-hear-btn:active {
+  transform: scale(0.94);
+}
+.vocab-modal-pronunciation {
+  font-size: 13px;
+  color: #7d6a55;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  font-variant: small-caps;
+}
+.vocab-modal-definition {
+  font-size: 16px;
+  line-height: 1.45;
+  color: #2a2722;
+  margin: 4px 0 14px;
+  max-width: 90%;
+}
+.vocab-modal-example {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #5c5147;
+  font-style: italic;
+  margin: 0 0 16px;
+  max-width: 90%;
+}
+.vocab-modal-example-label {
+  color: #c25e45;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant: normal;
+}
+.vocab-modal-dismiss {
+  background: #c25e45;
+  color: #fdf8ea;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  margin-top: 4px;
+  /* Big enough tap target for small fingers. */
+  min-height: 44px;
+}
+.vocab-modal-dismiss:hover { background: #a44a33; }
+.vocab-modal-dismiss:active { transform: scale(0.97); }
+
+/* Cozy mode tweaks — dial back brightness so the modal doesn't break
+   the warm-dim atmosphere of bedtime reading. */
+.reader.cozy ~ .vocab-modal-backdrop,
+.reader.cozy .vocab-modal-backdrop {
+  background: rgba(20, 16, 12, 0.55);
+}
+
 /* ── Reduced-motion respect ──────────────────────────────────────────
    Users who've opted into prefers-reduced-motion get a flatter active-
    word state (no scale breath, faster background fade) while keeping

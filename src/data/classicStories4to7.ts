@@ -1684,175 +1684,993 @@ export const CLASSIC_STORIES_4_7: Story[] = [
     "pages": [
       [
         "Page 1",
-        "Long ago, in a sunny little kingdom, there lived an emperor who loved clothes. Silk ones. Velvet ones. Sparkly ones with golden buttons. He had a whole palace wing just for his outfits!"
+        "Long ago, in a bright kingdom by the sea, there lived an emperor who loved clothes more than anything. Silk robes. Velvet capes. Shiny buttons. He changed outfits ten times a day, just to admire himself in the mirror."
       ],
       [
         "Page 2",
-        "Every hour, the emperor changed into something new. \"How do I look?\" he asked his mirror. \"Splendid!\" he answered himself, twirling happily. His people sighed. Their emperor cared about clothes more than anything else."
+        "One sunny morning, two clever strangers arrived at the palace. They bowed low and smiled sly smiles. \"Your Majesty,\" they said, \"we weave the most magical cloth in the world. Only smart and clever people can see it!\""
       ],
       [
         "Page 3",
-        "One bright morning, two sneaky strangers arrived at the palace gates. They had twinkly eyes and curly smiles. \"We are the greatest tailors in the world,\" they said. \"We weave magical cloth!\""
+        "The emperor's eyes grew wide. Magical cloth! He would wear it proudly. Then he would know who was clever and who was silly. \"Begin at once,\" he ordered. \"I shall pay you piles of gold.\""
       ],
       [
         "Page 4",
-        "\"Magical?\" gasped the emperor, leaning forward. \"Oh yes,\" whispered the tailors. \"Only smart and clever people can see it. Silly folks see nothing at all.\" The emperor's eyes went wide as saucers."
+        "The sneaky tailors set up two big looms. They pretended to weave. Clickety-clack went the empty shuttles. But there was no thread! No cloth! No stitches at all. Just air. The tailors giggled behind their hands."
       ],
       [
         "Page 5",
-        "\"I must have it!\" cried the emperor. He gave the tailors gold, silk thread, and a little workshop. The tailors pretended to weave on empty looms. Clickety-clack went nothing. They giggled behind their hands."
+        "The emperor sent his oldest minister to peek. The minister stared and stared. He saw nothing. Nothing at all! But he did not want to seem foolish. \"Oh my!\" he gasped. \"Such lovely colors!\""
       ],
       [
         "Page 6",
-        "The emperor sent his old adviser to peek. The adviser squinted at the empty loom. He saw nothing! But he did not want to seem silly. \"Beautiful!\" he fibbed. \"Simply marvelous!\""
+        "Day after day, the tailors asked for more silk and more gold. They stuffed it all in their pockets. They pretended to snip and stitch. Snip-snap, snip snap! The looms stayed completely empty."
       ],
       [
         "Page 7",
-        "At last the tailors called out, \"All finished!\" They held up their arms as if carrying something grand. The emperor saw nothing. His heart thumped. \"I mustn't seem foolish,\" he thought. \"Wonderful!\" he said."
+        "At last, the emperor came himself. He looked. He blinked. He saw nothing! His heart thumped. \"Am I not clever enough?\" he worried. So he smiled and nodded. \"Beautiful! Truly wonderful!\""
       ],
       [
         "Page 8",
-        "The tailors helped him \"dress\" for the big parade. They pretended to button, tuck, and tie. The emperor stood in only his soft white underclothes, shivering just a little. \"Perfect fit!\" the tailors sang."
+        "\"Wear it in the grand parade tomorrow!\" the tailors cried. All night they pretended to sew. They waved their needles in the air. The whole palace whispered about the magical clothes nobody could see."
       ],
       [
         "Page 9",
-        "Trumpets blared. Ta-da da! Out marched the emperor through the town square. Flags waved. Crowds gathered. And there stood the emperor in his underthings, head high, nose in the air."
+        "Parade day arrived. The tailors helped the emperor \"dress.\" They lifted invisible sleeves. They smoothed invisible silk. The emperor stood in his white underclothes, puffing out his chest. \"Magnificent!\" everyone cheered, though nobody saw a thing."
       ],
       [
         "Page 10",
-        "\"Ooh, how grand!\" cried the townsfolk. \"Lovely colors!\" said one. \"Such fine stitching!\" said another. Nobody wanted to seem silly. So everyone pretended. Everyone, that is, except one small child near the front."
+        "Out marched the emperor through the town. Trumpets blared. Flags flapped. Crowds lined the streets to see the magical clothes. Everyone gasped and clapped and cried, \"How splendid! How grand! What fine royal robes!\""
       ],
       [
         "Page 11",
-        "The little child blinked. She tugged her father's sleeve. Then, in a clear, honest voice, she called out, \"But the emperor isn't wearing any clothes!\" The whole square went quiet as a mouse."
+        "But then, a small clear voice called out. A little child pointed and laughed. \"Look, Mama! The emperor is in his underclothes! He isn't wearing any fancy robes at all!\" The crowd went very quiet."
       ],
       [
         "Page 12",
-        "A giggle bubbled up. Then another. Soon everyone was whispering, \"She's right! She's right!\" The emperor's cheeks turned pink as petals. He realized the tailors had tricked him. And they were long gone!"
+        "One by one, people began to whisper. Then giggle. Then laugh out loud. \"The child is right!\" they said. \"There are no magical clothes!\" The emperor's cheeks turned as pink as roses. But he kept marching."
       ],
       [
         "Page 13",
-        "The emperor hurried home, wrapped in a warm cloak. He thanked the honest little child with a smile. From that day on, he listened to the truth, no matter how hard it was to hear."
+        "The sneaky tailors had already run off with their gold. The emperor learned a big lesson that day. From then on, he listened to honest voices, especially small ones. And he never bought invisible clothes again."
       ]
     ],
     "fullPages": [
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A plump, cheerful middle-aged emperor with a bushy black mustache, rosy cheeks, and a tall gold crown, wearing an elaborate magenta and emerald robe with puffy sleeves and ruffled collar. He stands in a grand palace wardrobe room filled with colorful outfits on wooden stands. Warm afternoon sunlight streams through tall arched windows. Rich reds, golds, and soft creams dominate the palette. Storybook style with gentle lines and a whimsical, slightly silly feel.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A tall medieval European palace hall with tall windows and warm golden sunlight. The emperor is a plump middle-aged man with a curly brown beard, round cheeks, wearing an emerald-green velvet robe with gold trim and a small red crown. He stands admiring himself in a tall gilded mirror, his back slightly to us, hands on hips. Ornate wardrobes overflow with colorful clothes in the background. Warm amber light, rich jewel-tone colors, cozy and slightly comical mood.",
         "mood": "warm",
         "sounds": [
-          "soft footsteps on marble floor",
+          "soft palace footsteps",
           "fabric rustling",
-          "distant palace bells"
+          "distant harp music"
+        ],
+        "vocabWords": [
+          {
+            "word": "emperor",
+            "emoji": "👑",
+            "definition_2_4": null,
+            "definition_4_7": "An emperor is a king who rules a very big kingdom.",
+            "definition_7_10": "An emperor is a powerful ruler, like a king, who governs a large empire with many lands and people.",
+            "exampleSentence": "The emperor lived in a palace with golden gates.",
+            "pronunciation": "EM-per-er"
+          },
+          {
+            "word": "velvet",
+            "emoji": "🧣",
+            "definition_2_4": null,
+            "definition_4_7": "Velvet is a soft, fuzzy cloth that feels nice to touch.",
+            "definition_7_10": "Velvet is a smooth, fuzzy fabric often used for fancy clothes, curtains, and cushions in grand places.",
+            "exampleSentence": "Her birthday dress was made of deep blue velvet.",
+            "pronunciation": "VEL-vet"
+          },
+          {
+            "word": "admire",
+            "emoji": "😍",
+            "definition_2_4": null,
+            "definition_4_7": "To admire means to look at something and like it a lot.",
+            "definition_7_10": "To admire something means to look at it with wonder or respect, because you find it beautiful or impressive.",
+            "exampleSentence": "We stopped to admire the rainbow after the rain.",
+            "pronunciation": "ad-MIRE"
+          },
+          {
+            "word": "kingdom",
+            "emoji": "🏰",
+            "definition_2_4": null,
+            "definition_4_7": "A kingdom is a big land where a king or queen rules.",
+            "definition_7_10": "A kingdom is a country or land ruled by a king or queen, often with castles, villages, and loyal people.",
+            "exampleSentence": "The brave knight rode through the whole kingdom.",
+            "pronunciation": "KING-dum"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "emperor",
+            "syllables": [
+              "em",
+              "per",
+              "er"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "velvet",
+            "syllables": [
+              "vel",
+              "vet"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "kingdom",
+            "syllables": [
+              "king",
+              "dum"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The same plump emperor with bushy black mustache and tall gold crown, now twirling in front of a large oval gold-framed mirror, wearing a bright yellow outfit with polka dots. His reflection smiles back. Two weary servants in blue tunics stand behind him sighing politely. Afternoon light, cozy palace bedroom with tapestries. Playful, humorous composition. Warm golds and soft lavenders.",
-        "mood": "funny",
-        "sounds": [
-          "shoes tapping on stone",
-          "gentle sighing",
-          "clock ticking softly"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Two sneaky thin tailors with twinkly eyes, curly smiles, and long colorful coats, one with a red pointed cap and the other with a green one, stand at grand palace gates. They each carry a small leather satchel. Guards in silver helmets watch curiously. Morning sunlight on cobblestones, the palace rising in the background with pennants flying. Mischievous mood, bright cheerful colors.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Two sneaky tailors bow before the emperor in a grand throne room. The tailors are thin men with long pointed noses, one with red hair and a striped purple vest, the other bald with a yellow jacket and a wide sly grin. The emperor, a plump man with a curly brown beard, round cheeks, emerald-green velvet robe with gold trim, and small red crown, leans forward from his golden throne, very curious. Tall marble columns, red carpet, warm candlelight, playful mysterious mood.",
         "mood": "mysterious",
         "sounds": [
-          "palace gates creaking",
-          "birdsong in the morning",
-          "soft footsteps on cobblestone"
+          "footsteps on marble",
+          "whispered voices",
+          "crackling torch flames"
+        ],
+        "vocabWords": [
+          {
+            "word": "clever",
+            "emoji": "🧠",
+            "definition_2_4": null,
+            "definition_4_7": "Clever means smart and good at figuring things out.",
+            "definition_7_10": "Clever means quick-thinking and smart, especially at solving problems or coming up with sneaky ideas.",
+            "exampleSentence": "The clever fox found a shortcut through the woods.",
+            "pronunciation": "KLEH-ver"
+          },
+          {
+            "word": "weave",
+            "emoji": "🧵",
+            "definition_2_4": null,
+            "definition_4_7": "To weave means to make cloth by crossing threads together.",
+            "definition_7_10": "To weave is to make fabric by crossing threads over and under each other, often on a special machine called a loom.",
+            "exampleSentence": "Grandma taught me to weave a little basket.",
+            "pronunciation": "WEEV"
+          },
+          {
+            "word": "magical",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Magical means full of magic, like in fairy tales.",
+            "definition_7_10": "Magical means having special powers that can't be explained, often seen in stories with wizards and wonder.",
+            "exampleSentence": "The forest felt magical under the full moon.",
+            "pronunciation": "MAJ-ih-kul"
+          },
+          {
+            "word": "sly",
+            "emoji": "🦊",
+            "definition_2_4": null,
+            "definition_4_7": "Sly means tricky and sneaky in a quiet way.",
+            "definition_7_10": "Sly describes someone who is clever in a sneaky way, often planning something others don't notice.",
+            "exampleSentence": "The cat gave a sly look before pouncing.",
+            "pronunciation": "SLY"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "weave",
+            "syllables": [
+              "weev"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "clever",
+            "syllables": [
+              "kleh",
+              "ver"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "magical",
+            "syllables": [
+              "maj",
+              "ih",
+              "kul"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and tall gold crown, now in a rich magenta robe, leans forward eagerly on his golden throne, eyes wide as saucers. The two sneaky tailors in colorful coats and pointed caps (one red, one green) whisper beside him with sly smiles. Throne room with tall purple curtains and flickering candelabras. Warm amber light. Expressive, comic storybook style.",
-        "mood": "mysterious",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The emperor, a plump man with a curly brown beard, round cheeks, emerald-green velvet robe with gold trim, and small red crown, sits tall on a golden throne with eyes wide and excited. Heavy bags of gold coins sit beside him, one spilling open. The two tailors (thin, one red-haired in purple striped vest, one bald in yellow jacket) grin and reach for the coins. Tall stained glass windows cast rainbow light. Warm bright colors, excited mood.",
+        "mood": "exciting",
         "sounds": [
-          "whispering voices",
-          "candle flames flickering",
-          "emperor gasping softly"
+          "coins clinking",
+          "excited voices",
+          "royal trumpet"
+        ],
+        "vocabWords": [
+          {
+            "word": "ordered",
+            "emoji": "👉",
+            "definition_2_4": null,
+            "definition_4_7": "Ordered means told someone they must do something.",
+            "definition_7_10": "When you order someone, you firmly tell them what to do, usually because you are in charge.",
+            "exampleSentence": "The captain ordered the sailors to raise the sail.",
+            "pronunciation": "OR-derd"
+          },
+          {
+            "word": "piles",
+            "emoji": "📚",
+            "definition_2_4": null,
+            "definition_4_7": "Piles are big stacks of many things on top of each other.",
+            "definition_7_10": "Piles are heaps or stacks of things gathered together, like piles of leaves, books, or coins.",
+            "exampleSentence": "We raked the leaves into tall piles in the yard.",
+            "pronunciation": "PILES"
+          },
+          {
+            "word": "proudly",
+            "emoji": "😊",
+            "definition_2_4": null,
+            "definition_4_7": "Proudly means feeling happy and good about yourself.",
+            "definition_7_10": "Doing something proudly means doing it with a big, happy feeling about yourself or what you have done.",
+            "exampleSentence": "She proudly showed her painting to the class.",
+            "pronunciation": "PROWD-lee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "ordered",
+            "syllables": [
+              "or",
+              "derd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "gold",
+            "syllables": [
+              "gold"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "proudly",
+            "syllables": [
+              "prowd",
+              "lee"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The two sneaky tailors with twinkly eyes and curly smiles sit at two large wooden empty looms in a sunny workshop. They mime weaving the air, tongues poking out playfully. Spools of silk thread and piles of shiny gold coins sit on a side table. Bright morning light through a cottage window. Humorous and playful tone, warm honey-colored palette with hints of green and red.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Two big wooden looms stand in a sunlit workshop. The two tailors (thin, one red-haired in purple striped vest, one bald in yellow jacket) pretend to work, hands moving at empty looms with no thread. They exchange a giggling sideways look, hands near their mouths. Empty shuttles sit on benches. Sunlight streams through a round window. Warm dusty golden light, playful funny mood, slightly sneaky feel.",
         "mood": "funny",
         "sounds": [
-          "wooden looms clacking",
-          "tailors giggling",
-          "coins clinking"
+          "clickety-clack of empty looms",
+          "sneaky giggles",
+          "wooden shuttles tapping"
+        ],
+        "vocabWords": [
+          {
+            "word": "looms",
+            "emoji": "🧶",
+            "definition_2_4": null,
+            "definition_4_7": "Looms are big frames used to make cloth from threads.",
+            "definition_7_10": "Looms are wooden machines with many threads, used for weaving cloth by crossing the threads together.",
+            "exampleSentence": "The weaver worked at her loom all afternoon.",
+            "pronunciation": "LOOMS"
+          },
+          {
+            "word": "pretended",
+            "emoji": "🎭",
+            "definition_2_4": null,
+            "definition_4_7": "Pretended means acted like something was true when it wasn't.",
+            "definition_7_10": "To pretend is to act as if something is real or true, even though it is only make-believe.",
+            "exampleSentence": "He pretended to be a lion and roared.",
+            "pronunciation": "pre-TEN-ded"
+          },
+          {
+            "word": "shuttles",
+            "emoji": "🪡",
+            "definition_2_4": null,
+            "definition_4_7": "Shuttles are small tools that carry thread across a loom.",
+            "definition_7_10": "Shuttles are small pointed tools weavers use to pass thread back and forth through a loom.",
+            "exampleSentence": "The shuttle zoomed across the weaver's loom.",
+            "pronunciation": "SHUT-uls"
+          },
+          {
+            "word": "giggled",
+            "emoji": "🤭",
+            "definition_2_4": null,
+            "definition_4_7": "Giggled means laughed in a small, silly way.",
+            "definition_7_10": "To giggle means to laugh quietly in a light, bubbly way, often at something silly or secret.",
+            "exampleSentence": "The girls giggled at the funny joke.",
+            "pronunciation": "GIG-uld"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "looms",
+            "syllables": [
+              "looms"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "pretended",
+            "syllables": [
+              "pre",
+              "ten",
+              "ded"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "giggled",
+            "syllables": [
+              "gig",
+              "uld"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A kindly old adviser with a long white beard, round spectacles, a plum-colored robe, and a soft floppy hat, squints hard at an empty loom. The two sneaky tailors (one in red cap, one in green cap) gesture proudly at nothing. The adviser's eyebrows are raised in worry but he forces a polite smile. Cozy workshop with afternoon sun. Humorous composition, soft dusty colors with warm highlights.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. An old minister with a long white beard, bushy eyebrows, round spectacles, and a long blue robe with silver trim stands in the workshop, staring in confusion at the empty looms. His mouth hangs open. He scratches his head. The two tailors (thin, one red-haired in purple striped vest, one bald in yellow jacket) stand beside him, gesturing grandly at nothing. Warm afternoon light, soft blue shadows, gently puzzled funny mood.",
         "mood": "funny",
         "sounds": [
-          "floorboards creaking",
-          "nervous throat clearing",
-          "tailors humming"
+          "nervous gasp",
+          "clock ticking",
+          "wooden floor creaking"
+        ],
+        "vocabWords": [
+          {
+            "word": "minister",
+            "emoji": "👴",
+            "definition_2_4": null,
+            "definition_4_7": "A minister is someone who helps the king make choices.",
+            "definition_7_10": "A minister is an important helper who advises a king or leader and helps run the kingdom.",
+            "exampleSentence": "The wise minister always gave good advice.",
+            "pronunciation": "MIN-is-ter"
+          },
+          {
+            "word": "foolish",
+            "emoji": "🤪",
+            "definition_2_4": null,
+            "definition_4_7": "Foolish means silly or not very smart.",
+            "definition_7_10": "Foolish means acting in a silly way that shows you aren't thinking carefully or using good sense.",
+            "exampleSentence": "It was foolish to forget my raincoat in a storm.",
+            "pronunciation": "FOO-lish"
+          },
+          {
+            "word": "gasped",
+            "emoji": "😮",
+            "definition_2_4": null,
+            "definition_4_7": "Gasped means took a quick breath because of a surprise.",
+            "definition_7_10": "To gasp is to suddenly breathe in sharply because you are surprised, scared, or amazed.",
+            "exampleSentence": "She gasped when she saw the kitten's new tricks.",
+            "pronunciation": "GASPT"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "minister",
+            "syllables": [
+              "min",
+              "is",
+              "ter"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "foolish",
+            "syllables": [
+              "foo",
+              "lish"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "peek",
+            "syllables": [
+              "peek"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The two sneaky tailors in colorful coats and pointed caps (red and green) hold up their arms as if presenting a grand invisible garment. The plump emperor with bushy black mustache and tall gold crown, in a rich magenta robe, stares with hand on his chin, eyes nervous but trying to look wise. Workshop with soft golden afternoon light. Warm tones, gentle humor, empty space between the tailors' hands clearly visible.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The two tailors (thin, one red-haired in purple striped vest, one bald in yellow jacket) quietly stuff bright silk thread and gold coins into their puffy pockets while holding invisible scissors in the air. Piles of colorful silk spools sit unused. One tailor winks, the other snickers. The workshop is warm and sunlit with wooden beams and round windows. Playful sneaky mood, warm honey-colored light.",
+        "mood": "funny",
+        "sounds": [
+          "snip-snap of scissors in air",
+          "coins jingling in pockets",
+          "sneaky whispers"
+        ],
+        "vocabWords": [
+          {
+            "word": "stuffed",
+            "emoji": "🧦",
+            "definition_2_4": null,
+            "definition_4_7": "Stuffed means pushed things inside something until it was full.",
+            "definition_7_10": "To stuff something means to push or cram things tightly into a space until it is packed full.",
+            "exampleSentence": "He stuffed his pockets with crunchy autumn leaves.",
+            "pronunciation": "STUFT"
+          },
+          {
+            "word": "silk",
+            "emoji": "🎀",
+            "definition_2_4": null,
+            "definition_4_7": "Silk is a smooth, shiny cloth that feels very soft.",
+            "definition_7_10": "Silk is a smooth, shiny fabric made from threads spun by tiny creatures called silkworms.",
+            "exampleSentence": "The pillow was covered in a smooth silk case.",
+            "pronunciation": "SILK"
+          },
+          {
+            "word": "snip",
+            "emoji": "✂️",
+            "definition_2_4": null,
+            "definition_4_7": "Snip means to cut something with a quick little cut.",
+            "definition_7_10": "To snip means to cut something quickly and neatly, often with scissors, in small short cuts.",
+            "exampleSentence": "She snipped the ribbon to open the present.",
+            "pronunciation": "SNIP"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "silk",
+            "syllables": [
+              "silk"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "snip",
+            "syllables": [
+              "snip"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "pockets",
+            "syllables": [
+              "pok",
+              "ets"
+            ],
+            "phonicsLevel": "intermediate"
+          }
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The emperor, a plump man with a curly brown beard, round cheeks, emerald-green velvet robe with gold trim, and small red crown, stands in the workshop staring at the empty loom with wide worried eyes. One hand is on his chin. Tiny sweat beads show on his forehead. The two tailors (thin, one red-haired in purple striped vest, one bald in yellow jacket) stand proudly beside the empty loom. Soft warm light, gently tense and comical mood.",
         "mood": "tense",
         "sounds": [
           "heart thumping softly",
-          "fabric fluttering in imagination",
-          "tailors saying tada"
+          "nervous swallow",
+          "whispered worry"
+        ],
+        "vocabWords": [
+          {
+            "word": "blinked",
+            "emoji": "👁️",
+            "definition_2_4": null,
+            "definition_4_7": "Blinked means closed and opened your eyes quickly.",
+            "definition_7_10": "To blink means to shut and open your eyes very quickly, sometimes because you're surprised or tired.",
+            "exampleSentence": "I blinked when the sun shone in my eyes.",
+            "pronunciation": "BLINKT"
+          },
+          {
+            "word": "worried",
+            "emoji": "😟",
+            "definition_2_4": null,
+            "definition_4_7": "Worried means feeling a little scared something bad might happen.",
+            "definition_7_10": "To feel worried means to have a heavy, anxious feeling because you think something might go wrong.",
+            "exampleSentence": "She felt worried when her puppy ran too far.",
+            "pronunciation": "WUR-eed"
+          },
+          {
+            "word": "thumped",
+            "emoji": "💓",
+            "definition_2_4": null,
+            "definition_4_7": "Thumped means made a loud, heavy beating sound.",
+            "definition_7_10": "To thump means to beat or hit with a strong, dull sound, like a pounding heart or a bouncing ball.",
+            "exampleSentence": "His feet thumped on the stairs as he ran up.",
+            "pronunciation": "THUMPT"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "blinked",
+            "syllables": [
+              "blinkt"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "thumped",
+            "syllables": [
+              "thumpt"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "smiled",
+            "syllables": [
+              "smyled"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and tall gold crown now stands in simple soft white knee-length underclothes (long tunic shirt and baggy shorts), shivering slightly with a dignified expression. The two sneaky tailors mime buttoning and tucking invisible clothes around him. Dressing room with a mirror, warm candlelight, velvet curtains. Gentle silly humor, pink and gold palette. Emperor is modestly covered in knee-length underclothes throughout.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The two tailors (thin, one red-haired in purple striped vest, one bald in yellow jacket) wave empty silver needles and sewing pins dramatically in the air at nighttime, acting busy beside the empty loom. Tall candles glow. Shadows dance on the stone walls. In a doorway, palace servants in simple tunics peek and whisper behind their hands. Deep blue moody candlelight, playful and mysterious mood.",
+        "mood": "mysterious",
+        "sounds": [
+          "candle flames flickering",
+          "soft whispers",
+          "needles tapping on wood"
+        ],
+        "vocabWords": [
+          {
+            "word": "grand",
+            "emoji": "🎉",
+            "definition_2_4": null,
+            "definition_4_7": "Grand means big, fancy, and very important.",
+            "definition_7_10": "Grand means large, impressive, and special, often used for fancy events or beautiful buildings.",
+            "exampleSentence": "We had a grand party for grandma's birthday.",
+            "pronunciation": "GRAND"
+          },
+          {
+            "word": "parade",
+            "emoji": "🎺",
+            "definition_2_4": null,
+            "definition_4_7": "A parade is a big line of people walking to celebrate something.",
+            "definition_7_10": "A parade is a joyful march of people, often with music, flags, and costumes, through the streets.",
+            "exampleSentence": "We watched the parade with drums and floats.",
+            "pronunciation": "pa-RADE"
+          },
+          {
+            "word": "whispered",
+            "emoji": "🤫",
+            "definition_2_4": null,
+            "definition_4_7": "Whispered means talked very quietly so others couldn't hear.",
+            "definition_7_10": "To whisper means to speak very softly, almost without using your voice, so only someone close can hear.",
+            "exampleSentence": "She whispered a secret into her friend's ear.",
+            "pronunciation": "WIS-perd"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "parade",
+            "syllables": [
+              "pa",
+              "rade"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "whispered",
+            "syllables": [
+              "wis",
+              "perd"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "grand",
+            "syllables": [
+              "grand"
+            ],
+            "phonicsLevel": "easy"
+          }
+        ]
+      },
+      {
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The emperor, a plump man with a curly brown beard, round cheeks, and small red crown, stands in a simple white knee-length tunic and white shorts (modest underclothes), chest puffed out proudly. The two tailors (thin, one red-haired in purple striped vest, one bald in yellow jacket) hold up invisible fabric with grand flourishes. Servants in tunics smile and clap nervously in the background. Large tall mirrors and velvet curtains. Warm golden morning light, silly playful mood.",
         "mood": "funny",
         "sounds": [
-          "tailors humming a tune",
-          "mime patting",
-          "chilly shiver"
+          "nervous clapping",
+          "cheerful exclamations",
+          "fabric rustling"
+        ],
+        "vocabWords": [
+          {
+            "word": "magnificent",
+            "emoji": "🌟",
+            "definition_2_4": null,
+            "definition_4_7": "Magnificent means very beautiful and amazing.",
+            "definition_7_10": "Magnificent means wonderful and grand, so beautiful or impressive that it makes you say wow.",
+            "exampleSentence": "The castle looked magnificent at sunset.",
+            "pronunciation": "mag-NIF-ih-sent"
+          },
+          {
+            "word": "puffing",
+            "emoji": "💨",
+            "definition_2_4": null,
+            "definition_4_7": "Puffing means pushing out your chest or air.",
+            "definition_7_10": "To puff out your chest means to stick it out proudly, as if showing off.",
+            "exampleSentence": "The rooster puffed up his feathers on the fence.",
+            "pronunciation": "PUFF-ing"
+          },
+          {
+            "word": "smoothed",
+            "emoji": "🫳",
+            "definition_2_4": null,
+            "definition_4_7": "Smoothed means made something flat with your hands.",
+            "definition_7_10": "To smooth something means to press it flat or even, removing bumps, folds, or wrinkles.",
+            "exampleSentence": "Dad smoothed the bedsheets before breakfast.",
+            "pronunciation": "SMOOTHD"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "magnificent",
+            "syllables": [
+              "mag",
+              "nif",
+              "ih",
+              "sent"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "chest",
+            "syllables": [
+              "chest"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "invisible",
+            "syllables": [
+              "in",
+              "viz",
+              "uh",
+              "bul"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and tall gold crown, wearing only modest white knee-length underclothes (long tunic shirt and baggy shorts), marches proudly through a cobblestone medieval European town square with his nose in the air. Trumpeters in red tabards blow golden horns. Colorful flags and banners flutter. Crowds of townsfolk line the sides gasping. Bright sunny day, cheerful blues and reds. Clearly comic, never crude. Emperor is fully covered in underclothes.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A cheerful medieval European town square with stone cottages, bright flags, and flower boxes. The emperor marches down the middle in a simple white knee-length tunic and white shorts, chin high, wearing his small red crown. His curly brown beard and round cheeks are proud. Trumpeters in red tunics play on either side. Crowds of townspeople of many ages cheer and clap, all pretending the clothes are real. Confetti drifts down. Warm sunny golden light, cheerful funny parade mood.",
         "mood": "funny",
         "sounds": [
-          "trumpets blaring tada",
-          "flags flapping in breeze",
-          "crowd murmuring"
+          "trumpet fanfare",
+          "crowd cheering",
+          "flapping flags"
+        ],
+        "vocabWords": [
+          {
+            "word": "trumpets",
+            "emoji": "🎺",
+            "definition_2_4": null,
+            "definition_4_7": "Trumpets are shiny metal horns that make loud music.",
+            "definition_7_10": "Trumpets are brass instruments you blow into, making bright loud sounds often heard in parades.",
+            "exampleSentence": "The trumpets played a happy tune at the fair.",
+            "pronunciation": "TRUM-pets"
+          },
+          {
+            "word": "splendid",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "Splendid means really wonderful and nice to look at.",
+            "definition_7_10": "Splendid means amazing, beautiful, and excellent, often used to describe something grand or special.",
+            "exampleSentence": "We had a splendid picnic by the river.",
+            "pronunciation": "SPLEN-did"
+          },
+          {
+            "word": "marched",
+            "emoji": "🚶",
+            "definition_2_4": null,
+            "definition_4_7": "Marched means walked with steady, strong steps.",
+            "definition_7_10": "To march means to walk with firm, even steps, often in a line with others like in a band or parade.",
+            "exampleSentence": "The band marched down the street in rows.",
+            "pronunciation": "MARCHT"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "trumpets",
+            "syllables": [
+              "trum",
+              "pets"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "splendid",
+            "syllables": [
+              "splen",
+              "did"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "marched",
+            "syllables": [
+              "marcht"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Townsfolk of all ages in colorful medieval tunics and dresses clap and point, mouths open in fake awe. In the front stands a small round-cheeked child with short brown curls and a yellow smock, looking puzzled. Behind her, a kindly father with a brown beard in a green coat holds her hand. The emperor (bushy black mustache, gold crown, white knee-length underclothes) marches past in the background. Bright square, cheerful palette.",
-        "mood": "tense",
-        "sounds": [
-          "crowd oohing and ahhing",
-          "child tugging a sleeve",
-          "footsteps on cobblestone"
-        ]
-      },
-      {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Close-up of the small round-cheeked child with short brown curls in a yellow smock pointing bravely at the emperor, her mouth open in a clear honest shout. The whole crowd behind her has frozen in surprise, eyes wide. The emperor (bushy black mustache, gold crown, white knee-length underclothes) halts mid-step. A single bird pauses in the sky. Warm midday light, bright and clear, palette of yellow, soft blue, and rose.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. A small brown-haired child about five years old, with rosy cheeks, wearing a simple orange dress and brown boots, stands at the front of the crowd pointing at the emperor and laughing openly. Her mother, a woman with a long braid and green shawl, looks shocked beside her. The emperor (plump man with curly brown beard, round cheeks, small red crown, simple white knee-length tunic and white shorts) pauses, eyes wide. The crowd goes silent, mouths hanging open. Warm sunny light suddenly feeling still and surprised. Honest bright mood.",
         "mood": "triumphant",
         "sounds": [
-          "child shouting clearly",
-          "sudden hush",
-          "single bird chirp"
+          "child's clear laughing voice",
+          "sudden crowd silence",
+          "one cricket chirp"
+        ],
+        "vocabWords": [
+          {
+            "word": "pointed",
+            "emoji": "👉",
+            "definition_2_4": null,
+            "definition_4_7": "Pointed means held out a finger to show something.",
+            "definition_7_10": "To point means to stretch out your finger to show where something is or draw attention to it.",
+            "exampleSentence": "He pointed at the shooting star in the sky.",
+            "pronunciation": "POIN-ted"
+          },
+          {
+            "word": "honest",
+            "emoji": "💯",
+            "definition_2_4": null,
+            "definition_4_7": "Honest means always telling the truth.",
+            "definition_7_10": "Being honest means telling the truth and being fair, even when it feels hard to do.",
+            "exampleSentence": "It was honest of him to say he broke the vase.",
+            "pronunciation": "ON-est"
+          },
+          {
+            "word": "underclothes",
+            "emoji": "🩳",
+            "definition_2_4": null,
+            "definition_4_7": "Underclothes are clothes you wear under your other clothes.",
+            "definition_7_10": "Underclothes are the soft, simple clothes worn beneath regular outfits, like undershirts and shorts.",
+            "exampleSentence": "He packed warm underclothes for the snowy trip.",
+            "pronunciation": "UN-der-klohz"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "honest",
+            "syllables": [
+              "on",
+              "est"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "pointed",
+            "syllables": [
+              "poin",
+              "ted"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "child",
+            "syllables": [
+              "chyld"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor (bushy black mustache, gold crown, white knee-length underclothes) stands in the town square with cheeks bright pink, covering his face with one hand. Townsfolk around him giggle kindly behind hands and fans. In the distance, the two sneaky tailors in red and green caps sprint away with bulging satchels of gold. Warm sunny square, humorous but gentle mood, pink and peach tones.",
-        "mood": "funny",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The town square bursts with laughter. Townspeople of many ages giggle behind their hands, some doubled over chuckling. The emperor (plump man with curly brown beard, round cheeks, small red crown, simple white knee-length tunic and white shorts) stands with pink blushing cheeks, chin trembling just a bit, but keeps marching forward bravely. Flags flutter. Warm golden afternoon light, bittersweet yet funny mood.",
+        "mood": "bittersweet",
         "sounds": [
-          "soft giggling spreading",
-          "footsteps running away",
-          "coins jingling in satchels"
+          "crowd laughter building",
+          "uncertain footsteps",
+          "fluttering flags"
+        ],
+        "vocabWords": [
+          {
+            "word": "whisper",
+            "emoji": "🤫",
+            "definition_2_4": null,
+            "definition_4_7": "Whisper means to talk in a very quiet voice.",
+            "definition_7_10": "To whisper is to speak very softly, barely using your voice, so only someone near can hear.",
+            "exampleSentence": "He whispered so his baby sister wouldn't wake.",
+            "pronunciation": "WIS-per"
+          },
+          {
+            "word": "cheeks",
+            "emoji": "😊",
+            "definition_2_4": null,
+            "definition_4_7": "Cheeks are the soft round parts of your face below your eyes.",
+            "definition_7_10": "Cheeks are the soft, round parts of your face below your eyes, which sometimes turn pink when you're shy.",
+            "exampleSentence": "Her cheeks turned red when she got a gift.",
+            "pronunciation": "CHEEKS"
+          },
+          {
+            "word": "roses",
+            "emoji": "🌹",
+            "definition_2_4": null,
+            "definition_4_7": "Roses are sweet-smelling flowers that are often pink or red.",
+            "definition_7_10": "Roses are beautiful flowers with many petals and a sweet smell, often pink, red, yellow, or white.",
+            "exampleSentence": "Grandma grew pink roses by her front door.",
+            "pronunciation": "ROH-ziz"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "cheeks",
+            "syllables": [
+              "cheeks"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "roses",
+            "syllables": [
+              "roh",
+              "ziz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "laugh",
+            "syllables": [
+              "laff"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
-        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The plump emperor with bushy black mustache and gold crown, now wrapped in a warm red cloak, kneels down smiling gently to shake hands with the small round-cheeked child in her yellow smock. Townsfolk watch warmly in the background. Late afternoon sunlight spills across the palace steps. Soft golden glow, peaceful palette of rose, amber, and warm cream. A heartfelt, happy-ending mood.",
+        "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. The emperor (plump man with curly brown beard, round cheeks, small red crown) is now back at the palace, wearing a simple cozy brown robe (not fancy), kneeling gently to listen to the same small brown-haired child in the orange dress and brown boots. He smiles kindly. A window shows sunset sky. The two sneaky tailors are tiny far-off figures running into the distance with big sacks of gold. Soft warm orange and pink sunset light, gentle heartwarming mood.",
         "mood": "warm",
         "sounds": [
-          "soft applause",
-          "warm breeze",
-          "gentle palace bells"
+          "gentle evening breeze",
+          "soft child's voice",
+          "distant door closing"
+        ],
+        "vocabWords": [
+          {
+            "word": "lesson",
+            "emoji": "📖",
+            "definition_2_4": null,
+            "definition_4_7": "A lesson is something new you learn.",
+            "definition_7_10": "A lesson is something you learn, either from a teacher or from a mistake that helps you next time.",
+            "exampleSentence": "Falling taught her a lesson about bike helmets.",
+            "pronunciation": "LES-un"
+          },
+          {
+            "word": "listened",
+            "emoji": "👂",
+            "definition_2_4": null,
+            "definition_4_7": "Listened means paid attention with your ears.",
+            "definition_7_10": "To listen means to pay close attention to sounds or words so you understand what is being said.",
+            "exampleSentence": "We listened carefully to the rain on the roof.",
+            "pronunciation": "LIS-und"
+          },
+          {
+            "word": "voices",
+            "emoji": "🗣️",
+            "definition_2_4": null,
+            "definition_4_7": "Voices are the sounds people make when they talk or sing.",
+            "definition_7_10": "Voices are the sounds that come from our mouths when we speak, sing, or shout, each one unique.",
+            "exampleSentence": "We heard cheerful voices from the playground.",
+            "pronunciation": "VOI-siz"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "lesson",
+            "syllables": [
+              "les",
+              "un"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "listened",
+            "syllables": [
+              "lis",
+              "und"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "voices",
+            "syllables": [
+              "voi",
+              "siz"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       }
-    ]
+    ],
+    "comprehensionQuestions": [
+      {
+        "type": "recall",
+        "question": "What did the sneaky tailors say about their cloth?",
+        "options": [
+          {
+            "text": "Only clever people could see it",
+            "emoji": "🧠",
+            "correct": true
+          },
+          {
+            "text": "It glowed in the dark",
+            "emoji": "💡",
+            "correct": false
+          },
+          {
+            "text": "It could fly like a kite",
+            "emoji": "🪁",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "inference",
+        "question": "Why did the grown-ups pretend they could see the clothes?",
+        "options": [
+          {
+            "text": "They didn't want to seem foolish",
+            "emoji": "😬",
+            "correct": true
+          },
+          {
+            "text": "They really could see them",
+            "emoji": "👀",
+            "correct": false
+          },
+          {
+            "text": "They were too sleepy to look",
+            "emoji": "😴",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "connection",
+        "question": "Have you ever told the truth even when it was hard?",
+        "options": [
+          {
+            "text": "Yes, and I felt brave!",
+            "emoji": "💪",
+            "correct": true
+          },
+          {
+            "text": "Sometimes the truth feels scary to say",
+            "emoji": "🫣",
+            "correct": true
+          },
+          {
+            "text": "Telling the truth helps people trust me",
+            "emoji": "❤️",
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "predictionPause": {
+      "atPageIdx": 7,
+      "question": "The emperor is about to march in the parade without any real clothes! What do you think will happen?",
+      "options": [
+        {
+          "text": "Someone will shout the truth",
+          "emoji": "🗣️"
+        },
+        {
+          "text": "The crowd will pretend and clap",
+          "emoji": "👏"
+        },
+        {
+          "text": "The emperor will notice himself",
+          "emoji": "🪞"
+        }
+      ]
+    }
   }
 ];

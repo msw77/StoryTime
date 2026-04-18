@@ -313,9 +313,62 @@ const SAMPLE_STORY = `
       {
         "scene": "Soft watercolor children's book illustration, original character design, not based on any existing adaptation. Three little pigs standing together on a sunny green hilltop...",
         "mood": "warm",
-        "sounds": ["birds singing in morning sun", "gentle breeze through meadow grass"]
+        "sounds": ["birds singing in morning sun", "gentle breeze through meadow grass"],
+        "vocabWords": [
+          {
+            "word": "meadow",
+            "emoji": "🌾",
+            "definition_2_4": null,
+            "definition_4_7": "A meadow is a big open field with grass and wildflowers.",
+            "definition_7_10": "A meadow is a wide open field covered in grass and wildflowers, often where animals graze.",
+            "exampleSentence": "Rabbits hopped across the meadow as the sun came up.",
+            "pronunciation": "MED-oh"
+          }
+        ],
+        "readAloudWords": [
+          { "word": "pigs", "syllables": ["pigs"], "phonicsLevel": "easy" },
+          { "word": "meadow", "syllables": ["med", "oh"], "phonicsLevel": "intermediate" }
+        ]
       }
-    ]
+    ],
+    "comprehensionQuestions": [
+      {
+        "type": "recall",
+        "question": "What did the three pigs need to build?",
+        "options": [
+          { "text": "Their own houses", "emoji": "🏠", "correct": true },
+          { "text": "A farm", "emoji": "🚜", "correct": false },
+          { "text": "A playground", "emoji": "🛝", "correct": false }
+        ]
+      },
+      {
+        "type": "inference",
+        "question": "Why do you think Pip's straw house went up so fast?",
+        "options": [
+          { "text": "Straw is light and easy to stack", "emoji": "🌾", "correct": true },
+          { "text": "Pip was magic", "emoji": "✨", "correct": false },
+          { "text": "His brothers helped him", "emoji": "🐷", "correct": false }
+        ]
+      },
+      {
+        "type": "connection",
+        "question": "Have you ever wanted to build something quickly?",
+        "options": [
+          { "text": "Yes, it was so fun!", "emoji": "😄", "correct": true },
+          { "text": "Sometimes I take my time instead", "emoji": "🧱", "correct": true },
+          { "text": "I love building big things!", "emoji": "🏰", "correct": true }
+        ]
+      }
+    ],
+    "predictionPause": {
+      "atPageIdx": 4,
+      "question": "The big wolf is at the door! What do you think Pip will do?",
+      "options": [
+        { "text": "Run to his brother's house", "emoji": "🏃" },
+        { "text": "Hide under the table", "emoji": "🪑" },
+        { "text": "Ask the wolf to be friends", "emoji": "🐺" }
+      ]
+    }
   },
   "voiceMap": {
     "narrator": "Warm bedtime storyteller voice — a parent reading aloud, clear and expressive. Maintain a natural, steady storytelling pace throughout — do not speed up or slow down.",
@@ -371,7 +424,40 @@ Alongside the story, produce a voiceMap with:
 - characters: { lowercase-name: "Same storyteller voice, [pitch/tone only — no pacing words] — playing <character role>." }
 List every named character that speaks dialogue in the story. Include multiple aliases if needed (e.g. "mother" AND "mom" if both appear).
 
-Return ONLY a single JSON object with shape { "story": { ... Story fields ... }, "voiceMap": { narrator, characters } }. No commentary outside the JSON. No markdown code fences.`;
+## Reading-Science fields — REQUIRED
+In addition to the narrative fields, produce reading-science metadata on EACH page and on the STORY as a whole. These power Word Glow (tap-to-define), Sound It Out (tap-to-syllabify), and end-of-story comprehension questions.
+
+Per page, add these to the story.fullPages[i] object:
+
+- vocabWords: 3–5 per page. Words just above the age-${AGE} comfortable reading level — challenging but reachable from context. Favor concrete nouns, vivid verbs, sensory adjectives. Avoid words the kid already knows from daily life. Each: { word, emoji, definition_2_4, definition_4_7, definition_7_10, exampleSentence, pronunciation }.
+  - definition_2_4: null for the 2–4 band (too young for text definitions)
+  - definition_4_7: one sentence, 8–14 words, everyday language
+  - definition_7_10: one sentence, 12–20 words, richer; may include light metaphor
+  - exampleSentence: a sentence using the word in a DIFFERENT context from the story
+  - pronunciation: syllabic form like "CAN-yun", "eh-KOH"
+  - emoji: one emoji that evokes the meaning
+
+- readAloudWords: 2–3 per page (can overlap with vocabWords). Each: { word, syllables, phonicsLevel }.
+  - syllables: PHONETIC how the word is SPOKEN, not orthographic. "table" → ["tay", "bul"]. Single-syllable → one element.
+  - phonicsLevel: 'easy' (CVC, short vowels) | 'intermediate' (long vowels, digraphs, r-controlled) | 'hard' (irregular, multi-syll, schwa).
+
+Per story, add at the top level of the story object:
+
+- comprehensionQuestions: ${AGE === "4-7" ? "2–3 questions" : "3 questions (or 1 per chapter)"} shown after the final page.
+  - Each: { type, question, options: [{text, emoji, correct}] }
+  - type: 'recall' | 'inference' | 'connection'
+  - Exactly 3 options per question
+  - For recall/inference: exactly ONE option has correct: true
+  - For connection questions: ALL options have correct: true (no wrong answers about the kid's feelings)
+  - Warm, conversational phrasing — NEVER "Which of the following..."
+
+- predictionPause: exactly 1 per story. Pick the page with the most "what happens next" tension (usually mid-story, after setup but before climax).
+  - { atPageIdx (0-indexed), question, options: [{text, emoji}] }
+  - options: 2–3 plausible predictions, no correct field — all valid
+
+OMIT comprehensionQuestions and predictionPause if AGE is "2-4".
+
+Return ONLY a single JSON object with shape { "story": { ... Story fields + comprehensionQuestions + predictionPause ... }, "voiceMap": { narrator, characters } }. No commentary outside the JSON. No markdown code fences.`;
 }
 
 // ── Generation ──────────────────────────────────────────────────────
@@ -381,7 +467,11 @@ async function generateStory(def) {
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 16000,
+    // Raised from 16k — with vocabWords + readAloudWords on every
+    // page plus story-level comprehensionQuestions + predictionPause,
+    // a 13-page story runs ~20k tokens. We were hitting truncation
+    // around page 10 which dropped the comprehension fields entirely.
+    max_tokens: 32000,
     thinking: { type: "adaptive" },
     output_config: { effort: "high" },
     system: systemPrompt,

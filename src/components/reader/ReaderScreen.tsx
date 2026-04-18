@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Story, SpeechControls } from "@/types/story";
 import { SoundEffects } from "@/hooks/useSoundEffects";
 import { hydrateStoredAudio } from "@/hooks/useSpeech";
@@ -8,6 +8,8 @@ import { SceneIllustration } from "./SceneIllustration";
 import { useWordMoments } from "@/hooks/useWordMoments";
 import { HighlightDebugOverlay } from "./HighlightDebugOverlay";
 import { enableDiagnostics } from "@/lib/highlightDiagnostics";
+import { VocabWordModal } from "./VocabWordModal";
+import type { VocabWord } from "@/types/story";
 
 interface ReaderScreenProps {
   story: Story;
@@ -25,9 +27,22 @@ interface ReaderScreenProps {
    *  page-flip (falls back to a flat fade), and — once Sprint 2 lands —
    *  ambient sound beds + inline SFX cues. Defaults to true if unset. */
   effectsEnabled?: boolean;
+  /** Active child profile id, used to attribute Word Glow taps, reading
+   *  history, and future per-kid analytics. Null when no profile is
+   *  selected (guest/dev-bypass mode) — in that case analytics writes
+   *  are skipped entirely. */
+  childProfileId?: string | null;
 }
 
-export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnabled = true }: ReaderScreenProps) {
+export function ReaderScreen({
+  story,
+  onBack,
+  speech,
+  sfx,
+  onSave,
+  effectsEnabled = true,
+  childProfileId = null,
+}: ReaderScreenProps) {
   // Word-highlight diagnostics (Phase 0). Opt-in via ?hl=1 in the URL so
   // it never costs anything in normal use but is one query-param away when
   // we're tuning alignment. See src/lib/highlightDiagnostics.ts for the
@@ -46,6 +61,11 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
   const [pageIdx, setPageIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [finished, setFinished] = useState(false);
+
+  // Word Glow — vocabulary modal state. Null when closed. When a child
+  // taps a vocab-flagged word, we pause narration and open the modal;
+  // dismiss resumes narration where it left off. See VocabWordModal.
+  const [activeVocab, setActiveVocab] = useState<VocabWord | null>(null);
   // Cozy mode: warm sepia dim + radial vignette + candle-glow highlight.
   // One-tap toggle in the reader header. Persists for the duration of
   // this reader session only (intentional — a parent might want it for
@@ -448,6 +468,56 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
 
   const tw = page[1].split(/\s+/);
 
+  // Word Glow — build a lookup from "cleaned" display word to VocabWord
+  // for the CURRENT page. Display words may include punctuation (e.g.
+  // "canyon,", "canyon."); the vocab entry's word is clean. Match by
+  // stripping punctuation and lowercasing both sides. Note: if a word
+  // appears multiple times on a page, ALL instances become tappable to
+  // the same definition — that's the right behavior for a read-along.
+  const vocabForWordAt = useMemo(() => {
+    const list = story.fullPages?.[pageIdx]?.vocabWords ?? [];
+    if (list.length === 0) return (_i: number) => null as VocabWord | null;
+    const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9']/gi, "");
+    const byKey = new Map<string, VocabWord>();
+    for (const v of list) byKey.set(clean(v.word), v);
+    return (i: number): VocabWord | null => {
+      const w = tw[i];
+      if (!w) return null;
+      return byKey.get(clean(w)) ?? null;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [story, pageIdx, tw]);
+
+  // Word Glow tap handler — opens modal, pauses narrator, fires the
+  // analytics write. Analytics is fire-and-forget (errors swallowed)
+  // so a flaky network doesn't break the core feature. Skipped when
+  // no active profile exists (guest/dev-bypass mode).
+  const openVocabModal = useCallback(
+    (vocab: VocabWord, wordIdx: number) => {
+      sfx.tap();
+      speech.pause();
+      setActiveVocab(vocab);
+
+      if (!childProfileId) return;
+      const cleanWord = vocab.word.toLowerCase().replace(/[^a-z0-9']/gi, "");
+      // Fire-and-forget. No await, no UI-blocking.
+      void fetch("/api/vocabulary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          childProfileId,
+          word: cleanWord,
+          storyId: story.id,
+          pageIdx,
+        }),
+      }).catch(() => { /* ignore — analytics should never break UX */ });
+      // wordIdx captured for future use (e.g. analytics on WHICH
+      // instance of the word the kid tapped, for duplicate words).
+      void wordIdx;
+    },
+    [sfx, speech, childProfileId, story.id, pageIdx],
+  );
+
   // ── Chapter banner ────────────────────────────────────────────────
   // Medium/Long AI stories come back from Claude with a `chapterTitle`
   // set on the first page of each chapter. When the current page has a
@@ -592,19 +662,42 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
           {/* The sweep-underline experiment is reverted — solid highlight
                feels better given our timing accuracy. wordProgress is
                still exposed on SpeechControls for diagnostics and future
-               use, just not rendered here. */}
+               use, just not rendered here.
+
+               Word Glow — Science-of-Reading vocabulary feature. Each
+               word whose "cleaned" form matches an entry in this page's
+               fullPages[pageIdx].vocabWords gets a subtle dotted
+               underline and becomes tappable. Tapping pauses the
+               narrator and opens VocabWordModal. Age-2-4 stories
+               typically have no vocabWords (definitions are skipped),
+               so this is a no-op there. */}
           <div
             className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}`}
           >
             {tw.map((w, i) => {
               const effect = effectsForWord[i];
+              const vocab = vocabForWordAt(i);
               const classes = [
                 "word",
                 speech.speaking && i === speech.wordIndex ? "active" : "",
                 effect ? `word-fx word-fx-${effect}` : "",
+                vocab ? "vocab-word" : "",
               ].filter(Boolean).join(" ");
               return (
-                <span key={i} className={classes}>
+                <span
+                  key={i}
+                  className={classes}
+                  role={vocab ? "button" : undefined}
+                  tabIndex={vocab ? 0 : undefined}
+                  onClick={vocab ? () => openVocabModal(vocab, i) : undefined}
+                  onKeyDown={vocab ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      openVocabModal(vocab, i);
+                    }
+                  } : undefined}
+                  aria-label={vocab ? `${w.replace(/[^\w]/g, "")} — tap for definition` : undefined}
+                >
                   {w}{" "}
                 </span>
               );
@@ -613,6 +706,21 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
         </div>
       </div>
       {debugHighlight && <HighlightDebugOverlay />}
+      {activeVocab && (
+        <VocabWordModal
+          word={activeVocab}
+          ageBand={story.age}
+          onDismiss={() => {
+            setActiveVocab(null);
+            // Resume narration where it paused. No-op if the user
+            // hadn't pressed play before tapping the word.
+            speech.resume();
+          }}
+          // onHearWord left undefined intentionally — per-word TTS
+          // lands in the next Word Glow increment. The modal conditionally
+          // hides the speaker button when this prop is missing.
+        />
+      )}
     </div>
   );
 }
