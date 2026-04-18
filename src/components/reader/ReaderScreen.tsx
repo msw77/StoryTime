@@ -6,6 +6,8 @@ import { SoundEffects } from "@/hooks/useSoundEffects";
 import { hydrateStoredAudio } from "@/hooks/useSpeech";
 import { SceneIllustration } from "./SceneIllustration";
 import { useWordMoments } from "@/hooks/useWordMoments";
+import { HighlightDebugOverlay } from "./HighlightDebugOverlay";
+import { enableDiagnostics } from "@/lib/highlightDiagnostics";
 
 interface ReaderScreenProps {
   story: Story;
@@ -26,6 +28,21 @@ interface ReaderScreenProps {
 }
 
 export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnabled = true }: ReaderScreenProps) {
+  // Word-highlight diagnostics (Phase 0). Opt-in via ?hl=1 in the URL so
+  // it never costs anything in normal use but is one query-param away when
+  // we're tuning alignment. See src/lib/highlightDiagnostics.ts for the
+  // full rationale; tl;dr this shows live drift + lets us export a CSV
+  // of per-word timing data for analysis.
+  const [debugHighlight, setDebugHighlight] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("hl") === "1") {
+      enableDiagnostics();
+      setDebugHighlight(true);
+    }
+  }, []);
+
   const [pageIdx, setPageIdx] = useState(0);
   const [rating, setRating] = useState(0);
   const [finished, setFinished] = useState(false);
@@ -589,6 +606,7 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
           </div>
         </div>
       </div>
+      {debugHighlight && <HighlightDebugOverlay />}
     </div>
   );
 }

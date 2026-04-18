@@ -2,6 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Sentence, SpeechControls, VoiceMode, AIVoiceName } from "@/types/story";
+import {
+  isDiagnosticsEnabled,
+  emitSample,
+  resetSequence,
+} from "@/lib/highlightDiagnostics";
 
 // ─── Browser voice helpers ───────────────────────────────────────────
 
@@ -592,6 +597,15 @@ export function useSpeech(): SpeechControls {
     const timings = cached.wordTimings;
     let endHandled = false;
 
+    // Phase-0 diagnostics: reset the sample sequence at the start of each
+    // play-through so the overlay's "per-run" stats aren't contaminated by
+    // the previous page's samples. Cheap no-op when diagnostics are off.
+    resetSequence();
+    // Track the last displayIdx we emitted a sample for; we only emit on
+    // an actual word transition, not every frame (that would be ~60 Hz
+    // of duplicate rows). `-1` guarantees the first real word emits.
+    let lastEmittedDisplayIdx = -1;
+
     const cleanup = () => {
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
@@ -698,7 +712,31 @@ export function useSpeech(): SpeechControls {
         }
 
         const displayIdx = timingsLen === 0 ? 0 : timingToDisplay[whisperIdx];
-        setWordIndex(Math.min(Math.max(displayIdx, 0), displayLen - 1));
+        const clampedIdx = Math.min(Math.max(displayIdx, 0), displayLen - 1);
+        setWordIndex(clampedIdx);
+
+        // Phase-0 diagnostics: emit a sample only when the highlight
+        // actually advances to a new display word. Guarded so there's
+        // zero allocation on the no-change hot path even in dev.
+        if (
+          isDiagnosticsEnabled() &&
+          clampedIdx !== lastEmittedDisplayIdx &&
+          timingsLen > 0
+        ) {
+          lastEmittedDisplayIdx = clampedIdx;
+          const timing = timings[whisperIdx];
+          emitSample({
+            displayIdx: clampedIdx,
+            displayWord: allWords[clampedIdx] ?? "",
+            whisperIdx,
+            whisperWord: timing?.word ?? "",
+            whisperStart: timing?.start ?? 0,
+            audioTime: currentTime,
+            playbackRate: audio.playbackRate,
+            storyId,
+            pageIdx,
+          });
+        }
       }
 
       // Always keep the loop running — don't stop on momentary pauses/buffering
