@@ -208,6 +208,12 @@ export function LibraryScreen({
   // "Read Again" — deduped list of stories the active kid has read, most
   // recent first. We resolve each history entry back to its full Story
   // object so the existing renderBookCard can reuse cover art + metadata.
+  //
+  // EXCLUDES user-generated custom stories: those already have their own
+  // "My Stories" rail, and showing a freshly-read custom story in both
+  // places (right after the kid reads it) produced duplicate cards right
+  // next to each other. Classics + built-in library stories still belong
+  // here — Read Again is intentionally about re-visiting the catalog.
   const readAgainStories: Story[] = (() => {
     const seen = new Set<string>();
     const out: Story[] = [];
@@ -215,7 +221,9 @@ export function LibraryScreen({
       if (seen.has(h.story_id)) continue;
       seen.add(h.story_id);
       const full = stories.find((s) => s.id === h.story_id);
-      if (full) out.push(full);
+      if (!full) continue;
+      if (full.generated) continue; // custom story → lives in My Stories
+      out.push(full);
     }
     return out;
   })();
