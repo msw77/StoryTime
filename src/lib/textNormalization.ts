@@ -170,12 +170,11 @@ export function normalizeQuotes(text: string): string {
  *     we handle separately).
  */
 export function normalizeHyphens(text: string): string {
-  return text.replace(
-    /\b([a-z]+)(-[a-z]+)+\b/g,
-    (_m, first: string, rest: string) => {
-      return first + rest.replace(/-/g, " ");
-    }
-  );
+  // Match the whole lowercase-hyphenated compound (e.g. "ten-year-old")
+  // and replace every hyphen with a space. The earlier approach used a
+  // repeating capture group, which in JS only keeps the LAST match, so
+  // "ten-year-old" became "ten old" (losing "year").
+  return text.replace(/\b[a-z]+(?:-[a-z]+)+\b/g, (m) => m.replace(/-/g, " "));
 }
 
 // ── Combined entry point ────────────────────────────────────────────

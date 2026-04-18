@@ -22,6 +22,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { logApiUsage } from "./lib/cost-log.mjs";
+import { normalizePagesArrayOfTuples } from "./lib/text-normalize.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -245,6 +246,19 @@ NEVER scary or violent. Even dark source material must be softened.
 - Vocabulary may include occasional stretch words if context makes meaning clear.
 - Still NO graphic violence, NO on-page cruelty, NO romantic content beyond "married and were happy."
 
+## Read-along word highlighting — TEXT CONSTRAINTS
+The story is narrated aloud while each word is highlighted on screen in
+sync with the audio. For the highlight to land on the right word at the
+right moment, the text MUST avoid patterns that break speech-to-text
+alignment:
+- Write ALL numbers as words, not digits. "eleven" not "11", "nineteen
+  sixty-nine" not "1969". This applies to years, ages, counts, quantities.
+- Avoid hyphenated compound words. "ten year old boy" not "ten-year-old",
+  "well known" not "well-known".
+- Use commas or periods instead of em-dashes or en-dashes. Do not use the
+  characters — or – anywhere in story text.
+- Contractions ("don't", "can't", "it's") are fine — keep them natural.
+
 ## Violence and death
 - Ages 4-7: No character dies on-page. They "run away," "disappear," or "learn their lesson." No graphic violence, no suffering in detail.
 - Ages 7-10: Characters MAY pass away if the original story requires it, but handle death GENTLY and OFF-PAGE. Focus on emotional impact — loss, courage, remembrance — not the act.
@@ -420,6 +434,10 @@ async function generateStory(def) {
       throw new Error(`Expected ${CHAPTER_MIN}-${CHAPTER_MAX} chapter titles, got ${chapterStarts}`);
     }
   }
+  // Belt-and-suspenders: normalize digits, dashes, hyphens, curly quotes
+  // even though the prompt asks for them to be avoided. See
+  // scripts/lib/text-normalize.mjs and src/lib/textNormalization.ts.
+  normalizePagesArrayOfTuples(s.pages);
   return { story: s, voiceMap: parsed.voiceMap };
 }
 

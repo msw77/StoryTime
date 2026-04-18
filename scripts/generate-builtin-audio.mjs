@@ -101,6 +101,21 @@ async function generatePageAudio(storyId, pageIndex, text) {
     end: Math.round(w.end * 1000) / 1000,
   }));
 
+  // ── Coverage validation ─────────────────────────────────────────
+  // TTS occasionally truncates the input, producing audio shorter than
+  // the source text. When that happens the last N display words get
+  // orphaned and the reader skips them. Throwing here triggers the
+  // outer retry loop (up to 3 attempts per page).
+  const cleanLen = (w) => (w || "").replace(/[^\p{L}\p{N}]/gu, "").length;
+  const displayWordCount = text.split(/\s+/).filter(Boolean).length;
+  const whisperWordCount = wordTimings.filter((w) => cleanLen(w.word) > 0).length;
+  const missing = displayWordCount - whisperWordCount;
+  if (missing >= 3) {
+    throw new Error(
+      `TTS coverage short by ${missing} words (display=${displayWordCount} whisper=${whisperWordCount}) — likely TTS truncation, retrying`
+    );
+  }
+
   return {
     file: `/audio/${storyId}/page${pageIndex}.mp3`,
     duration: Math.round((whisperResponse.duration || 0) * 100) / 100,

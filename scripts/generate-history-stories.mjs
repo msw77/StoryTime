@@ -8,6 +8,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { logApiUsage } from "./lib/cost-log.mjs";
+import { normalizePagesArrayOfObjects } from "./lib/text-normalize.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -172,6 +173,18 @@ ${def.keyFacts}
 TARGET: 10 pages average. Minimum 8 pages, maximum 14 pages.
 Each page = one scene or moment (each page gets its own illustration).
 
+IMPORTANT — READ-ALONG WORD HIGHLIGHTING:
+The story is narrated aloud while each word is highlighted on screen in
+sync with the audio. To keep the highlight aligned with the narration:
+- Write ALL numbers as words, not digits. "eleven" not "11", "nineteen
+  sixty-nine" not "1969", "two thousand twenty six" not "2026". This is
+  especially important for a HISTORY story — dates and years must be
+  spelled out. Facts stay accurate either way.
+- Avoid hyphenated compound words. "ten year old boy" not "ten-year-old".
+- Use commas or periods instead of em-dashes. Do not use the characters
+  — or – in story text.
+- Contractions ("don't", "can't") are fine — keep them natural.
+
 IMPORTANT RULES:
 - Each page should be ${wordsPerPage} words
 - ALL historical facts, dates, names, and events MUST be accurate — do not invent or change historical details
@@ -229,6 +242,9 @@ Return valid JSON only, no other text:
     throw new Error(`Only ${story.pages?.length || 0} pages (need at least 8)`);
   }
 
+  // Belt-and-suspenders: normalize digits → words, dashes → commas,
+  // hyphens → spaces, curly quotes → straight. See scripts/lib/text-normalize.mjs.
+  normalizePagesArrayOfObjects(story.pages);
   return story;
 }
 
