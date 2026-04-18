@@ -1475,6 +1475,151 @@ body > * {
   cursor: pointer;
 }
 
+/* ── Parent Dashboard ────────────────────────────────────────────────
+   The "is my kid actually learning something" screen. Oura-style:
+   large headline numbers, warm phrasing, one card per focus area.
+   Not a grade report card — we don't show percentage "scores" to
+   parents either; the language is "7 of 9 questions" rather than
+   "78%" because the former reads like a conversation and the latter
+   reads like an exam. */
+.parent-dashboard {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 18px 40px;
+  min-height: 100vh;
+  background: var(--bg, #fdf8ea);
+}
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-top: 8px;
+}
+.dashboard-back {
+  background: rgba(194, 94, 69, 0.08);
+  border: 1px solid rgba(194, 94, 69, 0.18);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.dashboard-back:hover { background: rgba(194, 94, 69, 0.16); }
+.dashboard-header-text h1 {
+  font-family: var(--font-heading, Georgia), serif;
+  font-size: 26px;
+  font-weight: 700;
+  font-style: italic;
+  color: #2a2722;
+  margin: 0;
+  line-height: 1.15;
+}
+.dashboard-header-sub {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c25e45;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.dashboard-loading,
+.dashboard-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: #7d6a55;
+  font-size: 15px;
+}
+.dashboard-empty-emoji {
+  font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.dashboard-card {
+  background: #fff9e8;
+  border-radius: 18px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(194, 94, 69, 0.1);
+  box-shadow: 0 2px 8px rgba(42, 39, 34, 0.04);
+}
+.dashboard-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.dashboard-card-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+.dashboard-card-title {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #7d6a55;
+  margin: 0;
+}
+.dashboard-card-headline {
+  font-family: var(--font-heading, Georgia), serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #2a2722;
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+.dashboard-card-body {
+  font-size: 14px;
+  color: #5c5147;
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+.dashboard-card-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(194, 94, 69, 0.08);
+}
+
+/* Vocab chips — recent words as tappable-looking pills. Not actually
+   tappable yet (the click would need to route back to a story or show
+   the definition again; future feature). Kept non-interactive for now. */
+.dashboard-vocab-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dashboard-vocab-chip {
+  background: rgba(228, 147, 58, 0.14);
+  color: #7d5a33;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Comprehension per-type breakdown — compact key/value rows. */
+.dashboard-comp-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dashboard-comp-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #5c5147;
+}
+.dashboard-comp-label {
+  font-style: italic;
+}
+.dashboard-comp-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #2a2722;
+}
+
 /* ── Comprehension Questions screen ─────────────────────────────────
    Science-of-Reading Pillar 5. Shown between the last page of a story
    and the celebration. 2-3 warm, conversational questions with 3

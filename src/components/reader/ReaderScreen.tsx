@@ -10,8 +10,7 @@ import { HighlightDebugOverlay } from "./HighlightDebugOverlay";
 import { enableDiagnostics } from "@/lib/highlightDiagnostics";
 import { VocabWordModal } from "./VocabWordModal";
 import { ComprehensionQuestionsScreen } from "./ComprehensionQuestionsScreen";
-import { speakWord, speakSyllables } from "@/lib/wordAudio";
-import type { VocabWord, ReadAloudWord } from "@/types/story";
+import type { VocabWord } from "@/types/story";
 
 interface ReaderScreenProps {
   story: Story;
@@ -551,42 +550,14 @@ export function ReaderScreen({
     [sfx, speech, childProfileId, story.id, pageIdx],
   );
 
-  // Sound It Out — any tapped word plays its audio via /api/tts-word
-  // (with aggressive client-side cache). Non-vocab words get audio
-  // only; vocab words still open the modal (modal's speaker button
-  // plays audio on demand). This is the unified gesture that makes
-  // the reader feel exploratory — every word is a thing you can touch.
-  const handleWordTap = useCallback(
-    (wordIdx: number, vocab: VocabWord | null) => {
-      sfx.tap();
-      if (vocab) {
-        openVocabModal(vocab, wordIdx);
-        return;
-      }
-      // Non-vocab word: just play audio. Narration keeps playing
-      // underneath — we don't pause for a quick tap-to-hear since
-      // that would interrupt reading flow for a one-word nudge.
-      const raw = tw[wordIdx] ?? "";
-      // Strip surrounding punctuation but preserve apostrophes ("don't").
-      const cleaned = raw.replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, "");
-      if (!cleaned) return;
-      void speakWord(cleaned);
-    },
-    [sfx, tw, openVocabModal],
-  );
-
-  // Lookup for a word's readAloud data (syllables + phonicsLevel).
-  // Used by VocabWordModal's "Sound It Out" button when the currently-
-  // open vocab word is also a readAloud target.
-  const readAloudForWord = useCallback(
-    (word: string): ReadAloudWord | null => {
-      const list = story.fullPages?.[pageIdx]?.readAloudWords ?? [];
-      const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9']/gi, "");
-      const key = clean(word);
-      return list.find((r) => clean(r.word) === key) ?? null;
-    },
-    [story, pageIdx],
-  );
+  // Sound It Out was removed 2026-04-18 after parent testing found the
+  // TTS-per-syllable and tap-any-word behaviors janky and confusing.
+  // Whole-word TTS in isolation sounds wrong without sentence prosody,
+  // and per-syllable TTS ("can" + "yon") doesn't reproduce the way a
+  // teacher segments phonemes. We can revisit with phoneme-level audio
+  // or pre-recorded syllable assets later. For now, the tap gesture is
+  // scoped strictly to vocab words → definition modal. Every other
+  // word is non-interactive, matching the reader's prior behavior.
 
   // ── Chapter banner ────────────────────────────────────────────────
   // Medium/Long AI stories come back from Claude with a `chapterTitle`
@@ -757,20 +728,16 @@ export function ReaderScreen({
                 <span
                   key={i}
                   className={classes}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => handleWordTap(i, vocab)}
-                  onKeyDown={(e) => {
+                  role={vocab ? "button" : undefined}
+                  tabIndex={vocab ? 0 : undefined}
+                  onClick={vocab ? () => openVocabModal(vocab, i) : undefined}
+                  onKeyDown={vocab ? (e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      handleWordTap(i, vocab);
+                      openVocabModal(vocab, i);
                     }
-                  }}
-                  aria-label={
-                    vocab
-                      ? `${w.replace(/[^\w']/g, "")} — tap for definition`
-                      : `${w.replace(/[^\w']/g, "")} — tap to hear`
-                  }
+                  } : undefined}
+                  aria-label={vocab ? `${w.replace(/[^\w']/g, "")} — tap for definition` : undefined}
                 >
                   {w}{" "}
                 </span>
@@ -786,19 +753,10 @@ export function ReaderScreen({
           ageBand={story.age}
           onDismiss={() => {
             setActiveVocab(null);
-            // Resume narration where it paused. No-op if the user
-            // hadn't pressed play before tapping the word.
             speech.resume();
           }}
-          onHearWord={() => {
-            void speakWord(activeVocab.word);
-          }}
-          readAloud={readAloudForWord(activeVocab.word)}
-          onSoundItOut={() => {
-            const ra = readAloudForWord(activeVocab.word);
-            if (!ra) return;
-            void speakSyllables(activeVocab.word, ra.syllables);
-          }}
+          // Speaker button + Sound It Out both removed 2026-04-18.
+          // See the comment near openVocabModal for rationale.
         />
       )}
     </div>

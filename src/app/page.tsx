@@ -16,6 +16,7 @@ import { VoiceModal } from "@/components/shared/VoiceModal";
 import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
 import { ManageKidsScreen } from "@/components/shared/ManageKidsScreen";
+import { ParentDashboardScreen } from "@/components/parents/ParentDashboardScreen";
 import { useEffectsPref } from "@/hooks/useEffectsPref";
 import { useComprehensionPref } from "@/hooks/useComprehensionPref";
 import { loadDraft, clearDraft } from "@/lib/draftStory";
@@ -72,7 +73,7 @@ function useAuthState(): { isLoaded: boolean; isSignedIn: boolean } {
 
 export default function Home() {
   const { isLoaded: clerkLoaded, isSignedIn } = useAuthState();
-  const [screen, setScreen] = useState<"profiles" | "library" | "reader" | "builder" | "loading" | "manage-kids">("profiles");
+  const [screen, setScreen] = useState<"profiles" | "library" | "reader" | "builder" | "loading" | "manage-kids" | "parent-dashboard">("profiles");
   const [cur, setCur] = useState<Story | null>(null);
   const [stories, setStories] = useState<Story[]>(ALL_STORIES);
   const [showVoice, setShowVoice] = useState(false);
@@ -735,6 +736,12 @@ export default function Home() {
           onUpdateAge={handleUpdateProfileAge}
         />
       )}
+      {screen === "parent-dashboard" && (
+        <ParentDashboardScreen
+          activeProfile={activeProfile}
+          onBack={() => setScreen("library")}
+        />
+      )}
       {toast && (
         <div className="toast" role="status" aria-live="polite">
           {toast}
@@ -747,6 +754,7 @@ export default function Home() {
         setEffectsEnabled={setEffectsEnabled}
         comprehensionEnabled={comprehensionEnabled}
         setComprehensionEnabled={setComprehensionEnabled}
+        onOpenDashboard={() => setScreen("parent-dashboard")}
       />
       <VoiceModal
         show={showVoice}

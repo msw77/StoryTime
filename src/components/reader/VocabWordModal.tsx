@@ -143,31 +143,10 @@ export function VocabWordModal({
           </p>
         )}
 
-        {/* Sound It Out — Science of Reading Pillars 1 + 2. Only shown
-            if this word is also flagged as a readAloud target (it has
-            phonetic syllable breakdown). Disabled for 2-4 where
-            syllable-hearing is too abstract for pre-readers; those
-            kids get the whole-word auto-speak on modal open instead.
-            The visible dots between syllables teach letter-sound
-            mapping: kids see "can · yon" and hear each syllable land. */}
-        {onSoundItOut && readAloud && !is2to4 && (
-          <>
-            <div className="vocab-modal-syllables" aria-hidden="true">
-              {readAloud.syllables.map((syl, i) => (
-                <span key={i} className="vocab-modal-syllable">
-                  {syl}
-                </span>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="vocab-modal-sound-it-out"
-              onClick={onSoundItOut}
-            >
-              Sound It Out 🔊
-            </button>
-          </>
-        )}
+        {/* Sound It Out syllable block removed 2026-04-18 — TTS could
+            not do phonetic segmentation cleanly and the output sounded
+            wrong to parents. Leaving the props on the interface so
+            wiring can be restored if we ship phoneme-level audio. */}
 
         <button
           type="button"

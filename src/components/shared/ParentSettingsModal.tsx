@@ -28,6 +28,10 @@ interface ParentSettingsModalProps {
    *  bedtime reads. */
   comprehensionEnabled: boolean;
   setComprehensionEnabled: (enabled: boolean) => void;
+  /** Open the parent dashboard. Settings modal closes first, then the
+   *  dashboard screen takes over. Provided by the parent component so
+   *  the modal stays agnostic of the app-level screen state machine. */
+  onOpenDashboard?: () => void;
 }
 
 export function ParentSettingsModal({
@@ -37,6 +41,7 @@ export function ParentSettingsModal({
   setEffectsEnabled,
   comprehensionEnabled,
   setComprehensionEnabled,
+  onOpenDashboard,
 }: ParentSettingsModalProps) {
   if (!show) return null;
 
@@ -115,6 +120,21 @@ export function ParentSettingsModal({
             </span>
           </button>
         </div>
+
+        {onOpenDashboard && (
+          <div style={{ marginTop: 18, textAlign: "center" }}>
+            <button
+              type="button"
+              className="pill-btn secondary"
+              onClick={() => {
+                onClose();
+                onOpenDashboard();
+              }}
+            >
+              View reading progress →
+            </button>
+          </div>
+        )}
 
         <div style={{ marginTop: 20, textAlign: "center" }}>
           <button className="pill-btn primary" onClick={onClose}>
