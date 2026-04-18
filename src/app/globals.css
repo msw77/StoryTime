@@ -108,6 +108,10 @@ body > * {
 /* Header */
 .header {
   padding: 20px 20px 12px;
+  /* Add iOS PWA safe-area inset on top of the base padding so the
+     header icons clear the notch / status bar when installed as a
+     home-screen app. No-op on desktop and non-standalone browsers. */
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -117,7 +121,7 @@ body > * {
    top padding on mobile so the logo breathes under the notch / status
    bar rather than hugging the very top of the viewport. */
 .home-header {
-  padding-top: 32px;
+  padding-top: calc(32px + env(safe-area-inset-top, 0px));
   padding-left: var(--home-inset);
   padding-right: var(--home-inset);
 }
@@ -1024,6 +1028,12 @@ body > * {
   display: flex;
   align-items: center;
   padding: 12px 16px;
+  /* iOS PWA safe-area: in standalone mode the status bar sits on top
+     of the body, so without this pad the back button gets squeezed
+     vertically against the notch / clock. env() returns 0 on desktop
+     and non-standalone browsers, so this is a no-op everywhere except
+     installed-to-home-screen iPhones. */
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
   gap: 8px;
   position: sticky;
   top: 0;
@@ -1473,6 +1483,46 @@ body > * {
    that's fine. */
 .story-text .word.vocab-word {
   cursor: pointer;
+}
+
+/* ── Parent Settings narration sub-section ─────────────────────────
+   Condensed default state for the voice picker. Shows the current
+   voice + a rightward chevron; tap expands the full list. Saves
+   vertical space so the rest of the settings panel doesn't get
+   pushed below the fold by six voice cards the parent already
+   chose between. */
+.settings-narration-current {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #fff9e8;
+  border: 1px solid rgba(194, 94, 69, 0.14);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.settings-narration-current:hover {
+  background: #fef3d7;
+  border-color: rgba(194, 94, 69, 0.28);
+}
+.settings-narration-current-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2a2722;
+}
+.settings-narration-current-desc {
+  font-size: 12px;
+  color: #7d6a55;
+  margin-top: 2px;
+}
+.settings-narration-chevron {
+  font-size: 22px;
+  color: #c25e45;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  font-weight: 700;
 }
 
 /* ── Parent Settings feedback link ───────────────────────────────────

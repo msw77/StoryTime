@@ -2,14 +2,49 @@
 
 /**
  * Parent Settings modal — opened from the ⚙️ gear button in the library
- * header. Home for preferences that apply across every story:
- * audio/visual effects, story-questions toggle, feedback link (beta
- * period), future accessibility options.
+ * header. Single home for all parent-facing preferences: narration
+ * voice + speed, audio/visual effects, story-questions toggle,
+ * reading-progress link, feedback link.
  *
- * Kept intentionally separate from VoiceModal (the 🎙️ modal) because
- * voice-specific settings and parent-wide preferences have different
- * mental models — one is per-story, one is per-device.
+ * History: originally had a separate 🎙️ Voice Modal for voice picking.
+ * Parent testing flagged two icons in the header as cramped and
+ * confusing ("why are there two settings buttons?"), so the voice
+ * picker consolidated into here. One settings pane, one mental model.
+ * Classic stories still override the voice at playback time because
+ * they use baked-in character voices — that logic sits in the audio
+ * pipeline, not this UI.
  */
+
+import { useState } from "react";
+import { AIVoiceName, AI_VOICES } from "@/types/story";
+
+// Preview a voice's narration with a canned sentence. Fire-and-forget;
+// we don't cache or manage the Audio element beyond the single play —
+// parents tap between voices rapidly and expect instant feedback.
+async function previewVoice(voice: AIVoiceName, speed: number) {
+  try {
+    const res = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: "Once upon a time, a brave little fox set off on a great adventure.",
+        voice,
+        speed,
+      }),
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const audioBytes = Uint8Array.from(atob(data.audio), (c) => c.charCodeAt(0));
+    const blob = new Blob([audioBytes], { type: data.contentType });
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.onended = () => URL.revokeObjectURL(url);
+    void audio.play();
+  } catch {
+    // Silently fail — a parent mashing preview buttons during a network
+    // hiccup shouldn't see an error toast.
+  }
+}
 
 // Feedback link component. Renders ONLY when one of two env vars is
 // set, so non-beta builds hide the button entirely (instead of having
@@ -62,6 +97,15 @@ interface ParentSettingsModalProps {
    *  bedtime reads. */
   comprehensionEnabled: boolean;
   setComprehensionEnabled: (enabled: boolean) => void;
+  /** Narration voice + speed settings, lifted from useSpeech. Classic
+   *  stories ignore these at playback (they have their own character
+   *  voices), so we intentionally don't surface a "locked" state here
+   *  — the parent can still choose their preferred voice for AI
+   *  narration on non-classic stories. */
+  aiVoice: AIVoiceName;
+  setAiVoice: (v: AIVoiceName) => void;
+  aiSpeed: number;
+  setAiSpeed: (s: number) => void;
   /** Open the parent dashboard. Settings modal closes first, then the
    *  dashboard screen takes over. Provided by the parent component so
    *  the modal stays agnostic of the app-level screen state machine. */
@@ -75,6 +119,10 @@ export function ParentSettingsModal({
   setEffectsEnabled,
   comprehensionEnabled,
   setComprehensionEnabled,
+  aiVoice,
+  setAiVoice,
+  aiSpeed,
+  setAiSpeed,
   onOpenDashboard,
 }: ParentSettingsModalProps) {
   if (!show) return null;
@@ -94,6 +142,33 @@ export function ParentSettingsModal({
         >
           Controls that apply across every story on this device.
         </p>
+
+        {/* ── Narration — collapsible sub-section ──────────────────
+            Default shows the currently-selected voice label with a
+            "Change" affordance and the always-useful speed slider.
+            Tapping "Change" reveals the full voice list inline so
+            this section only expands if the parent actually wants
+            to audition alternatives. Most parents pick once and
+            never return to this control. */}
+        <NarrationSection
+          aiVoice={aiVoice}
+          setAiVoice={setAiVoice}
+          aiSpeed={aiSpeed}
+          setAiSpeed={setAiSpeed}
+        />
+
+        <div
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+            marginBottom: 8,
+          }}
+        >
+          Reading experience
+        </div>
 
         {/* Audio & visual effects master toggle.
             Intentionally a single control rather than two (audio vs
@@ -183,6 +258,123 @@ export function ParentSettingsModal({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── Narration sub-section ─────────────────────────────────────────────
+// Collapsible voice picker. Default: shows section header, current
+// voice, a "Change" link, and the speed slider. Parent rarely swaps
+// voice mid-session, so keeping the full list hidden avoids pushing
+// the rest of Parent Settings off-screen. Tapping "Change" expands
+// the list inline; tapping a new voice sets it but leaves the list
+// open so the parent can preview/compare without re-opening.
+function NarrationSection({
+  aiVoice,
+  setAiVoice,
+  aiSpeed,
+  setAiSpeed,
+}: {
+  aiVoice: AIVoiceName;
+  setAiVoice: (v: AIVoiceName) => void;
+  aiSpeed: number;
+  setAiSpeed: (s: number) => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const currentVoice =
+    AI_VOICES.find((v) => v.id === aiVoice) ?? AI_VOICES[0];
+
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div
+        style={{
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "var(--muted)",
+          marginBottom: 8,
+        }}
+      >
+        Narration
+      </div>
+
+      {/* Current voice row — condensed display + Change affordance */}
+      <div
+        className="settings-narration-current"
+        role="button"
+        tabIndex={0}
+        onClick={() => setExpanded((e) => !e)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpanded((x) => !x);
+          }
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="settings-narration-current-name">
+            {currentVoice.id === "nova" ? "⭐ " : ""}
+            {currentVoice.label}
+          </div>
+          <div className="settings-narration-current-desc">
+            {currentVoice.desc}
+          </div>
+        </div>
+        <span
+          className="settings-narration-chevron"
+          aria-hidden="true"
+          style={{
+            transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
+          }}
+        >
+          ›
+        </span>
+      </div>
+
+      {/* Speed slider is always visible — adjusts more often than voice */}
+      <div className="speed-section" style={{ marginTop: 10 }}>
+        <label>Speed: {aiSpeed.toFixed(2)}x</label>
+        <input
+          type="range"
+          className="speed-slider"
+          min="0.7"
+          max="1.4"
+          step="0.05"
+          value={aiSpeed}
+          onChange={(e) => setAiSpeed(+e.target.value)}
+        />
+      </div>
+
+      {/* Expanded: full voice list with previews */}
+      {expanded && (
+        <div style={{ marginTop: 12 }}>
+          {AI_VOICES.map((v) => (
+            <div
+              key={v.id}
+              className={`voice-item ${aiVoice === v.id ? "active" : ""}`}
+              onClick={() => setAiVoice(v.id)}
+            >
+              <div style={{ flex: 1 }}>
+                <div className="voice-name">
+                  {v.id === "nova" ? "⭐ " : ""}
+                  {v.label}
+                </div>
+                <div className="voice-lang">{v.desc}</div>
+              </div>
+              <button
+                className="preview-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void previewVoice(v.id, aiSpeed);
+                }}
+              >
+                ▶ Preview
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

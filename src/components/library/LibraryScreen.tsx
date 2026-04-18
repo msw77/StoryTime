@@ -39,7 +39,6 @@ interface LibraryScreenProps {
   onSelect: (story: Story) => void;
   onCreateNew: () => void;
   onDeleteStory?: (storyId: string) => void;
-  setShowVoice: (show: boolean) => void;
   setShowSettings?: (show: boolean) => void;
   isPremium?: boolean;
   freeStoryLimit?: number;
@@ -68,7 +67,6 @@ export function LibraryScreen({
   onSelect,
   onCreateNew,
   onDeleteStory,
-  setShowVoice,
   setShowSettings,
   isPremium = false,
   freeStoryLimit = 5,
@@ -659,13 +657,10 @@ export function LibraryScreen({
           >
             🔎
           </button>
-          <button
-            className="icon-btn"
-            onClick={() => setShowVoice(true)}
-            title="Voice settings"
-          >
-            🎙️
-          </button>
+          {/* Voice settings moved into ⚙️ Parent Settings — one
+              pane for all parent-facing prefs. Previous two-icon
+              layout was cramped on phones and confused testers
+              ("why two settings buttons?"). */}
           {setShowSettings && (
             <button
               className="icon-btn"

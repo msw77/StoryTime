@@ -12,7 +12,6 @@ import { LibraryScreen } from "@/components/library/LibraryScreen";
 import { ReaderScreen } from "@/components/reader/ReaderScreen";
 import { BuilderScreen } from "@/components/builder/BuilderScreen";
 import { LoadingScreen } from "@/components/builder/LoadingScreen";
-import { VoiceModal } from "@/components/shared/VoiceModal";
 import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
 import { ManageKidsScreen } from "@/components/shared/ManageKidsScreen";
@@ -66,7 +65,6 @@ export default function Home() {
   const [screen, setScreen] = useState<"profiles" | "library" | "reader" | "builder" | "loading" | "manage-kids" | "parent-dashboard">("profiles");
   const [cur, setCur] = useState<Story | null>(null);
   const [stories, setStories] = useState<Story[]>(ALL_STORIES);
-  const [showVoice, setShowVoice] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [effectsEnabled, setEffectsEnabled] = useEffectsPref();
   const [comprehensionEnabled, setComprehensionEnabled] = useComprehensionPref();
@@ -655,7 +653,6 @@ export default function Home() {
           onSelect={handleSelect}
           onCreateNew={() => setScreen("builder")}
           onDeleteStory={handleDeleteStory}
-          setShowVoice={setShowVoice}
           setShowSettings={setShowSettings}
           isPremium={isPremium}
           freeStoryLimit={FREE_STORY_LIMIT}
@@ -744,16 +741,11 @@ export default function Home() {
         setEffectsEnabled={setEffectsEnabled}
         comprehensionEnabled={comprehensionEnabled}
         setComprehensionEnabled={setComprehensionEnabled}
-        onOpenDashboard={() => setScreen("parent-dashboard")}
-      />
-      <VoiceModal
-        show={showVoice}
-        onClose={() => setShowVoice(false)}
-        isClassic={!!cur?.isClassic}
         aiVoice={speech.aiVoice}
         setAiVoice={speech.setAiVoice}
         aiSpeed={speech.aiSpeed}
         setAiSpeed={speech.setAiSpeed}
+        onOpenDashboard={() => setScreen("parent-dashboard")}
       />
     </div>
   );
