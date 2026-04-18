@@ -80,14 +80,12 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
     }, 200);
   }, [pageIdx, pages.length, sfx, speech]);
 
-  // Set reading speed based on age group when story opens. Younger kids
-  // need noticeably more time to follow the highlighted words — a parent
-  // tester on 2-4 stories said the prior 0.85 still felt rushed, so we
-  // drop the youngest tier to 0.78 and keep a gentle slowdown on 4-7.
-  // Parents can still override manually via voice settings during the
-  // session.
+  // Set reading speed based on age group when story opens. Older kids
+  // read along faster and prefer a livelier tempo; younger kids need more
+  // time per word to track the highlight. Parents can override via the
+  // speed chip in the reader header at any time.
   useEffect(() => {
-    const ageSpeed = story.age === "2-4" ? 0.78 : story.age === "4-7" ? 0.9 : 1.0;
+    const ageSpeed = story.age === "2-4" ? 0.9 : story.age === "4-7" ? 1.0 : 1.1;
     speech.setAiSpeed(ageSpeed);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [story.id]);
@@ -411,11 +409,6 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
               >
                 {saved ? (saving ? "Saved ✓" : "Saved!") : "Save to My Library"}
               </button>
-              {saving && (
-                <p style={{ fontSize: 12, color: "var(--muted)", marginTop: -4, fontWeight: 600 }}>
-                  🎧 Audio uploading in background (~30s) — feel free to leave
-                </p>
-              )}
             </>
           )}
           <button
@@ -493,6 +486,23 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
           >
             ⏭
           </button>
+          {/* Reading-speed dropdown. Applies live via audio.playbackRate;
+              for stored classic audio this changes playback speed in place.
+              Default speed is age-aware (see useEffect below that sets it
+              on story load). */}
+          <select
+            className="speed-chip"
+            value={speech.aiSpeed.toFixed(2)}
+            onChange={(e) => speech.setAiSpeed(+e.target.value)}
+            title="Reading speed"
+            aria-label="Reading speed"
+          >
+            <option value="0.80">0.8×</option>
+            <option value="0.90">0.9×</option>
+            <option value="1.00">1.0×</option>
+            <option value="1.10">1.1×</option>
+            <option value="1.15">1.15×</option>
+          </select>
           <button
             type="button"
             role="switch"
@@ -501,7 +511,7 @@ export function ReaderScreen({ story, onBack, speech, sfx, onSave, effectsEnable
             onClick={() => setAutoplay((a) => !a)}
             title={autoplay ? "Autoplay is on — pages advance automatically" : "Autoplay is off — tap next to advance"}
           >
-            <span>AUTOPLAY</span>
+            <span>Auto</span>
             <span className="autoplay-toggle-track" aria-hidden="true">
               <span className="autoplay-toggle-knob" />
             </span>

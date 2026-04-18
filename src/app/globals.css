@@ -112,15 +112,30 @@ body > * {
   align-items: center;
   justify-content: space-between;
 }
+/* Home view uses the tighter home-inset (14px) so the logo lines up
+   exactly with the hero's left edge and every rail's first card. Extra
+   top padding on mobile so the logo breathes under the notch / status
+   bar rather than hugging the very top of the viewport. */
+.home-header {
+  padding-top: 32px;
+  padding-left: var(--home-inset);
+  padding-right: var(--home-inset);
+}
 /* Brand wordmark. Post-processed with scripts/knockout-brand-backgrounds
-   to have a true alpha channel — no blend-mode trickery needed, the
-   image is genuinely transparent around the letterforms. */
+   to have a true alpha channel — no blend-mode trickery needed. */
 .brand-wordmark {
   height: 60px;
   width: auto;
   display: block;
   margin-left: -6px; /* hand-lettered PNG has slight internal padding;
                         nudge to align optically with the 20px gutter */
+}
+/* On the home header the padding already matches home-inset, so the
+   optical nudge would push the logo LEFT of the book/hero edge — reset
+   it there. The -6px only exists to compensate for the wider .header
+   gutter used in the subviews. */
+.home-header .brand-wordmark {
+  margin-left: 0;
 }
 /* Welcome / sign-in screen gets a bigger centered wordmark instead of
    the header treatment — this is the app's "cover", so it should
@@ -939,18 +954,31 @@ body > * {
 /* Classic title block needs extra top room so the absolutely-positioned
    "Classics Collection" label doesn't overlap the title text. The label
    lives in the gap between image bottom (~42% from bottom) and where
-   the title text begins. */
+   the title text begins.
+   Classic cards need a taller title block than regular cards because
+   they fit: 2-line title + author line + age badge. Default 38% clipped
+   the 2nd line of long titles behind the author (e.g. "Goldilocks and
+   the Three Bears"). Bumping to 44% and nudging the Classics label up
+   to match keeps the cover art almost the same but gives the text room. */
 .story-grid .story-card.classic-card .book-title-block {
-  padding-top: 16px;
+  height: 44%;
+  /* Extra top padding reserves a clean band of title-stock paper above
+     the title text where the "Classics Collection" label floats. Without
+     this extra padding, the label is forced up into the image to find
+     room, which is what the user flagged. */
+  padding-top: 22px;
+  gap: 6px;
 }
-/* "Classics Collection" label — absolutely positioned on the card in
-   the gap between cover image and title block. Pinned at the same
-   height on every classic card regardless of title length. */
+/* "Classics Collection" label — absolutely positioned inside the top
+   padding band of the title block, sitting BELOW the image edge (title
+   block top = 44% from bottom). At `bottom: 35%`, the label's top edge
+   lands near ~39% from bottom, leaving a healthy ~5% gap below the
+   image and still 4–5% above where the actual title text begins. */
 .classic-collection-label {
   position: absolute;
   left: 10px;
   right: 0;
-  bottom: 37%;
+  bottom: 35%;
   z-index: 3;
   font-family: "Georgia", "Times New Roman", serif;
   font-size: 9px;
@@ -1049,6 +1077,63 @@ body > * {
 .hdr-btn.play:hover { background: var(--accent-deep); }
 .hdr-btn.active {
   background: rgba(228, 147, 58, 0.15);
+}
+
+/* Reading-speed dropdown — native <select> styled to match the autoplay
+   and cozy-mode pills so all three controls line up as a visual set.
+   Same border, same radius, same padding structure. Native select arrow
+   is suppressed so the current value renders as plain text "1.0×". */
+/* All three header pills — .autoplay-toggle, .cozy-toggle, .speed-chip —
+   share the same HEIGHT so they line up as a vertically-aligned set.
+   Widths differ naturally based on content (speed text vs autoplay label
+   + track vs cozy icon). 28px total including the 1.5px border on each
+   side. */
+.speed-chip,
+.autoplay-toggle,
+.cozy-toggle {
+  min-height: 28px;
+  box-sizing: border-box;
+}
+.speed-chip {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.speed-chip:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text);
+}
+.speed-chip:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(228, 147, 58, 0.08);
+  color: var(--accent);
+}
+/* Firefox — hide the dotted focus ring inside the value text */
+.speed-chip::-moz-focus-inner { border: 0; }
+.reader.cozy .speed-chip {
+  color: rgba(232, 226, 212, 0.75);
+  border-color: rgba(232, 226, 212, 0.25);
+}
+.reader.cozy .speed-chip:hover {
+  background: rgba(232, 226, 212, 0.06);
+  color: #e8e2d4;
 }
 
 /* Autoplay labeled toggle switch in the reader header.
@@ -1230,24 +1315,26 @@ body > * {
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-/* Cozy mode — warm sepia treatment to match the rest of the reader. */
-.reader.cozy .chapter-banner-number { color: rgba(93, 60, 32, 0.72); }
-.reader.cozy .chapter-banner-title { color: #4a2f18; }
+/* Cozy mode — dark slate background, so the chapter banner needs LIGHT
+   text and rules or it disappears against the dark bg. Mirrors the
+   cream story-text color used elsewhere in cozy mode. */
+.reader.cozy .chapter-banner-number { color: rgba(232, 226, 212, 0.72); }
+.reader.cozy .chapter-banner-title { color: #e8e2d4; }
 .reader.cozy .chapter-banner-rule {
   background: linear-gradient(
     to right,
-    rgba(93, 60, 32, 0) 0%,
-    rgba(93, 60, 32, 0.5) 50%,
-    rgba(93, 60, 32, 0) 100%
+    rgba(232, 226, 212, 0) 0%,
+    rgba(232, 226, 212, 0.45) 50%,
+    rgba(232, 226, 212, 0) 100%
   );
 }
 .reader.cozy .chapter-banner-divider {
   background: linear-gradient(
     to right,
-    rgba(93, 60, 32, 0) 0%,
-    rgba(93, 60, 32, 0.6) 18%,
-    rgba(93, 60, 32, 0.6) 82%,
-    rgba(93, 60, 32, 0) 100%
+    rgba(232, 226, 212, 0) 0%,
+    rgba(232, 226, 212, 0.55) 18%,
+    rgba(232, 226, 212, 0.55) 82%,
+    rgba(232, 226, 212, 0) 100%
   );
 }
 .scene {
@@ -1727,13 +1814,15 @@ body > * {
   line-height: 1.45;
 }
 
-/* ── Cozy mode toggle button (sits inline in .header-controls) ── */
+/* ── Cozy mode toggle button (sits inline in .header-controls) ──
+   Shares min-height: 28px with .autoplay-toggle and .speed-chip so all
+   three header pills align vertically. */
 .cozy-toggle {
   background: transparent;
   border: 1.5px solid var(--border);
-  border-radius: 18px;
-  padding: 4px 10px;
-  font-size: 16px;
+  border-radius: 999px;
+  padding: 0 10px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.25s ease;
   line-height: 1;
@@ -2344,6 +2433,162 @@ body > * {
   font-weight: 600;
 }
 
+/* ── Manage Kids screen ─────────────────────────────────────────────
+   Dedicated management view (entered from the library header's kid-
+   picker dropdown). Clean list of kids with age editable inline and
+   a × to remove. "Add a Child" at the bottom opens the create modal. */
+.manage-kids-list {
+  max-width: 520px;
+  margin: 16px auto 40px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.manage-kids-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card, #fdf8ed);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 6px rgba(78, 52, 34, 0.05);
+}
+.manage-kids-avatar {
+  font-size: 40px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.manage-kids-info {
+  flex: 1;
+  min-width: 0;
+}
+.manage-kids-name {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.manage-kids-age-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.manage-kids-age-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.manage-kids-age-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  min-width: 58px;
+}
+.manage-kids-age-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.manage-kids-delete {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  color: #c23030;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.manage-kids-delete:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+  transform: scale(1.05);
+}
+.manage-kids-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  margin-top: 6px;
+}
+.manage-kids-add:hover {
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.manage-kids-add-icon {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+/* ── Profile delete button ──────────────────────────────────────────
+   Always-visible small × in the TOP-LEFT of every profile card on
+   the "Who's reading today?" screen. Tapping prompts a confirm before
+   deletion. Positioned top-left to avoid overlapping any badge in the
+   top-right corner and to feel editor-ish (like closing a tab). */
+.profile-delete-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: 2px solid white;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0.85;
+  transition: transform 0.15s, background 0.15s, opacity 0.15s;
+}
+.profile-delete-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: #dc2626;
+}
+.profile-card {
+  position: relative;
+}
+
 /* ─── Custom brand imagery (placeholders generated via fal.ai) ─── */
 
 /* Action card icons — replace the emoji in Create / My Stories /
@@ -2519,4 +2764,1062 @@ body > * {
 @keyframes new-dot-pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HOME PAGE REDESIGN — editorial magazine/streaming-service layout.
+   Hero + horizontal rails + kid-picker dropdown. Replaces the old
+   filter-row + grid on the main library view. Browse-by-filter lives
+   under the "All Stories" subview (top-right magnifier icon).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Header tweak on the home view — bring the logo + controls onto one
+   clean baseline. Reuses .header spacing for the subviews. */
+.home-header {
+  gap: 4px;
+}
+
+/* ── Home-page horizontal inset ──────────────────────────────────────
+   All top-level home-page sections (hero, rails, CTA, footer) inset by
+   this many pixels from the left AND right edges of the viewport so
+   every section's visible boundary lines up. Rails use the inset as
+   scroller padding-left so the first card sits at the same gutter. */
+:root {
+  --home-inset: 14px;
+}
+
+/* ── Kid picker — avatar + tiny name beneath ─────────────────────────
+   Trigger shows the active kid's emoji avatar in a circle with their
+   first name in small caps directly underneath (e.g. a bear emoji with
+   "Teddy" below). Dropdown is a compact horizontal row of other kids'
+   avatars with their names underneath. Position:absolute menu so the
+   header layout never shifts when the dropdown opens. */
+.kid-picker {
+  position: relative;
+  display: inline-flex;
+}
+.kid-picker-trigger {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  padding: 2px 4px 0;
+  cursor: pointer;
+  line-height: 1;
+  max-width: 56px;
+  transition: transform 0.15s;
+}
+.kid-picker-trigger:hover { transform: translateY(-1px); }
+.kid-picker-avatar {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface, #fdf8ed);
+  transition: border-color 0.15s;
+}
+.kid-picker-trigger:hover .kid-picker-avatar {
+  border-color: var(--accent);
+}
+.kid-picker-name {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  max-width: 56px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.kid-picker-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--surface, #fdf8ed);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 10px 8px;
+  box-shadow: 0 14px 36px rgba(78, 52, 34, 0.18);
+  z-index: 100;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  animation: kid-menu-in 0.15s ease-out;
+}
+@keyframes kid-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.kid-picker-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 2px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+  max-width: 64px;
+}
+.kid-picker-option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+.kid-picker-option.active {
+  background: rgba(228, 147, 58, 0.1);
+}
+.kid-picker-option-avatar {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface, #fff);
+}
+.kid-picker-option.active .kid-picker-option-avatar {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(228, 147, 58, 0.18);
+}
+.kid-picker-option-name {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kid-picker-option.active .kid-picker-option-name {
+  color: var(--accent);
+}
+.kid-picker-manage .kid-picker-option-avatar {
+  font-size: 18px;
+}
+
+/* ── Hero — featured story banner ────────────────────────────────────
+   Tonight's/Today's/This Morning's Story. True landscape (2:1-ish) so
+   it's a banner, not a portrait. Text + "Start Reading" pill overlay
+   the left side of the illustration. Native <button> so it's keyboard
+   + screen-reader friendly. */
+.home-hero {
+  position: relative;
+  display: block;
+  width: calc(100% - (var(--home-inset) * 2));
+  margin: 8px var(--home-inset) 22px;
+  aspect-ratio: 2 / 1;
+  max-height: 240px;
+  min-height: 170px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--surface, #f4efe4);
+  box-shadow:
+    0 4px 12px rgba(78, 52, 34, 0.12),
+    0 10px 28px rgba(78, 52, 34, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.home-hero:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 16px rgba(78, 52, 34, 0.18),
+    0 14px 36px rgba(78, 52, 34, 0.1);
+}
+.home-hero:active {
+  transform: translateY(0);
+}
+.home-hero-img,
+.home-hero-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-hero-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.home-hero-fallback-emoji {
+  font-size: 76px;
+  opacity: 0.85;
+}
+/* Diagonal top-left gradient so the title and button (now pinned to
+   the upper-left) are readable no matter what the illustration shows
+   behind them. The illustration's subject — usually centered or
+   right-of-center — remains fully visible. */
+.home-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(20, 14, 8, 0.62) 0%,
+    rgba(20, 14, 8, 0.4) 30%,
+    rgba(20, 14, 8, 0.1) 65%,
+    rgba(20, 14, 8, 0) 100%
+  );
+  pointer-events: none;
+}
+.home-hero-text {
+  position: absolute;
+  left: 20px;
+  top: 18px;
+  bottom: 18px;
+  right: 36%;
+  display: flex;
+  flex-direction: column;
+  /* Text pinned to the top-left of the hero. Eyebrow + title sit up
+     top where they don't overlap the illustration's subject (often
+     centered in the scene). Start Reading button sits below the title
+     with breathing room — NOT at the bottom corner. */
+  justify-content: flex-start;
+  gap: 10px;
+  text-align: left;
+  color: #f7efdf;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+.home-hero-eyebrow {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+.home-hero-title {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.12;
+  font-style: italic;
+  margin-bottom: 10px;
+  /* No line-clamp — let long titles wrap freely instead of clipping. */
+}
+.home-hero-cta {
+  display: inline-block;
+  align-self: flex-start;
+  background: var(--accent);
+  color: white;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  padding: 7px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(228, 147, 58, 0.4);
+  text-shadow: none;
+}
+/* Age pill in the bottom-right corner of the hero — a soft frosted-
+   glass treatment with a thin border. Less heavy than a solid dark
+   pill, reads as editorial / magazine rather than "button". */
+.home-hero-age {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fdfaf1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .home-hero {
+    aspect-ratio: 5 / 2;
+    max-height: 280px;
+  }
+  .home-hero-title { font-size: 28px; }
+  .home-hero-eyebrow { font-size: 12px; }
+  .home-hero-age { font-size: 11px; padding: 5px 12px; }
+}
+
+/* ── Horizontal rails ────────────────────────────────────────────────
+   One row per rail — small-caps editorial title, "See all" on the right,
+   horizontal-scroll row of compact rail cards below. Separate card
+   component (.rail-card) avoids fighting the full book-card treatment
+   used in the grid view. */
+.home-rail {
+  margin: 0 0 24px;
+  padding: 0;
+}
+/* Hairline divider between consecutive rails — subtle editorial break
+   without a hard section-border feel. A pseudo-element carries the
+   line so it can be inset from the viewport edges (magazine gutter)
+   without affecting the rail's own layout. First rail has no line
+   because the hero already separates the feed from the page top. */
+.home-rail + .home-rail {
+  position: relative;
+  padding-top: 18px;
+}
+.home-rail + .home-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--home-inset);
+  right: var(--home-inset);
+  height: 1px;
+  background: rgba(78, 52, 34, 0.1);
+  pointer-events: none;
+}
+.home-rail-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 var(--home-inset) 8px;
+}
+.home-rail-title {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0;
+}
+.home-rail-see-all {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.home-rail-see-all:hover {
+  color: var(--accent);
+}
+.home-rail-scroller {
+  /* CSS Grid gives precise 4-across sizing that matches the hero's
+     left/right edges exactly. grid-auto-columns defines each track at
+     (content-width − 3 gaps) / 4, so four tracks fit the content area
+     exactly and the fifth flows off-screen into the horizontal scroll.
+     minmax(0, ...) blocks content from expanding past the calc'd size. */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(calc((100% - 30px) / 4), 140px);
+  gap: 10px;
+  padding: 4px var(--home-inset) 10px;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline-start: var(--home-inset);
+  scrollbar-width: none;
+  box-sizing: border-box;
+  /* Fade the last ~14px of content to transparent so any sub-pixel
+     peek of the fifth book (inherent to the layout when the 4th card
+     aligns exactly with the hero's right edge) fades to invisible
+     instead of reading as "4 and a smidge". Netflix-style edge fade;
+     keeps the scroll-forward affordance without visible overflow. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    black 0,
+    black calc(100% - 14px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    black 0,
+    black calc(100% - 14px),
+    transparent 100%
+  );
+}
+.home-rail-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Rail card — proper book-cover look ─────────────────────────────
+   One book object per card. Top ~62% = cover illustration, bottom
+   ~38% = cream "book face" with title (and italic author for classics)
+   printed directly on the paper. Left spine gradient + asymmetric
+   border-radius (flat on the spine side) so it reads as a book rather
+   than a rounded rectangle. Width is calc'd so exactly FOUR books fit
+   across the rail at any viewport, with the first book's left edge
+   aligned to hero's left edge and the fourth's right edge aligned to
+   hero's right edge. */
+.rail-card {
+  /* Inside the grid container above, each card fills one auto-column
+     track (grid-auto-columns handles sizing, not the card itself). */
+  width: 100%;
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: start;
+  position: relative;
+  transition: transform 0.15s ease;
+  box-sizing: border-box;
+}
+.rail-card:hover { transform: translateY(-2px); }
+.rail-card:active { transform: translateY(0); }
+
+.rail-card-book {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  /* Asymmetric radius: flat on the spine side, rounded on the fore-edge
+     so the whole object reads as a book with a binding on the left. */
+  border-radius: 2px 10px 10px 2px;
+  overflow: hidden;
+  background: #f4efe4;
+  box-shadow:
+    0 2px 4px rgba(78, 52, 34, 0.22),
+    0 8px 16px rgba(78, 52, 34, 0.1),
+    inset 4px 0 6px rgba(0, 0, 0, 0.15),
+    inset -1px 0 0 rgba(78, 52, 34, 0.18);
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+}
+/* Thick spine with a visible binding seam. The outer gradient darkens
+   the leftmost 8px into the "binding"; the thin solid strip at 8px is
+   the seam where the pages meet the cover board. */
+.rail-card-book::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 10px;
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.38) 0%,
+      rgba(0, 0, 0, 0.22) 40%,
+      rgba(0, 0, 0, 0.08) 80%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  pointer-events: none;
+  z-index: 3;
+}
+/* Page fore-edge / top sliver — subtle creamy highlight along the top
+   edge starting just past the spine so it reads as paper, not gloss. */
+.rail-card-book::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 248, 230, 0.55) 0%,
+    rgba(255, 248, 230, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+.rail-card-img-wrap {
+  position: relative;
+  /* 58% image / 42% face leaves room for a 3-line title on regular
+     books without pushing the illustration too small. Classics use a
+     2-line title + 1-line author which fits in the same face height. */
+  height: 58%;
+  overflow: hidden;
+  background: #f4efe4;
+}
+.rail-card-img {
+  position: absolute;
+  inset: -3% -3% -3% -3%;
+  width: 106%;
+  height: 106%;
+  object-fit: cover;
+  display: block;
+}
+.rail-card-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rail-card-fallback-emoji {
+  font-size: 32px;
+  opacity: 0.9;
+}
+
+/* The printed "book face" — bottom ~38% of the book holds the title
+   on cream paper. Fraunces italic serif keeps it feeling editorial. */
+.rail-card-face {
+  height: 42%;
+  padding: 6px 4px 6px 8px;
+  background: linear-gradient(
+    to bottom,
+    #faf4e5 0%,
+    #f0e6c9 100%
+  );
+  border-top: 1px solid rgba(180, 130, 50, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2px;
+}
+.rail-card-title {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #3a2a1a;
+  display: -webkit-box;
+  /* Non-classic books get 3 title lines so long titles like
+     "Captain Finn's Missing Treasure" no longer truncate at this
+     compact card width. Classics override back to 2 lines below
+     because they also print an italic author under the title. */
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding: 0 2px;
+}
+.rail-card-author {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  font-size: 8px;
+  font-weight: 500;
+  color: rgba(78, 52, 34, 0.65);
+  padding: 0 2px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Classics get a gold-foil frame around the whole book. */
+.rail-card-classic .rail-card-book {
+  box-shadow:
+    0 0 0 2px #c9a24a,
+    0 2px 4px rgba(78, 52, 34, 0.2),
+    0 6px 14px rgba(201, 162, 74, 0.22);
+}
+/* Classics override the 3-line clamp back to 2 lines so there's room
+   for the italic author line underneath ("Charles Perrault" etc). */
+.rail-card-classic .rail-card-title {
+  -webkit-line-clamp: 2;
+}
+
+@media (min-width: 420px) {
+  .rail-card-fallback-emoji { font-size: 36px; }
+  .rail-card-title { font-size: 11px; }
+  .rail-card-author { font-size: 9px; }
+}
+@media (min-width: 640px) {
+  .rail-card-fallback-emoji { font-size: 42px; }
+  .rail-card-title { font-size: 12px; }
+  .rail-card-author { font-size: 10px; }
+}
+
+/* ── My Stories folder — visually distinct "blue book" variant ──────
+   Same book layout as the story cards (image half on top, title half
+   on the face) but in a dusty-slate-blue palette so it clearly reads
+   as a different kind of object on the shelf — a collection folder,
+   not just another story. The kid's own stories deserve their own
+   cover color. */
+.rail-card-folder .rail-card-book {
+  /* Tint the whole book a slate-blue so the spine/binding gradients
+     keep their darker look without the warm cream casting. */
+  background: #2f3a52;
+}
+.rail-card-folder .rail-card-book::before {
+  /* Slightly cooler spine gradient for the blue-bound book. */
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.44) 0%,
+      rgba(0, 0, 0, 0.24) 40%,
+      rgba(0, 0, 0, 0.1) 80%,
+      rgba(0, 0, 0, 0) 100%
+    );
+}
+.rail-card-folder .rail-card-face {
+  background:
+    linear-gradient(
+      to bottom,
+      #3f4e6a 0%,
+      #2f3a52 100%
+    );
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.rail-card-folder .rail-card-title {
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #f4e9c8;           /* warm cream title on the blue book face */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+/* The illustration half of the folder book — soft gradient if there's
+   no custom-story cover yet, showing the kid that this is an empty-
+   but-waiting slot. */
+.rail-card-folder-blank {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(
+      160deg,
+      #4a5a7a 0%,
+      #2f3a52 100%
+    );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rail-card-folder-count {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(228, 147, 58, 0.4);
+  z-index: 4;
+}
+
+/* ── Create Your Own Story — image-fill banner CTA ───────────────────
+   The illustration fills the entire module. A right-side gradient
+   ensures the overlaid text + button are legible no matter what the
+   illustration shows. Text sits in the top-right area of the banner
+   (which happens to be empty sky/backdrop in the hero illustration).
+   Landscape aspect so it reads as a bar between rails, not a card. */
+.home-create-cta {
+  position: relative;
+  display: block;
+  width: calc(100% - (var(--home-inset) * 2));
+  margin: 0 var(--home-inset) 24px;
+  padding: 0;
+  aspect-ratio: 3 / 1;
+  min-height: 120px;
+  max-height: 180px;
+  border: 1.5px solid rgba(180, 130, 50, 0.22);
+  border-radius: 18px;
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  background: var(--surface, #fdf8ed);
+  box-shadow: 0 3px 10px rgba(78, 52, 34, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.home-create-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(78, 52, 34, 0.12);
+}
+.home-create-cta-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+  display: block;
+}
+/* Gradient fade on the right half of the banner — darkens the top-
+   right corner enough for white text to read cleanly, while the rest
+   of the illustration stays fully visible. */
+.home-create-cta-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to left,
+    rgba(20, 14, 8, 0.62) 0%,
+    rgba(20, 14, 8, 0.42) 35%,
+    rgba(20, 14, 8, 0.1) 60%,
+    rgba(20, 14, 8, 0) 80%
+  );
+  pointer-events: none;
+}
+.home-create-cta-text {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  bottom: 12px;
+  max-width: 58%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 3px;
+  color: #f7efdf;
+  text-align: right;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+.home-create-cta-eyebrow {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  margin: 0;
+}
+.home-create-cta-title {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-style: italic;
+  margin: 0;
+  white-space: nowrap;
+}
+.home-create-cta-desc {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 2px 0 4px;
+  opacity: 0.92;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.home-create-cta-btn {
+  display: inline-block;
+  margin-top: auto;
+  background: var(--accent);
+  color: white;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(228, 147, 58, 0.45);
+  text-shadow: none;
+}
+@media (min-width: 640px) {
+  .home-create-cta {
+    aspect-ratio: 4 / 1;
+    max-height: 200px;
+  }
+  .home-create-cta-title { font-size: 20px; }
+  .home-create-cta-eyebrow { font-size: 11px; }
+  .home-create-cta-desc { font-size: 12px; }
+}
+
+/* ── Home footer — quick links to list views ─────────────────────── */
+.home-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 16px var(--home-inset) 40px;
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+}
+.home-footer-link {
+  background: none;
+  border: none;
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+  padding: 10px 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s;
+}
+.home-footer-link:hover {
+  color: var(--accent);
+}
+
+/* Paywall nudge at the very bottom of the home feed for free users. */
+.home-paywall-wrap {
+  padding: 8px 20px 40px;
+}
+
+/* ===================================================================
+   COST DASHBOARD -- /admin/costs (admin-only)
+   Tight editorial layout with KPI strip, stacked bar chart, and a
+   couple of breakdown panels. No charting lib -- SVG is hand-rolled.
+   =================================================================== */
+.cost-dashboard {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  font-family: var(--font-nunito), Inter, system-ui, sans-serif;
+}
+.cost-dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.cost-dashboard-header h1 {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+}
+.cost-period-toggle {
+  display: inline-flex;
+  background: var(--surface, #f4efe4);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.cost-period-btn {
+  background: none;
+  border: none;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: background 0.15s, color 0.15s;
+}
+.cost-period-btn:hover { color: var(--text); }
+.cost-period-btn.active {
+  background: var(--accent);
+  color: white;
+}
+.cost-error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #991b1b;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.cost-error-hint {
+  font-size: 12px;
+  color: #7f1d1d;
+  margin-top: 6px;
+  opacity: 0.8;
+}
+.cost-loading {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ── KPI strip ─────────────────────────────────────────────────────── */
+.cost-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media (max-width: 800px) {
+  .cost-kpis { grid-template-columns: repeat(2, 1fr); }
+}
+.cost-kpi {
+  background: var(--surface, #fdf8ed);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.cost-kpi.emphasis {
+  background: linear-gradient(135deg, #fdf5e6 0%, #f2e4c3 100%);
+  border-color: rgba(180, 130, 50, 0.3);
+}
+.cost-kpi-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.cost-kpi-value {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+.cost-kpi-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── Chart + panels ─────────────────────────────────────────────── */
+.cost-chart-wrap {
+  background: var(--surface, #fdf8ed);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.cost-chart-wrap h2 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+.cost-chart { width: 100%; }
+.cost-chart-svg {
+  width: 100%;
+  height: 160px;
+  display: block;
+  overflow: visible;
+}
+.cost-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.cost-chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cost-chart-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.cost-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+@media (max-width: 700px) {
+  .cost-panels { grid-template-columns: 1fr; }
+}
+.cost-panel {
+  background: var(--surface, #fdf8ed);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.cost-panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.cost-empty {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 12px 0;
+  font-style: italic;
+}
+
+/* ── Breakdown list (horizontal bar per row) ──────────────────────── */
+.cost-breakdown {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cost-breakdown-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 70px;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.cost-breakdown-label {
+  font-weight: 700;
+  color: var(--text);
+  text-transform: capitalize;
+}
+.cost-breakdown-bar-wrap {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.cost-breakdown-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.cost-breakdown-value {
+  text-align: right;
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Entry list (one-time / flat) ─────────────────────────────────── */
+.cost-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.cost-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(78, 52, 34, 0.06);
+  font-size: 13px;
+}
+.cost-list-row:last-child { border-bottom: none; }
+.cost-list-main { flex: 1; min-width: 0; }
+.cost-list-left {
+  font-weight: 700;
+  color: var(--text);
+}
+.cost-list-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.cost-list-right {
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
 }

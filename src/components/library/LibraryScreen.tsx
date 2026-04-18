@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton } from "@/components/shared/ClerkSafe";
 import { Story } from "@/types/story";
 import { GENRES, AGE_GROUPS } from "@/data/genres";
 import { PaywallCard } from "@/components/shared/PaywallCard";
@@ -51,7 +51,16 @@ interface LibraryScreenProps {
   isPremium?: boolean;
   freeStoryLimit?: number;
   activeProfile?: ChildProfile | null;
+  /** All child profiles on this account. Used by the header avatar
+   *  dropdown so switching kids doesn't require a full-page picker
+   *  context-switch. */
+  profiles?: ChildProfile[];
+  /** Legacy: opens the dedicated profile-picker screen (still used
+   *  as the "Manage kids" menu item in the dropdown). */
   onSwitchProfile?: () => void;
+  /** New: switch directly to a given profile without leaving the
+   *  library. Called from the header avatar dropdown. */
+  onSwitchProfileDirect?: (profile: ChildProfile) => void;
   /** Titles of stories that arrived via background save during this
    *  session. Cards matching these titles render a small blue dot
    *  until the user opens the story. Keyed by title (not id) because
@@ -71,7 +80,9 @@ export function LibraryScreen({
   isPremium = false,
   freeStoryLimit = 5,
   activeProfile,
+  profiles = [],
   onSwitchProfile,
+  onSwitchProfileDirect,
   newStoryTitles,
 }: LibraryScreenProps) {
   const [gf, setGf] = useState("all");
@@ -79,6 +90,31 @@ export function LibraryScreen({
   const [search, setSearch] = useState("");
   const [showStorybook, setShowStorybook] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showAllStories, setShowAllStories] = useState(false);
+  const [kidMenuOpen, setKidMenuOpen] = useState(false);
+
+  // Time-aware greeting for the hero section. Shifts copy based on local
+  // hour so morning reads feel distinct from bedtime reads — same data,
+  // different frame. Small touch; reads as a premium app that knows what
+  // time of day it is.
+  const getHeroLabel = (): string => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 11) return "This Morning's Story";
+    if (hour >= 11 && hour < 17) return "Today's Story";
+    return "Tonight's Story";
+  };
+
+  // Close the kid-picker dropdown when the user clicks outside it.
+  useEffect(() => {
+    if (!kidMenuOpen) return;
+    const onDocClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest(".kid-picker")) return;
+      setKidMenuOpen(false);
+    };
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, [kidMenuOpen]);
 
   // Built-in story cover images — lazy-loaded from storyImages.json, which
   // holds pre-generated fal.media URLs for every page of every built-in
@@ -167,6 +203,133 @@ export function LibraryScreen({
   // For free users, only show the first N built-in stories
   const visibleBuiltIn = isPremium ? filteredBuiltIn : filteredBuiltIn.slice(0, freeStoryLimit);
   const lockedCount = isPremium ? 0 : Math.max(0, filteredBuiltIn.length - freeStoryLimit);
+
+  // ── Home-page rail data ────────────────────────────────────────────
+  // "Read Again" — deduped list of stories the active kid has read, most
+  // recent first. We resolve each history entry back to its full Story
+  // object so the existing renderBookCard can reuse cover art + metadata.
+  const readAgainStories: Story[] = (() => {
+    const seen = new Set<string>();
+    const out: Story[] = [];
+    for (const h of scopedReadingHistory) {
+      if (seen.has(h.story_id)) continue;
+      seen.add(h.story_id);
+      const full = stories.find((s) => s.id === h.story_id);
+      if (full) out.push(full);
+    }
+    return out;
+  })();
+
+  // Hero recommendation — pick a story the active kid hasn't read yet,
+  // preferring content in their age band so the Tonight's Story slot
+  // feels targeted. Fall through to broader pools if the ideal pool is
+  // empty. Stable within a day (seeded by kid id + date) so the
+  // recommendation doesn't flicker on every re-render.
+  const heroStory: Story | null = (() => {
+    const readIds = new Set(scopedReadingHistory.map((h) => h.story_id));
+    // Map the kid's numeric age to the closest story age band. Simple
+    // banding now — can swap in a smarter recommendation engine later
+    // (reading history, preferred genres, favorite characters, etc.).
+    const ageToBand = (n: number | null | undefined): string | null => {
+      if (n == null) return null;
+      if (n <= 4) return "2-4";
+      if (n <= 7) return "4-7";
+      return "7-10";
+    };
+    const kidBand = ageToBand(activeProfile?.age ?? null);
+    const notRead = (s: Story) => !readIds.has(s.id);
+    const inBand = (s: Story) => !kidBand || s.age === kidBand;
+
+    // Preference order: (1) unread + in-band → (2) any in-band →
+    // (3) unread overall → (4) anything.
+    const tiers: Story[][] = [
+      builtInStories.filter((s) => notRead(s) && inBand(s)),
+      builtInStories.filter(inBand),
+      builtInStories.filter(notRead),
+      builtInStories,
+    ];
+    const pool = tiers.find((t) => t.length > 0) || [];
+    if (pool.length === 0) return null;
+    // Daily-stable pick: same kid + same day → same recommendation.
+    const dateKey = new Date().toISOString().slice(0, 10);
+    const seed = Array.from(`${activeProfile?.id || ""}:${dateKey}`).reduce(
+      (a, c) => (a * 31 + c.charCodeAt(0)) | 0,
+      0,
+    );
+    const idx = Math.abs(seed) % pool.length;
+    return pool[idx];
+  })();
+
+  // Classics rail — only the built-in classic retellings, filtered to
+  // the active kid's age band if one is set on the profile, otherwise
+  // all classics. Ordered by age then original title so the rail reads
+  // predictably across sessions.
+  const classicsRail: Story[] = builtInStories
+    .filter((s) => s.isClassic)
+    .sort((a, b) => {
+      const ageOrder: Record<string, number> = { "2-4": 0, "4-7": 1, "7-10": 2 };
+      const ageDiff = (ageOrder[a.age] ?? 9) - (ageOrder[b.age] ?? 9);
+      if (ageDiff !== 0) return ageDiff;
+      return a.title.localeCompare(b.title);
+    });
+
+  // Per-genre rails — maps each real genre to its built-in stories.
+  // Excludes "all", "random", and "classics" (classics get their own
+  // featured rail above). Empty genres are dropped so we don't render
+  // an empty rail.
+  const genreRails: Array<{ id: string; label: string; emoji: string; stories: Story[] }> =
+    GENRES
+      .filter((g) => g.id !== "all" && g.id !== "random" && g.id !== "classics")
+      .map((g) => ({
+        id: g.id,
+        label: g.label,
+        emoji: g.emoji,
+        stories: builtInStories.filter((s) => s.genre === g.id && !s.isClassic),
+      }))
+      .filter((g) => g.stories.length > 0);
+
+  // ── Rail card — proper book-cover look ───────────────────────────
+  // The whole card is ONE book object: illustration on the top 60%,
+  // title (and classic author) printed on the "book face" (cream
+  // paper) below. Spine gradient on the left edge. Sized so exactly
+  // four cards fit across the home-inset-bound rail at any viewport.
+  const renderRailCard = (s: Story) => {
+    const coverUrl = getCoverUrl(s);
+    const isClassic = !!s.isClassic;
+    const isNew = !!newStoryTitles && newStoryTitles.has(s.title);
+    return (
+      <button
+        key={s.id}
+        className={`rail-card${isClassic ? " rail-card-classic" : ""}`}
+        onClick={() => onSelect(s)}
+        aria-label={`${s.title}${s.originalAuthor ? ` by ${s.originalAuthor}` : ""}`}
+      >
+        {isNew && <span className="new-story-dot" aria-label="New" />}
+        <div className="rail-card-book">
+          <div className="rail-card-img-wrap">
+            {coverUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={coverUrl} alt="" className="rail-card-img" loading="lazy" />
+            ) : (
+              <div
+                className="rail-card-fallback"
+                style={{ background: s.color }}
+                aria-hidden="true"
+              >
+                <span className="rail-card-fallback-emoji">{s.emoji}</span>
+              </div>
+            )}
+          </div>
+          <div className="rail-card-face">
+            <div className="rail-card-title">{s.title}</div>
+            {isClassic && s.originalAuthor && (
+              <div className="rail-card-author">{s.originalAuthor}</div>
+            )}
+          </div>
+        </div>
+      </button>
+    );
+  };
 
   // Book-style story card. Shared by the main library grid and the
   // "My Stories" subview so both places read as a shelf of books instead
@@ -353,152 +516,70 @@ export function LibraryScreen({
     );
   }
 
-  // ── Main library view ──
-  return (
-    <>
-      <div className="header">
-        {/* Hand-lettered Fraunces wordmark placeholder generated via fal.ai
-            (nano-banana-2). Drop-in replacement for the old emoji+text h1.
-            Height-constrained; width flows from the natural aspect. */}
-        <img
-          src="/brand/logo-wordmark.png"
-          alt="StoryTime"
-          className="brand-wordmark"
-        />
-        <div className="header-btns">
-          {activeProfile && onSwitchProfile && (
-            <button
-              className="icon-btn"
-              onClick={onSwitchProfile}
-              title="Switch child profile"
-              style={{ fontSize: 22 }}
-            >
-              {activeProfile.avatar_emoji}
-            </button>
-          )}
-          <button className="icon-btn" onClick={() => setShowVoice(true)} title="Voice settings">
-            🎙️
+  // ── "All Stories" subview — full filterable grid (the old main view) ──
+  if (showAllStories) {
+    return (
+      <>
+        <div className="header">
+          <button className="icon-btn" onClick={() => setShowAllStories(false)}>
+            ←
           </button>
-          {setShowSettings && (
+          <h1 className="subview-title">All Stories</h1>
+          <div className="header-btns">
+            <UserButton />
+          </div>
+        </div>
+
+        <div className="library-search-wrap">
+          <input
+            type="search"
+            className="library-search"
+            placeholder="🔎  Search stories…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          {search && (
             <button
-              className="icon-btn"
-              onClick={() => setShowSettings(true)}
-              title="Parent settings"
+              type="button"
+              className="library-search-clear"
+              onClick={() => setSearch("")}
+              aria-label="Clear search"
             >
-              ⚙️
+              ✕
             </button>
           )}
-          <UserButton />
         </div>
-      </div>
 
-      {activeProfile && (
-        <div style={{
-          padding: "0 20px 4px",
-          fontSize: 14,
-          fontWeight: 700,
-          color: "var(--muted)",
-        }}>
-          Reading as <span style={{ color: "var(--accent)" }}>{activeProfile.name}</span>
-          {activeProfile.age && ` · Age ${activeProfile.age}`}
-        </div>
-      )}
-
-      {/* Hero illustration banner — parent+child reading in a window nook.
-          Editorial anchor above the filter row on the main library view.
-          Placeholder (fal.ai nano-banana-2). Height-capped so it doesn't
-          push the story grid too far down the page. */}
-      <div className="library-hero">
-        <img
-          src="/brand/hero-illustration.png"
-          alt="A parent and child reading together in a cozy window nook"
-          className="library-hero-img"
-        />
-      </div>
-
-      {/* Top action cards — Create + My Stories + Recently Read.
-          Emojis replaced with custom brand icons (fal.ai placeholders,
-          see public/brand/). If any image 404s, the card still renders
-          without crashing; alt text is the same as the title below.
-          Positioned above the genre/age filter row so the primary
-          actions are the first thing a parent sees under the hero. */}
-      {isPremium && (
-        <div className="action-cards three-col">
-          <div className="story-card create-card" onClick={onCreateNew}>
-            <img src="/brand/icon-create.png" alt="" className="action-icon" />
-            <div className="title">Create Story</div>
+        <div className="filter-row">
+          <div className="filter-select-wrap">
+            <select
+              className="filter-select"
+              value={gf}
+              onChange={(e) => setGf(e.target.value)}
+            >
+              {GENRES.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.emoji} {g.label}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="story-card storybook-card" onClick={() => setShowStorybook(true)}>
-            <img src="/brand/icon-library.png" alt="" className="action-icon" />
-            <div className="title">My Stories</div>
-            {myStories.length > 0 && (
-              <div className="storybook-count">{myStories.length}</div>
-            )}
-          </div>
-          <div className="story-card history-card" onClick={() => setShowHistory(true)}>
-            <img src="/brand/icon-history.png" alt="" className="action-icon" />
-            <div className="title">Recently Read</div>
-            {scopedReadingHistory.length > 0 && (
-              <div className="storybook-count">{new Set(scopedReadingHistory.map((h) => h.story_id)).size}</div>
-            )}
+          <div className="filter-select-wrap">
+            <select
+              className="filter-select"
+              value={af || ""}
+              onChange={(e) => setAf(e.target.value || null)}
+            >
+              <option value="">All Ages</option>
+              {AGE_GROUPS.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
 
-      <div className="filter-row">
-        <div className="filter-select-wrap">
-          <select
-            className="filter-select"
-            value={gf}
-            onChange={(e) => setGf(e.target.value)}
-          >
-            {GENRES.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.emoji} {g.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="filter-select-wrap">
-          <select
-            className="filter-select"
-            value={af || ""}
-            onChange={(e) => setAf(e.target.value || null)}
-          >
-            <option value="">All Ages</option>
-            {AGE_GROUPS.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Built-in Story Library */}
-      <div className="library-section">
-        <div className="section-header">
-          <h2 className="section-title">Story Library</h2>
-          <div className="section-search-wrap">
-            <input
-              type="search"
-              className="section-search"
-              placeholder="🔎  Search…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            {search && (
-              <button
-                type="button"
-                className="section-search-clear"
-                onClick={() => setSearch("")}
-                aria-label="Clear search"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
         {visibleBuiltIn.length === 0 && search ? (
           <div className="storybook-empty" style={{ padding: "24px 20px" }}>
             <div style={{ fontSize: 40 }}>🔎</div>
@@ -513,7 +594,308 @@ export function LibraryScreen({
             )}
           </div>
         )}
+      </>
+    );
+  }
+
+  // ── Main library view — home feed (editorial rails) ──
+  const heroCoverUrl = heroStory ? getCoverUrl(heroStory) : null;
+  // Hero shows just the age band label ("Ages 4–7") without the leading
+  // emoji icon — the icon is redundant on top of an illustration.
+  const heroAgeLabel = heroStory
+    ? AGE_GROUPS.find((a) => a.id === heroStory.age)?.label?.replace(/^\S+\s+/, "")
+    : null;
+
+  return (
+    <>
+      <div className="header home-header">
+        <img
+          src="/brand/logo-wordmark.png"
+          alt="StoryTime"
+          className="brand-wordmark"
+        />
+        <div className="header-btns">
+          <button
+            className="icon-btn"
+            onClick={() => setShowAllStories(true)}
+            title="Browse all stories"
+            aria-label="Browse all stories"
+          >
+            🔎
+          </button>
+          <button
+            className="icon-btn"
+            onClick={() => setShowVoice(true)}
+            title="Voice settings"
+          >
+            🎙️
+          </button>
+          {setShowSettings && (
+            <button
+              className="icon-btn"
+              onClick={() => setShowSettings(true)}
+              title="Parent settings"
+            >
+              ⚙️
+            </button>
+          )}
+          {/* Kid picker — compact avatar-over-name. With >1 profile,
+              tapping opens a dropdown showing other kids as avatar-only
+              circles with tiny names underneath. Dropdown is
+              position:absolute so it doesn't push the header around. */}
+          {activeProfile && profiles.length > 1 && onSwitchProfileDirect ? (
+            <div className="kid-picker">
+              <button
+                className="kid-picker-trigger"
+                onClick={(e) => { e.stopPropagation(); setKidMenuOpen(!kidMenuOpen); }}
+                title={`Viewing ${activeProfile.name}'s library — tap to switch kid`}
+                aria-label={`Viewing ${activeProfile.name}'s library`}
+                aria-expanded={kidMenuOpen}
+              >
+                <span className="kid-picker-avatar">{activeProfile.avatar_emoji}</span>
+                <span className="kid-picker-name">{activeProfile.name}</span>
+              </button>
+              {kidMenuOpen && (
+                <div className="kid-picker-menu" role="menu">
+                  {profiles.map((p) => (
+                    <button
+                      key={p.id}
+                      role="menuitem"
+                      className={`kid-picker-option${p.id === activeProfile.id ? " active" : ""}`}
+                      onClick={() => {
+                        if (p.id !== activeProfile.id) onSwitchProfileDirect(p);
+                        setKidMenuOpen(false);
+                      }}
+                      title={`${p.name}${p.age != null ? ` · Age ${p.age}` : ""}`}
+                    >
+                      <span className="kid-picker-option-avatar">{p.avatar_emoji}</span>
+                      <span className="kid-picker-option-name">{p.name}</span>
+                    </button>
+                  ))}
+                  {onSwitchProfile && (
+                    <button
+                      role="menuitem"
+                      className="kid-picker-option kid-picker-manage"
+                      onClick={() => { setKidMenuOpen(false); onSwitchProfile(); }}
+                      title="Manage kids"
+                    >
+                      <span className="kid-picker-option-avatar" aria-hidden="true">⚙️</span>
+                      <span className="kid-picker-option-name">Manage</span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : activeProfile && onSwitchProfile ? (
+            <button
+              className="kid-picker-trigger"
+              onClick={onSwitchProfile}
+              title={`Viewing ${activeProfile.name}'s library`}
+            >
+              <span className="kid-picker-avatar">{activeProfile.avatar_emoji}</span>
+              <span className="kid-picker-name">{activeProfile.name}</span>
+            </button>
+          ) : null}
+          <UserButton />
+        </div>
       </div>
+
+      {/* Featured hero — time-aware recommendation for the active kid.
+          One big card with the illustration and title overlay; tap to
+          open. This replaces the old illustration-only banner with
+          something actionable. */}
+      {heroStory && (
+        <button
+          className="home-hero"
+          onClick={() => onSelect(heroStory)}
+          aria-label={`${getHeroLabel()}: ${heroStory.title}`}
+        >
+          {heroCoverUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={heroCoverUrl} alt="" className="home-hero-img" />
+          ) : (
+            <div
+              className="home-hero-fallback"
+              style={{ background: heroStory.color }}
+              aria-hidden="true"
+            >
+              <span className="home-hero-fallback-emoji">{heroStory.emoji}</span>
+            </div>
+          )}
+          <div className="home-hero-overlay" aria-hidden="true" />
+          <div className="home-hero-text">
+            <div className="home-hero-eyebrow">{getHeroLabel()}</div>
+            <div className="home-hero-title">{heroStory.title}</div>
+            <span className="home-hero-cta">Start Reading</span>
+          </div>
+          {heroAgeLabel && (
+            <div className="home-hero-age" aria-hidden="true">{heroAgeLabel}</div>
+          )}
+        </button>
+      )}
+
+      {/* Read Again + My Stories folder — combined rail under the hero.
+          First card is the "My Stories" folder, shown only after the
+          kid has saved their first custom story. The rest are stories
+          they've previously read. Section hides entirely if both would
+          be empty. */}
+      {(readAgainStories.length > 0 || (isPremium && myStories.length > 0)) && (
+        <section className="home-rail">
+          <div className="home-rail-header">
+            <h2 className="home-rail-title">Read Again</h2>
+            {(readAgainStories.length > 6 || myStories.length > 3) && (
+              <button
+                className="home-rail-see-all"
+                onClick={() => setShowHistory(true)}
+              >
+                See all
+              </button>
+            )}
+          </div>
+          <div className="home-rail-scroller">
+            {isPremium && myStories.length > 0 && (() => {
+              // Use the most-recently-saved custom story's cover as the
+              // illustration on the My Stories folder book. Falls back to
+              // a cream-gold solid if no cover is available yet.
+              const latestCustomCover =
+                myStories.map((s) => s.preloadedImages?.[0]).find((u) => !!u) ||
+                null;
+              return (
+                <button
+                  key="__my-stories-folder"
+                  className="rail-card rail-card-folder"
+                  onClick={() => setShowStorybook(true)}
+                  aria-label={`My Stories — ${myStories.length} saved`}
+                >
+                  <div className="rail-card-book">
+                    <span className="rail-card-folder-count">
+                      {myStories.length}
+                    </span>
+                    <div className="rail-card-img-wrap">
+                      {latestCustomCover ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={latestCustomCover}
+                          alt=""
+                          className="rail-card-img"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="rail-card-folder-blank" aria-hidden="true" />
+                      )}
+                    </div>
+                    <div className="rail-card-face rail-card-folder-face">
+                      <div className="rail-card-title">My Stories</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            })()}
+            {readAgainStories.slice(0, 12).map((s) => renderRailCard(s))}
+          </div>
+        </section>
+      )}
+
+      {/* Create Your Own Story — banner with illustration filling the
+          whole module, text overlaid in the empty (top-right) area of
+          the image. Premium-gated (free users hit the paywall). */}
+      {isPremium && (
+        <button
+          className="home-create-cta"
+          onClick={onCreateNew}
+          aria-label="Create your own story"
+        >
+          <img
+            src="/brand/hero-illustration.png"
+            alt=""
+            className="home-create-cta-bg"
+          />
+          <div className="home-create-cta-overlay" aria-hidden="true" />
+          <div className="home-create-cta-text">
+            <div className="home-create-cta-eyebrow">Make it personal</div>
+            <div className="home-create-cta-title">Create Your Own Story</div>
+            <span className="home-create-cta-btn">Build a Story</span>
+          </div>
+        </button>
+      )}
+
+      {/* Classics Collection rail — gold-foil cards. Featured above the
+          genre rails because it's the premium curated content. */}
+      {classicsRail.length > 0 && (
+        <section className="home-rail">
+          <div className="home-rail-header">
+            <h2 className="home-rail-title">Classics Collection</h2>
+            <button
+              className="home-rail-see-all"
+              onClick={() => {
+                setGf("classics");
+                setShowAllStories(true);
+              }}
+            >
+              See all
+            </button>
+          </div>
+          <div className="home-rail-scroller">
+            {classicsRail.slice(0, 12).map((s) => renderRailCard(s))}
+          </div>
+        </section>
+      )}
+
+      {/* Per-genre rails — one for each genre that actually has stories. */}
+      {genreRails.map((g) => (
+        <section className="home-rail" key={g.id}>
+          <div className="home-rail-header">
+            <h2 className="home-rail-title">{g.label}</h2>
+            {g.stories.length > 6 && (
+              <button
+                className="home-rail-see-all"
+                onClick={() => {
+                  setGf(g.id);
+                  setShowAllStories(true);
+                }}
+              >
+                See all
+              </button>
+            )}
+          </div>
+          <div className="home-rail-scroller">
+            {g.stories.slice(0, 12).map((s) => renderRailCard(s))}
+          </div>
+        </section>
+      ))}
+
+      {/* Footer — quick links to the list views. */}
+      <div className="home-footer">
+        <button
+          className="home-footer-link"
+          onClick={() => setShowAllStories(true)}
+        >
+          Browse All Stories →
+        </button>
+        {myStories.length > 0 && (
+          <button
+            className="home-footer-link"
+            onClick={() => setShowStorybook(true)}
+          >
+            My Stories ({myStories.length}) →
+          </button>
+        )}
+        {scopedReadingHistory.length > 0 && (
+          <button
+            className="home-footer-link"
+            onClick={() => setShowHistory(true)}
+          >
+            Recently Read →
+          </button>
+        )}
+      </div>
+
+      {/* Free-tier paywall nudge at the very bottom, only when relevant. */}
+      {!isPremium && lockedCount > 0 && (
+        <div className="home-paywall-wrap">
+          <PaywallCard storiesRemaining={freeStoryLimit} />
+        </div>
+      )}
     </>
   );
 }

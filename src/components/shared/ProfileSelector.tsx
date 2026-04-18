@@ -13,11 +13,14 @@ interface ProfileSelectorProps {
   profiles: ChildProfile[];
   onSelect: (profile: ChildProfile) => void;
   onCreate: (name: string, age: number, emoji: string) => void;
+  /** Optional. When provided, each profile card shows an edit/delete
+   *  control that calls this with the profile id. */
+  onDelete?: (profileId: string) => void;
 }
 
 const AVATARS = ["🧒", "👧", "👦", "🧒🏽", "👧🏾", "👦🏼", "🐱", "🐶", "🦄", "🐻", "🐰", "🐸"];
 
-export function ProfileSelector({ profiles, onSelect, onCreate }: ProfileSelectorProps) {
+export function ProfileSelector({ profiles, onSelect, onCreate, onDelete }: ProfileSelectorProps) {
   const [showCreate, setShowCreate] = useState(false);
   const [name, setName] = useState("");
   const [age, setAge] = useState("4");
@@ -46,9 +49,16 @@ export function ProfileSelector({ profiles, onSelect, onCreate }: ProfileSelecto
       />
       <h2>Who&apos;s reading today?</h2>
 
+      {/* Selection-only screen. Tapping a card picks that kid. Profile
+          management (delete, edit age) lives on the dedicated Manage
+          Kids screen reachable from the library header dropdown. */}
       <div className="profile-grid">
         {profiles.map((p) => (
-          <div key={p.id} className="profile-card" onClick={() => onSelect(p)}>
+          <div
+            key={p.id}
+            className="profile-card"
+            onClick={() => onSelect(p)}
+          >
             <div className="profile-avatar">{p.avatar_emoji}</div>
             <div className="profile-name">{p.name}</div>
             {p.age && <div className="profile-age">Age {p.age}</div>}

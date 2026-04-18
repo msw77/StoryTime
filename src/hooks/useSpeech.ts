@@ -382,7 +382,9 @@ export function useSpeech(): SpeechControls {
 
   // AI voice settings
   const [aiVoice, setAiVoice] = useState<AIVoiceName>("nova");
-  const [aiSpeed, setAiSpeed] = useState(1.0);
+  // Default 1.10× — 1.0 played too slowly (especially for younger-age stories)
+  // but 1.15 felt a touch hurried. Users can drag the slider either way.
+  const [aiSpeed, setAiSpeed] = useState(1.10);
 
   // Browser voice settings
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
@@ -397,6 +399,16 @@ export function useSpeech(): SpeechControls {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
+
+  // Live-update playbackRate when aiSpeed changes mid-playback. Without
+  // this, the reader's in-page speed control wouldn't take effect until
+  // the NEXT page started — changing speed on the current page would feel
+  // broken. audio.playbackRate is safe to mutate while audio is playing.
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = aiSpeed;
+    }
+  }, [aiSpeed]);
   // Monotonic epoch counter. Every stop() AND every new speakAI() call
   // increments this. Each in-flight speakAI captures its own epoch at the
   // top of the function and checks `myEpoch === speechEpochRef.current`
