@@ -9,6 +9,7 @@ import { useWordMoments } from "@/hooks/useWordMoments";
 import { HighlightDebugOverlay } from "./HighlightDebugOverlay";
 import { enableDiagnostics } from "@/lib/highlightDiagnostics";
 import { VocabWordModal } from "./VocabWordModal";
+import { ComprehensionQuestionsScreen } from "./ComprehensionQuestionsScreen";
 import type { VocabWord } from "@/types/story";
 
 interface ReaderScreenProps {
@@ -32,6 +33,10 @@ interface ReaderScreenProps {
    *  selected (guest/dev-bypass mode) — in that case analytics writes
    *  are skipped entirely. */
   childProfileId?: string | null;
+  /** Parent preference: show Science-of-Reading comprehension questions
+   *  after each story (age 4+). Default true. When false the reader
+   *  jumps straight to the celebration/save/back-to-library flow. */
+  comprehensionEnabled?: boolean;
 }
 
 export function ReaderScreen({
@@ -42,6 +47,7 @@ export function ReaderScreen({
   onSave,
   effectsEnabled = true,
   childProfileId = null,
+  comprehensionEnabled = true,
 }: ReaderScreenProps) {
   // Word-highlight diagnostics (Phase 0). Opt-in via ?hl=1 in the URL so
   // it never costs anything in normal use but is one query-param away when
@@ -66,6 +72,17 @@ export function ReaderScreen({
   // taps a vocab-flagged word, we pause narration and open the modal;
   // dismiss resumes narration where it left off. See VocabWordModal.
   const [activeVocab, setActiveVocab] = useState<VocabWord | null>(null);
+
+  // Story Questions — tracks whether we still owe the child the
+  // comprehension screen. Set to true when the story finishes AND the
+  // story has questions AND the parent has the feature on. Cleared to
+  // false when the child answers the last question or taps Skip. Only
+  // used inside the `finished` branch below.
+  const hasComprehension =
+    comprehensionEnabled &&
+    Array.isArray(story.comprehensionQuestions) &&
+    story.comprehensionQuestions.length > 0;
+  const [comprehensionShown, setComprehensionShown] = useState(false);
   // Cozy mode: warm sepia dim + radial vignette + candle-glow highlight.
   // One-tap toggle in the reader header. Persists for the duration of
   // this reader session only (intentional — a parent might want it for
@@ -417,6 +434,23 @@ export function ReaderScreen({
   }
 
   if (finished) {
+    // Science-of-Reading Pillar 5: between last page and celebration,
+    // serve 2-3 warm comprehension questions if the story has them
+    // and the parent has the feature on. The child can skip at any
+    // point — skipping still saves them back to the celebration,
+    // which still offers Save-to-Library / Read Again / Back to
+    // Library exactly as before.
+    if (hasComprehension && !comprehensionShown) {
+      return (
+        <ComprehensionQuestionsScreen
+          questions={story.comprehensionQuestions!}
+          storyId={story.id}
+          childProfileId={childProfileId}
+          onTap={sfx.tap}
+          onComplete={() => setComprehensionShown(true)}
+        />
+      );
+    }
     return (
       <div className="reader">
         <div className="end-screen">

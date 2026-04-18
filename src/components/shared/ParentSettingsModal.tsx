@@ -22,6 +22,12 @@ interface ParentSettingsModalProps {
   onClose: () => void;
   effectsEnabled: boolean;
   setEffectsEnabled: (enabled: boolean) => void;
+  /** Parent toggle for the Science-of-Reading comprehension questions
+   *  that appear at the end of age-4+ stories. Default ON. Toggling
+   *  OFF lets parents bypass the teaching layer for wind-down or
+   *  bedtime reads. */
+  comprehensionEnabled: boolean;
+  setComprehensionEnabled: (enabled: boolean) => void;
 }
 
 export function ParentSettingsModal({
@@ -29,6 +35,8 @@ export function ParentSettingsModal({
   onClose,
   effectsEnabled,
   setEffectsEnabled,
+  comprehensionEnabled,
+  setComprehensionEnabled,
 }: ParentSettingsModalProps) {
   if (!show) return null;
 
@@ -72,6 +80,36 @@ export function ParentSettingsModal({
             title={effectsEnabled ? "Effects are on — tap to turn off" : "Effects are off — tap to turn on"}
           >
             <span>{effectsEnabled ? "ON" : "OFF"}</span>
+            <span className="autoplay-toggle-track" aria-hidden="true">
+              <span className="autoplay-toggle-knob" />
+            </span>
+          </button>
+        </div>
+
+        {/* Story Questions toggle — after each story, 2-3 warm
+            conversational questions check comprehension (Pillar 5 of
+            the Science of Reading). Off by default would be wrong —
+            most parents buying a read-along app want the teaching
+            layer — but easy to flip for wind-down reads. */}
+        <div className="settings-row" style={{ marginTop: 12 }}>
+          <div className="settings-row-info">
+            <div className="settings-row-title">Story questions</div>
+            <div className="settings-row-desc">
+              After each story (ages 4+), show a few warm questions
+              about what happened. No scores shown to the child —
+              results land in the parent dashboard. Turn off for quiet
+              wind-down reads.
+            </div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={comprehensionEnabled}
+            className={`autoplay-toggle ${comprehensionEnabled ? "on" : ""}`}
+            onClick={() => setComprehensionEnabled(!comprehensionEnabled)}
+            title={comprehensionEnabled ? "Questions are on — tap to turn off" : "Questions are off — tap to turn on"}
+          >
+            <span>{comprehensionEnabled ? "ON" : "OFF"}</span>
             <span className="autoplay-toggle-track" aria-hidden="true">
               <span className="autoplay-toggle-knob" />
             </span>

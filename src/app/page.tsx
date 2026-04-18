@@ -17,6 +17,7 @@ import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
 import { ManageKidsScreen } from "@/components/shared/ManageKidsScreen";
 import { useEffectsPref } from "@/hooks/useEffectsPref";
+import { useComprehensionPref } from "@/hooks/useComprehensionPref";
 import { loadDraft, clearDraft } from "@/lib/draftStory";
 import { generateStoryFlow, type GenerateStoryFormValues } from "@/lib/generateStory";
 
@@ -77,6 +78,7 @@ export default function Home() {
   const [showVoice, setShowVoice] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [effectsEnabled, setEffectsEnabled] = useEffectsPref();
+  const [comprehensionEnabled, setComprehensionEnabled] = useComprehensionPref();
   const [loaded, setLoaded] = useState(false);
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<ChildProfile | null>(null);
@@ -682,6 +684,7 @@ export default function Home() {
           onSave={cur.generated ? handleSaveStory : undefined}
           effectsEnabled={effectsEnabled}
           childProfileId={activeProfile?.id ?? null}
+          comprehensionEnabled={comprehensionEnabled}
         />
       )}
       {screen === "builder" && (
@@ -742,6 +745,8 @@ export default function Home() {
         onClose={() => setShowSettings(false)}
         effectsEnabled={effectsEnabled}
         setEffectsEnabled={setEffectsEnabled}
+        comprehensionEnabled={comprehensionEnabled}
+        setComprehensionEnabled={setComprehensionEnabled}
       />
       <VoiceModal
         show={showVoice}
