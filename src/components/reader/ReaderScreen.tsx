@@ -405,6 +405,53 @@ export function ReaderScreen({
     effectsEnabled,
   });
 
+  // Word Glow hooks — MUST be declared here, above ALL early returns
+  // below (showLeavePrompt, finished, etc.) so React sees the same
+  // hook count on every render. If they live further down, the
+  // finished=true path renders fewer hooks than the normal path and
+  // React throws "Rendered fewer hooks than expected". (Same reason
+  // effectsForWord lives up here — see the comment above.)
+  const vocabForWordAt = useMemo(() => {
+    const pageText = page?.[1] ?? "";
+    const words = pageText.split(/\s+/);
+    const list = story.fullPages?.[pageIdx]?.vocabWords ?? [];
+    if (list.length === 0) return (_i: number) => null as VocabWord | null;
+    const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9']/gi, "");
+    const byKey = new Map<string, VocabWord>();
+    for (const v of list) byKey.set(clean(v.word), v);
+    return (i: number): VocabWord | null => {
+      const w = words[i];
+      if (!w) return null;
+      return byKey.get(clean(w)) ?? null;
+    };
+  }, [story, pageIdx, page]);
+
+  // Word Glow tap handler — opens modal, pauses narrator, fires the
+  // analytics write. Fire-and-forget network call so flaky connections
+  // never break the tap UX. Skipped when no active profile (guest mode).
+  const openVocabModal = useCallback(
+    (vocab: VocabWord, wordIdx: number) => {
+      sfx.tap();
+      speech.pause();
+      setActiveVocab(vocab);
+
+      if (!childProfileId) return;
+      const cleanWord = vocab.word.toLowerCase().replace(/[^a-z0-9']/gi, "");
+      void fetch("/api/vocabulary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          childProfileId,
+          word: cleanWord,
+          storyId: story.id,
+          pageIdx,
+        }),
+      }).catch(() => { /* analytics should never break UX */ });
+      void wordIdx;
+    },
+    [sfx, speech, childProfileId, story.id, pageIdx],
+  );
+
   // "Save before leaving?" prompt
   if (showLeavePrompt) {
     return (
@@ -501,54 +548,6 @@ export function ReaderScreen({
   }
 
   const tw = page[1].split(/\s+/);
-
-  // Word Glow — build a lookup from "cleaned" display word to VocabWord
-  // for the CURRENT page. Display words may include punctuation (e.g.
-  // "canyon,", "canyon."); the vocab entry's word is clean. Match by
-  // stripping punctuation and lowercasing both sides. Note: if a word
-  // appears multiple times on a page, ALL instances become tappable to
-  // the same definition — that's the right behavior for a read-along.
-  const vocabForWordAt = useMemo(() => {
-    const list = story.fullPages?.[pageIdx]?.vocabWords ?? [];
-    if (list.length === 0) return (_i: number) => null as VocabWord | null;
-    const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9']/gi, "");
-    const byKey = new Map<string, VocabWord>();
-    for (const v of list) byKey.set(clean(v.word), v);
-    return (i: number): VocabWord | null => {
-      const w = tw[i];
-      if (!w) return null;
-      return byKey.get(clean(w)) ?? null;
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [story, pageIdx, tw]);
-
-  // Word Glow tap handler — opens modal, pauses narrator, fires the
-  // analytics write. Analytics is fire-and-forget (errors swallowed)
-  // so a flaky network doesn't break the core feature. Skipped when
-  // no active profile exists (guest/dev-bypass mode).
-  const openVocabModal = useCallback(
-    (vocab: VocabWord, wordIdx: number) => {
-      sfx.tap();
-      speech.pause();
-      setActiveVocab(vocab);
-
-      if (!childProfileId) return;
-      const cleanWord = vocab.word.toLowerCase().replace(/[^a-z0-9']/gi, "");
-      // Fire-and-forget. No await, no UI-blocking.
-      void fetch("/api/vocabulary", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          childProfileId,
-          word: cleanWord,
-          storyId: story.id,
-          pageIdx,
-        }),
-      }).catch(() => { /* ignore — analytics should never break UX */ });
-      void wordIdx;
-    },
-    [sfx, speech, childProfileId, story.id, pageIdx],
-  );
 
   // Sound It Out was removed 2026-04-18 after parent testing found the
   // TTS-per-syllable and tap-any-word behaviors janky and confusing.

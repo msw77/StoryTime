@@ -3796,6 +3796,72 @@
           "steam hissing",
           "birds chirping",
           "leaves rustling"
+        ],
+        "vocabWords": [
+          {
+            "word": "emerald",
+            "emoji": "💎",
+            "definition_2_4": null,
+            "definition_4_7": "A bright green color like a special green stone.",
+            "definition_7_10": "A brilliant green color that sparkles like the precious gemstone found deep in the earth.",
+            "exampleSentence": "The emerald grass looked beautiful after the spring rain.",
+            "pronunciation": "EM-er-uld"
+          },
+          {
+            "word": "weathered",
+            "emoji": "🌪️",
+            "definition_2_4": null,
+            "definition_4_7": "Something that looks old from being outside in rain and sun.",
+            "definition_7_10": "Worn and changed by wind, rain, and sun over many years of being outdoors.",
+            "exampleSentence": "The weathered fence needed painting after the long winter.",
+            "pronunciation": "WETH-erd"
+          },
+          {
+            "word": "discovered",
+            "emoji": "🔍",
+            "definition_2_4": null,
+            "definition_4_7": "Found something new or hidden that you didn't know was there.",
+            "definition_7_10": "Found something interesting or important that was hidden or unknown before you saw it.",
+            "exampleSentence": "Maya discovered a pretty seashell buried in the sand.",
+            "pronunciation": "dis-KUV-erd"
+          },
+          {
+            "word": "twisting",
+            "emoji": "🌿",
+            "definition_2_4": null,
+            "definition_4_7": "Turning and curving around something in a spiral shape.",
+            "definition_7_10": "Winding around and around something in curves and spirals like a snake or ribbon.",
+            "exampleSentence": "The twisting road went up and down through the mountains.",
+            "pronunciation": "TWIST-ing"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "emerald",
+            "syllables": [
+              "em",
+              "er",
+              "uld"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "discovered",
+            "syllables": [
+              "dis",
+              "kuv",
+              "erd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "weathered",
+            "syllables": [
+              "weth",
+              "erd"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -3807,6 +3873,62 @@
           "monkey chattering",
           "parrot squawking",
           "elephant trumpeting"
+        ],
+        "vocabWords": [
+          {
+            "word": "chattering",
+            "emoji": "🐒",
+            "definition_2_4": null,
+            "definition_4_7": "Making lots of quick, excited talking sounds all at once.",
+            "definition_7_10": "Talking rapidly and excitedly, making many quick sounds like when you're really happy or nervous.",
+            "exampleSentence": "The children were chattering about their fun day at the park.",
+            "pronunciation": "CHAT-er-ing"
+          },
+          {
+            "word": "squawked",
+            "emoji": "🦜",
+            "definition_2_4": null,
+            "definition_4_7": "Made a loud, sharp sound like an angry bird.",
+            "definition_7_10": "Made a harsh, loud cry like a bird does when it's excited or trying to get attention.",
+            "exampleSentence": "The chicken squawked when the dog came too close to her nest.",
+            "pronunciation": "SKWAWKT"
+          },
+          {
+            "word": "trumpeted",
+            "emoji": "🐘",
+            "definition_2_4": null,
+            "definition_4_7": "Made a loud sound through the nose like an elephant does.",
+            "definition_7_10": "Made a deep, musical sound through the trunk, like an elephant's special way of talking.",
+            "exampleSentence": "The elephant trumpeted loudly to call her baby back to her side.",
+            "pronunciation": "TRUM-pet-ed"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "chattering",
+            "syllables": [
+              "chat",
+              "er",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "squawked",
+            "syllables": [
+              "skwawkt"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "trumpeted",
+            "syllables": [
+              "trum",
+              "pet",
+              "ed"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -3818,6 +3940,72 @@
           "steam puffing",
           "metal creaking",
           "encouraging animal sounds"
+        ],
+        "vocabWords": [
+          {
+            "word": "conductor's",
+            "emoji": "🚂",
+            "definition_2_4": null,
+            "definition_4_7": "The special seat where the person who drives the train sits.",
+            "definition_7_10": "The place where the train driver sits to control the engine and guide passengers safely.",
+            "exampleSentence": "The conductor's hat had a shiny badge on the front.",
+            "pronunciation": "kun-DUK-terz"
+          },
+          {
+            "word": "controls",
+            "emoji": "🎛️",
+            "definition_2_4": null,
+            "definition_4_7": "Buttons and levers that make machines work when you push them.",
+            "definition_7_10": "The special buttons, switches, and levers used to make a machine do what you want.",
+            "exampleSentence": "The airplane pilot used the controls to fly safely through the clouds.",
+            "pronunciation": "kun-TROLZ"
+          },
+          {
+            "word": "confusing",
+            "emoji": "😕",
+            "definition_2_4": null,
+            "definition_4_7": "Hard to understand because there are too many different things.",
+            "definition_7_10": "Difficult to figure out or understand because it seems mixed up or complicated.",
+            "exampleSentence": "The math problem was confusing until the teacher explained it step by step.",
+            "pronunciation": "kun-FYOOZ-ing"
+          },
+          {
+            "word": "nervously",
+            "emoji": "😰",
+            "definition_2_4": null,
+            "definition_4_7": "Feeling worried or scared about doing something new or hard.",
+            "definition_7_10": "In a way that shows you feel anxious or uncertain about what might happen next.",
+            "exampleSentence": "She nervously raised her hand to ask the teacher a question.",
+            "pronunciation": "NER-vus-lee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "conductor's",
+            "syllables": [
+              "kun",
+              "duk",
+              "terz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "controls",
+            "syllables": [
+              "kun",
+              "trolz"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "nervously",
+            "syllables": [
+              "ner",
+              "vus",
+              "lee"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -3829,6 +4017,68 @@
           "train whistle",
           "wheels on tracks",
           "happy animal chatter"
+        ],
+        "vocabWords": [
+          {
+            "word": "lurched",
+            "emoji": "🚂",
+            "definition_2_4": null,
+            "definition_4_7": "Moved forward suddenly with a big jerk or bump.",
+            "definition_7_10": "Started moving with a sudden, jerky motion that makes you feel like you're being pushed.",
+            "exampleSentence": "The bus lurched forward when the driver pressed the gas pedal too hard.",
+            "pronunciation": "LURCHD"
+          },
+          {
+            "word": "striped",
+            "emoji": "🦓",
+            "definition_2_4": null,
+            "definition_4_7": "Having lines of different colors going across something.",
+            "definition_7_10": "Marked with bands or lines of different colors that go across in a pattern.",
+            "exampleSentence": "She wore a striped shirt with red and white lines.",
+            "pronunciation": "STRYPD"
+          },
+          {
+            "word": "spotted",
+            "emoji": "🐆",
+            "definition_2_4": null,
+            "definition_4_7": "Having round marks or dots of different colors on something.",
+            "definition_7_10": "Covered with small round marks or patches that make a dotted pattern on the surface.",
+            "exampleSentence": "The spotted dog had black dots all over his white fur.",
+            "pronunciation": "SPOT-ed"
+          },
+          {
+            "word": "chatter",
+            "emoji": "💬",
+            "definition_2_4": null,
+            "definition_4_7": "Quick, friendly talking between lots of people at once.",
+            "definition_7_10": "Rapid, excited conversation where many voices mix together in a happy, busy sound.",
+            "exampleSentence": "The birthday party was full of happy chatter and laughter.",
+            "pronunciation": "CHAT-er"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "lurched",
+            "syllables": [
+              "lurchd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "striped",
+            "syllables": [
+              "strypd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "chatter",
+            "syllables": [
+              "chat",
+              "er"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -3840,6 +4090,73 @@
           "arguing voices",
           "train rumbling",
           "frustrated animal noises"
+        ],
+        "vocabWords": [
+          {
+            "word": "brewing",
+            "emoji": "☁️",
+            "definition_2_4": null,
+            "definition_4_7": "Starting to happen or build up like a storm coming.",
+            "definition_7_10": "Beginning to develop or form, like when trouble or a storm is slowly starting to happen.",
+            "exampleSentence": "Dark clouds were brewing in the sky before the thunderstorm.",
+            "pronunciation": "BROO-ing"
+          },
+          {
+            "word": "crowded",
+            "emoji": "👥",
+            "definition_2_4": null,
+            "definition_4_7": "Full of too many people or things in a small space.",
+            "definition_7_10": "Packed with so many people or things that there's barely room to move around comfortably.",
+            "exampleSentence": "The crowded elevator was full of people going to work.",
+            "pronunciation": "KROWD-ed"
+          },
+          {
+            "word": "accidentally",
+            "emoji": "🤭",
+            "definition_2_4": null,
+            "definition_4_7": "Doing something by mistake without meaning to do it.",
+            "definition_7_10": "Happening by chance or mistake, not on purpose or because you planned to do it.",
+            "exampleSentence": "He accidentally dropped his sandwich when he tripped on the rug.",
+            "pronunciation": "ak-si-DEN-tal-ee"
+          },
+          {
+            "word": "grumpy",
+            "emoji": "😠",
+            "definition_2_4": null,
+            "definition_4_7": "Feeling angry or unhappy about something that bothered you.",
+            "definition_7_10": "In a bad mood where you feel irritated and don't want to be friendly or patient.",
+            "exampleSentence": "Dad was grumpy in the morning until he had his coffee.",
+            "pronunciation": "GRUM-pee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "brewing",
+            "syllables": [
+              "broo",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "accidentally",
+            "syllables": [
+              "ak",
+              "si",
+              "den",
+              "tal",
+              "ee"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "grumpy",
+            "syllables": [
+              "grum",
+              "pee"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -3851,6 +4168,61 @@
           "babbling brook",
           "gentle apologies",
           "peaceful munching"
+        ],
+        "vocabWords": [
+          {
+            "word": "babbling",
+            "emoji": "🏞️",
+            "definition_2_4": null,
+            "definition_4_7": "Making soft, happy sounds like water flowing over rocks.",
+            "definition_7_10": "Making gentle, continuous sounds like a stream of water flowing and gurgling over stones.",
+            "exampleSentence": "The babbling creek made peaceful sounds as we walked beside it.",
+            "pronunciation": "BAB-ling"
+          },
+          {
+            "word": "announced",
+            "emoji": "📢",
+            "definition_2_4": null,
+            "definition_4_7": "Said something important so everyone could hear and know about it.",
+            "definition_7_10": "Made an official statement or declaration so that everyone would know important information.",
+            "exampleSentence": "The teacher announced that tomorrow would be a snow day.",
+            "pronunciation": "uh-NOUNSD"
+          },
+          {
+            "word": "gentle",
+            "emoji": "🤗",
+            "definition_2_4": null,
+            "definition_4_7": "Soft and kind, not rough or mean to others.",
+            "definition_7_10": "Tender and careful in a way that shows kindness and doesn't hurt anyone's feelings.",
+            "exampleSentence": "The gentle nurse spoke softly while putting on the bandage.",
+            "pronunciation": "JEN-tul"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "babbling",
+            "syllables": [
+              "bab",
+              "ling"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "announced",
+            "syllables": [
+              "uh",
+              "nounsd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "gentle",
+            "syllables": [
+              "jen",
+              "tul"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       },
       {
@@ -3862,6 +4234,64 @@
           "gentle talking",
           "happy sighs",
           "contented animal sounds"
+        ],
+        "vocabWords": [
+          {
+            "word": "harmony",
+            "emoji": "🎵",
+            "definition_2_4": null,
+            "definition_4_7": "When different sounds blend together to make beautiful music.",
+            "definition_7_10": "When different voices or sounds work together perfectly to create something beautiful and peaceful.",
+            "exampleSentence": "The choir sang in harmony during the school concert.",
+            "pronunciation": "HAR-muh-nee"
+          },
+          {
+            "word": "tropical",
+            "emoji": "🌺",
+            "definition_2_4": null,
+            "definition_4_7": "From hot, sunny places where palm trees and bright flowers grow.",
+            "definition_7_10": "Coming from warm, humid places near the equator where exotic plants and colorful flowers bloom.",
+            "exampleSentence": "We ate tropical fruit like pineapples and mangoes on our vacation.",
+            "pronunciation": "TROP-i-kul"
+          },
+          {
+            "word": "peacefully",
+            "emoji": "😌",
+            "definition_2_4": null,
+            "definition_4_7": "In a calm, quiet way without any fighting or trouble.",
+            "definition_7_10": "In a tranquil manner where everything feels safe, calm, and free from worry or conflict.",
+            "exampleSentence": "The cat slept peacefully in the warm sunshine by the window.",
+            "pronunciation": "PEES-ful-ee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "harmony",
+            "syllables": [
+              "har",
+              "muh",
+              "nee"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "tropical",
+            "syllables": [
+              "trop",
+              "i",
+              "kul"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "peacefully",
+            "syllables": [
+              "pees",
+              "ful",
+              "ee"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -3873,6 +4303,61 @@
           "harmonious singing",
           "train wheels",
           "gentle laughter"
+        ],
+        "vocabWords": [
+          {
+            "word": "slowing",
+            "emoji": "🐌",
+            "definition_2_4": null,
+            "definition_4_7": "Going slower and slower until you almost stop moving.",
+            "definition_7_10": "Gradually reducing speed and moving more slowly until you nearly come to a complete stop.",
+            "exampleSentence": "The car was slowing down as it approached the red light.",
+            "pronunciation": "SLOW-ing"
+          },
+          {
+            "word": "puffing",
+            "emoji": "💨",
+            "definition_2_4": null,
+            "definition_4_7": "Blowing out air or smoke in short, quick bursts.",
+            "definition_7_10": "Sending out short bursts of air or steam, like when you're breathing hard after running.",
+            "exampleSentence": "The dragon was puffing smoke from its nose in the fairy tale.",
+            "pronunciation": "PUF-ing"
+          },
+          {
+            "word": "groaning",
+            "emoji": "😣",
+            "definition_2_4": null,
+            "definition_4_7": "Making deep, unhappy sounds like when something hurts or is broken.",
+            "definition_7_10": "Making low, strained sounds that show pain, effort, or that something is struggling to work.",
+            "exampleSentence": "The old door was groaning as we tried to push it open.",
+            "pronunciation": "GROWN-ing"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "slowing",
+            "syllables": [
+              "slow",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "puffing",
+            "syllables": [
+              "puf",
+              "ing"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "groaning",
+            "syllables": [
+              "grown",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -3884,6 +4369,65 @@
           "engine straining",
           "worried puffing",
           "concerned animal voices"
+        ],
+        "vocabWords": [
+          {
+            "word": "immediately",
+            "emoji": "⚡",
+            "definition_2_4": null,
+            "definition_4_7": "Right away without waiting or thinking about it first.",
+            "definition_7_10": "At once, without any delay or hesitation, happening as soon as something else occurs.",
+            "exampleSentence": "When the fire alarm rang, everyone immediately left the building.",
+            "pronunciation": "ih-MEE-dee-ut-lee"
+          },
+          {
+            "word": "powerful",
+            "emoji": "💪",
+            "definition_2_4": null,
+            "definition_4_7": "Very strong and able to do big, hard things.",
+            "definition_7_10": "Having great strength and force, able to accomplish difficult tasks that others cannot do.",
+            "exampleSentence": "The powerful wind blew the leaves all around the yard.",
+            "pronunciation": "POW-er-ful"
+          },
+          {
+            "word": "clearing",
+            "emoji": "🧹",
+            "definition_2_4": null,
+            "definition_4_7": "Moving things out of the way to make a path clean.",
+            "definition_7_10": "Removing obstacles or unwanted things from a space to make it open and passable.",
+            "exampleSentence": "Mom was clearing the toys from the hallway so no one would trip.",
+            "pronunciation": "KLEER-ing"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "immediately",
+            "syllables": [
+              "ih",
+              "mee",
+              "dee",
+              "ut",
+              "lee"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "powerful",
+            "syllables": [
+              "pow",
+              "er",
+              "ful"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "clearing",
+            "syllables": [
+              "kleer",
+              "ing"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -3895,6 +4439,63 @@
           "determined grunting",
           "teamwork calls",
           "rocks moving"
+        ],
+        "vocabWords": [
+          {
+            "word": "celebration",
+            "emoji": "🎉",
+            "definition_2_4": null,
+            "definition_4_7": "A happy party where people come together for something special.",
+            "definition_7_10": "A joyful gathering where people come together to honor or enjoy something important and meaningful.",
+            "exampleSentence": "The whole town came to the celebration for the new library opening.",
+            "pronunciation": "sel-uh-BRAY-shun"
+          },
+          {
+            "word": "cheered",
+            "emoji": "📣",
+            "definition_2_4": null,
+            "definition_4_7": "Shouted happy sounds to show they were excited and proud.",
+            "definition_7_10": "Made loud, enthusiastic sounds of joy and approval to show support and happiness for someone.",
+            "exampleSentence": "The crowd cheered when their team scored the winning goal.",
+            "pronunciation": "CHEERD"
+          },
+          {
+            "word": "gratitude",
+            "emoji": "🙏",
+            "definition_2_4": null,
+            "definition_4_7": "The happy feeling you get when someone does something nice for you.",
+            "definition_7_10": "A warm feeling of thankfulness and appreciation for the kind things others have done for you.",
+            "exampleSentence": "She showed her gratitude by writing a thank-you note to her teacher.",
+            "pronunciation": "GRAT-i-tood"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "celebration",
+            "syllables": [
+              "sel",
+              "uh",
+              "bray",
+              "shun"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "cheered",
+            "syllables": [
+              "cheerd"
+            ],
+            "phonicsLevel": "intermediate"
+          },
+          {
+            "word": "gratitude",
+            "syllables": [
+              "grat",
+              "i",
+              "tood"
+            ],
+            "phonicsLevel": "hard"
+          }
         ]
       },
       {
@@ -3906,6 +4507,73 @@
           "loud cheering",
           "celebration calls",
           "joyful trumpeting"
+        ],
+        "vocabWords": [
+          {
+            "word": "golden",
+            "emoji": "🌅",
+            "definition_2_4": null,
+            "definition_4_7": "The warm, bright yellow color of the sun or gold.",
+            "definition_7_10": "Having the rich, warm color of gold that glows like sunshine or precious metal.",
+            "exampleSentence": "The golden leaves fell gently from the trees in autumn.",
+            "pronunciation": "GOLD-en"
+          },
+          {
+            "word": "delicious",
+            "emoji": "😋",
+            "definition_2_4": null,
+            "definition_4_7": "Tasting really, really good and making you want to eat more.",
+            "definition_7_10": "Having a wonderful flavor that makes your mouth happy and satisfies your taste buds perfectly.",
+            "exampleSentence": "The delicious cookies smelled amazing when they came out of the oven.",
+            "pronunciation": "dih-LISH-us"
+          },
+          {
+            "word": "strangers",
+            "emoji": "👋",
+            "definition_2_4": null,
+            "definition_4_7": "People you don't know yet but might become friends with.",
+            "definition_7_10": "People who are unfamiliar to you because you haven't met them or spent time together before.",
+            "exampleSentence": "The strangers at the park became friends after playing together all day.",
+            "pronunciation": "STRAY-njerz"
+          },
+          {
+            "word": "wonderfully",
+            "emoji": "✨",
+            "definition_2_4": null,
+            "definition_4_7": "In a really amazing and magical way that makes you feel great.",
+            "definition_7_10": "In an exceptionally beautiful or marvelous way that fills you with joy and amazement.",
+            "exampleSentence": "The birthday surprise worked out wonderfully and everyone had fun.",
+            "pronunciation": "WUN-der-ful-ee"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "golden",
+            "syllables": [
+              "gold",
+              "en"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "delicious",
+            "syllables": [
+              "dih",
+              "lish",
+              "us"
+            ],
+            "phonicsLevel": "hard"
+          },
+          {
+            "word": "wonderfully",
+            "syllables": [
+              "wun",
+              "der",
+              "ful",
+              "ee"
+            ],
+            "phonicsLevel": "intermediate"
+          }
         ]
       },
       {
@@ -3917,9 +4585,147 @@
           "happy music",
           "joyful laughter",
           "evening bird songs"
+        ],
+        "vocabWords": [
+          {
+            "word": "sunset",
+            "emoji": "🌅",
+            "definition_2_4": null,
+            "definition_4_7": "When the sun goes down and the sky turns pretty colors.",
+            "definition_7_10": "The beautiful time of day when the sun disappears and paints the sky with gorgeous colors.",
+            "exampleSentence": "We watched the sunset from the beach as the waves crashed nearby.",
+            "pronunciation": "SUN-set"
+          },
+          {
+            "word": "laughter",
+            "emoji": "😄",
+            "definition_2_4": null,
+            "definition_4_7": "The happy sounds people make when something is funny or fun.",
+            "definition_7_10": "The joyful sounds of people giggling and laughing when they're having a wonderful time together.",
+            "exampleSentence": "The playground was filled with children's laughter during recess.",
+            "pronunciation": "LAF-ter"
+          },
+          {
+            "word": "tropical",
+            "emoji": "🥭",
+            "definition_2_4": null,
+            "definition_4_7": "From hot, sunny places where special sweet fruits grow.",
+            "definition_7_10": "Coming from warm, exotic places where unusual and flavorful fruits grow naturally in the heat.",
+            "exampleSentence": "The tropical smoothie had mango, pineapple, and coconut in it.",
+            "pronunciation": "TROP-i-kul"
+          }
+        ],
+        "readAloudWords": [
+          {
+            "word": "sunset",
+            "syllables": [
+              "sun",
+              "set"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "laughter",
+            "syllables": [
+              "laf",
+              "ter"
+            ],
+            "phonicsLevel": "easy"
+          },
+          {
+            "word": "dancing",
+            "syllables": [
+              "dan",
+              "sing"
+            ],
+            "phonicsLevel": "easy"
+          }
         ]
       }
-    ]
+    ],
+    "comprehensionQuestions": [
+      {
+        "type": "recall",
+        "question": "What did Ava find covered in vines and flowers in the jungle?",
+        "options": [
+          {
+            "text": "An old train",
+            "emoji": "🚂",
+            "correct": true
+          },
+          {
+            "text": "A treasure chest",
+            "emoji": "💰",
+            "correct": false
+          },
+          {
+            "text": "A magical castle",
+            "emoji": "🏰",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "inference",
+        "question": "Why do you think the animals stopped arguing after Ava's kindness break?",
+        "options": [
+          {
+            "text": "They learned how to be kind to each other",
+            "emoji": "❤️",
+            "correct": true
+          },
+          {
+            "text": "They got tired and fell asleep",
+            "emoji": "😴",
+            "correct": false
+          },
+          {
+            "text": "They were scared of Ava",
+            "emoji": "😨",
+            "correct": false
+          }
+        ]
+      },
+      {
+        "type": "connection",
+        "question": "How do you feel when someone is kind to you, just like Ava was kind to the animals?",
+        "options": [
+          {
+            "text": "Happy and cared for",
+            "emoji": "😊",
+            "correct": true
+          },
+          {
+            "text": "Grateful and warm inside",
+            "emoji": "🤗",
+            "correct": true
+          },
+          {
+            "text": "Ready to be kind to others too",
+            "emoji": "💕",
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "predictionPause": {
+      "atPageIdx": 8,
+      "question": "Oh no! The train is struggling to get up the hill. What do you think will happen next?",
+      "options": [
+        {
+          "text": "The animals will work together to help push the train",
+          "emoji": "🤝"
+        },
+        {
+          "text": "They'll have to get off and walk the rest of the way",
+          "emoji": "🚶"
+        },
+        {
+          "text": "Another train will come to rescue them",
+          "emoji": "🚂"
+        }
+      ]
+    }
   },
   "a7": {
     "id": "a7",
