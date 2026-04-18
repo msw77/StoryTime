@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { UserButton } from "@/components/shared/ClerkSafe";
-import { Story } from "@/types/story";
+import { Story, ChildProfile } from "@/types/story";
 import { GENRES, AGE_GROUPS } from "@/data/genres";
 import { PaywallCard } from "@/components/shared/PaywallCard";
 
@@ -18,13 +18,6 @@ function formatTimeAgo(dateStr: string): string {
   if (days === 1) return "Yesterday";
   if (days < 7) return `${days}d ago`;
   return new Date(dateStr).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
-
-interface ChildProfile {
-  id: string;
-  name: string;
-  age: number | null;
-  avatar_emoji: string;
 }
 
 interface ReadingHistoryEntry {

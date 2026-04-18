@@ -10,11 +10,9 @@ import { createServiceClient } from "@/lib/supabase";
 // Security: gated by an env allowlist — only Clerk users whose primary
 // email matches ADMIN_EMAILS (comma-separated) can hit this endpoint.
 // In dev-auth-bypass mode we allow the call through so the dashboard
-// renders in the Claude Code preview browser.
+// renders in the Claude Code preview browser. See src/lib/devBypass.ts.
 
-const DEV_AUTH_BYPASS =
-  process.env.NODE_ENV === "development" &&
-  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
 
 async function requireAdmin(): Promise<{ ok: true } | { ok: false; response: NextResponse }> {
   if (DEV_AUTH_BYPASS) return { ok: true };

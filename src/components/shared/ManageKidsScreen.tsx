@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-interface ChildProfile {
-  id: string;
-  name: string;
-  age: number | null;
-  avatar_emoji: string;
-}
+import type { ChildProfile } from "@/types/story";
 
 interface ManageKidsScreenProps {
   profiles: ChildProfile[];

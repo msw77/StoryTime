@@ -1,15 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
 
 // Dev preview auth bypass — when NEXT_PUBLIC_DEV_AUTH_BYPASS=1 is set
 // in dev, middleware is a no-op: no Clerk calls, no auth protection.
 // Lets the Claude Code preview browser load localhost pages without
 // any redirect to clerk.accounts.dev (which the preview tool blocks).
-// NODE_ENV gate ensures prod builds never take this path even if the
-// env var somehow leaks into deployment.
-const DEV_AUTH_BYPASS =
-  process.env.NODE_ENV === "development" &&
-  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+// See src/lib/devBypass.ts for the full guard chain.
 
 // Public routes that don't require authentication
 const isPublicRoute = createRouteMatcher([

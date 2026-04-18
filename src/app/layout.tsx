@@ -42,23 +42,28 @@ export const metadata: Metadata = {
     "Personalized AI-generated stories with narration, word highlighting, and illustrations for kids ages 2-10.",
 };
 
-// Dev preview auth bypass. When NEXT_PUBLIC_DEV_AUTH_BYPASS=1 is set in
-// dev, we skip ClerkProvider entirely — no Clerk client script loads,
-// no network call to clerk.accounts.dev — so the Claude Code preview
-// browser (which blocks all non-localhost URLs) can render the page.
-// Gated by NODE_ENV to make absolutely sure this never ships to prod.
-const DEV_AUTH_BYPASS =
-  process.env.NODE_ENV === "development" &&
-  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+// Dev preview auth bypass — see src/lib/devBypass.ts. When active we
+// skip ClerkProvider entirely so the Claude Code preview browser
+// (localhost-only) can render the page without Clerk's external
+// redirect.
+import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // ErrorBoundary wraps the app content so any render crash below it
+  // shows a calm fallback instead of unmounting the whole tree. It
+  // sits INSIDE <body> and OUTSIDE ClerkProvider so a Clerk error
+  // (e.g. missing env var at runtime) also gets caught. See
+  // src/components/shared/ErrorBoundary.tsx for rationale.
   const html = (
     <html lang="en" className={`${inter.variable} ${fraunces.variable} ${caveat.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </body>
     </html>
   );
   return DEV_AUTH_BYPASS ? html : <ClerkProvider>{html}</ClerkProvider>;

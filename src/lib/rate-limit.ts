@@ -77,10 +77,35 @@ export const limiters = hasRedis
         analytics: true,
         prefix: "rl:save-story",
       }),
+      // Analytics-write endpoints (no paid AI cost per call, but they
+      // hit Supabase on every invocation). Caps are intentionally loose
+      // vs the AI limiters — a kid tapping vocab words during active
+      // reading can realistically hit 50–100 in a single story. The
+      // purpose is abuse prevention and DB-cost ceiling, not throttling
+      // real use. A scripted abuser would burn through these caps
+      // before doing meaningful damage.
+      vocabulary: new Ratelimit({
+        redis: redis!,
+        limiter: Ratelimit.slidingWindow(2000, "1 h"),
+        analytics: true,
+        prefix: "rl:vocabulary",
+      }),
+      comprehension: new Ratelimit({
+        redis: redis!,
+        limiter: Ratelimit.slidingWindow(200, "1 h"),
+        analytics: true,
+        prefix: "rl:comprehension",
+      }),
     }
   : null;
 
-export type LimiterName = "generateStory" | "generateImages" | "tts" | "saveStory";
+export type LimiterName =
+  | "generateStory"
+  | "generateImages"
+  | "tts"
+  | "saveStory"
+  | "vocabulary"
+  | "comprehension";
 
 /**
  * Check a limiter for the given user. Returns { ok: true } to proceed, or

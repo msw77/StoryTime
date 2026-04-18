@@ -222,6 +222,24 @@ export interface Story {
   predictionPause?: PredictionPause;
 }
 
+/**
+ * A child profile — the "who is reading right now" entity. Parents
+ * create one per kid from Manage Kids. Persisted in Supabase
+ * `child_profiles` under the owner's Clerk user id. The same shape is
+ * returned by GET /api/profiles and consumed by ProfileSelector,
+ * LibraryScreen, ReaderScreen (for analytics attribution), and the
+ * Parent Dashboard.
+ *
+ * Previously this interface was re-declared in 5+ files; consolidating
+ * here to avoid schema drift.
+ */
+export interface ChildProfile {
+  id: string;
+  name: string;
+  age: number | null;
+  avatar_emoji: string;
+}
+
 export interface Genre {
   id: string;
   label: string;

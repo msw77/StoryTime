@@ -56,3 +56,12 @@ CREATE POLICY "vocab_owner_update" ON vocabulary_encounters
       SELECT id FROM child_profiles WHERE user_id = auth.uid()
     )
   );
+
+-- DELETE policy — COPPA right-to-delete companion. Parent-session
+-- Supabase client can only delete their own kid's vocab rows.
+CREATE POLICY "vocab_owner_delete" ON vocabulary_encounters
+  FOR DELETE USING (
+    child_profile_id IN (
+      SELECT id FROM child_profiles WHERE user_id = auth.uid()
+    )
+  );

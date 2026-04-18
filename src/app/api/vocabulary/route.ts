@@ -1,9 +1,12 @@
 import { createServiceClient } from "@/lib/supabase";
 import {
   parseJsonBody,
+  requireClerkUser,
   requireDbUserId,
   validateChildProfileOwnership,
 } from "@/lib/api-helpers";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { logApiUsage } from "@/lib/costTracking";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -20,16 +23,31 @@ import { z } from "zod";
 // via `times_looked_up === 1 ? new : repeat` on the client side if
 // ever needed for UI celebration.
 const logLookupSchema = z.object({
+  // Strict UUID — a malformed string like "abc" would otherwise reach the
+  // DB. Zod's `.uuid()` gives us a 400 before any query.
   childProfileId: z.string().uuid(),
   // Normalized lowercase word (stripped of punctuation). Client does this
-  // before posting so the canonical form in the DB is consistent.
+  // before posting so the canonical form in the DB is consistent. Cap at
+  // 64 chars so an attacker can't stuff the table with 10KB "words".
   word: z.string().min(1).max(64),
-  storyId: z.string().optional(),
-  pageIdx: z.number().int().min(0).optional(),
+  // Accept story ids up to a reasonable cap. No DB-side constraint so we
+  // enforce bounds here.
+  storyId: z.string().max(128).optional(),
+  pageIdx: z.number().int().min(0).max(500).optional(),
 });
 
 export async function POST(req: Request) {
   try {
+    // Two-stage auth: Clerk first (for rate-limit keying on clerk id),
+    // then resolve DB user id. requireDbUserId also calls requireClerkUser
+    // internally — we keep the separate call here so the limiter keys on
+    // the same clerk id the other endpoints use, not the db uuid.
+    const clerk = await requireClerkUser();
+    if (!clerk.ok) return clerk.response;
+
+    const rl = await enforceRateLimit("vocabulary", clerk.value);
+    if (!rl.ok) return rl.response;
+
     const userResult = await requireDbUserId();
     if (!userResult.ok) return userResult.response;
     const dbUserId = userResult.value;

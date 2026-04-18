@@ -33,14 +33,10 @@ function fail(message: string, status: number): HelperFailure {
   return { ok: false, response: NextResponse.json({ error: message }, { status }) };
 }
 
-// Dev preview auth bypass (same flag as middleware.ts + page.tsx). In
-// bypass mode API routes skip Clerk and operate against the FIRST user
-// row in the Supabase `users` table — which for a single-dev account is
-// "you" and pulls through all your real profiles, stories, history.
-// Gated by NODE_ENV to make certain this path can't ship to prod.
-const DEV_AUTH_BYPASS =
-  process.env.NODE_ENV === "development" &&
-  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+// Dev preview auth bypass — see src/lib/devBypass.ts for the full
+// guard chain. In bypass mode API routes skip Clerk and operate
+// against the FIRST user row in the Supabase `users` table.
+import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
 
 // Cache the looked-up bypass user id so we don't hit Supabase on every
 // API call during a dev session.

@@ -1,9 +1,11 @@
 import { createServiceClient } from "@/lib/supabase";
 import {
   parseJsonBody,
+  requireClerkUser,
   requireDbUserId,
   validateChildProfileOwnership,
 } from "@/lib/api-helpers";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -15,16 +17,23 @@ import { z } from "zod";
 // The child never sees the correct/incorrect flag surface as a score.
 // It's logged purely for the parent dashboard.
 const logAnswerSchema = z.object({
+  // Strict UUID shape check before we touch the DB.
   childProfileId: z.string().uuid(),
-  storyId: z.string().min(1),
-  questionIdx: z.number().int().min(0),
+  storyId: z.string().min(1).max(128),
+  questionIdx: z.number().int().min(0).max(50),
   questionType: z.enum(["recall", "inference", "connection"]),
-  chosenOptionIdx: z.number().int().min(0),
+  chosenOptionIdx: z.number().int().min(0).max(10),
   correct: z.boolean(),
 });
 
 export async function POST(req: Request) {
   try {
+    const clerk = await requireClerkUser();
+    if (!clerk.ok) return clerk.response;
+
+    const rl = await enforceRateLimit("comprehension", clerk.value);
+    if (!rl.ok) return rl.response;
+
     const userResult = await requireDbUserId();
     if (!userResult.ok) return userResult.response;
     const dbUserId = userResult.value;

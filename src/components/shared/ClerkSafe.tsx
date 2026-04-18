@@ -5,17 +5,14 @@ import {
   UserButton as RealUserButton,
   SignInButton as RealSignInButton,
 } from "@clerk/nextjs";
+import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
 
 // ── Clerk-safe wrappers ────────────────────────────────────────────────
 // In dev preview auth-bypass mode (NEXT_PUBLIC_DEV_AUTH_BYPASS=1), the
 // app renders WITHOUT a <ClerkProvider> in the tree — see layout.tsx.
 // The real Clerk components throw when they can't find their provider
 // context, so in bypass mode we substitute a no-op placeholder. In
-// production (and normal dev), these just forward straight through to
-// Clerk.
-const DEV_AUTH_BYPASS =
-  process.env.NODE_ENV === "development" &&
-  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+// production (and normal dev), these just forward straight through.
 
 export function UserButton(props: ComponentProps<typeof RealUserButton>) {
   if (DEV_AUTH_BYPASS) return null;

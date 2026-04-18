@@ -1475,6 +1475,56 @@ body > * {
   cursor: pointer;
 }
 
+/* ── Error boundary fallback ─────────────────────────────────────────
+   Calm, warm crash screen. The kid sees "something popped" — soft
+   language — not a stack trace. Matches the rest of the app's cream
+   palette so it doesn't look like a separate error page from outside. */
+.error-boundary-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg, #fdf8ea);
+  padding: 24px;
+}
+.error-boundary-card {
+  max-width: 420px;
+  text-align: center;
+  padding: 32px 28px;
+  background: #fff9e8;
+  border-radius: 18px;
+  border: 1px solid rgba(194, 94, 69, 0.12);
+}
+.error-boundary-emoji { font-size: 48px; margin-bottom: 12px; }
+.error-boundary-title {
+  font-family: var(--font-heading, Georgia), serif;
+  font-size: 24px;
+  font-weight: 700;
+  font-style: italic;
+  color: #2a2722;
+  margin: 0 0 10px;
+}
+.error-boundary-body {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #5c5147;
+  margin: 0 0 20px;
+}
+.error-boundary-button {
+  background: #c25e45;
+  color: #fdf8ea;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  min-height: 42px;
+}
+.error-boundary-button:hover { background: #a44a33; }
+.error-boundary-button:active { transform: scale(0.97); }
+
 /* ── Parent Dashboard ────────────────────────────────────────────────
    The "is my kid actually learning something" screen. Oura-style:
    large headline numbers, warm phrasing, one card per focus area.

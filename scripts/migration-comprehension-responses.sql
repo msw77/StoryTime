@@ -46,3 +46,15 @@ CREATE POLICY "comp_owner_insert" ON comprehension_responses
       SELECT id FROM child_profiles WHERE user_id = auth.uid()
     )
   );
+
+-- DELETE policy — required for COPPA right-to-delete. When a parent
+-- deletes a child profile the ON DELETE CASCADE handles row cleanup
+-- via the service role, but defense-in-depth: a parent using a direct
+-- Supabase client from their own Clerk session can only delete their
+-- own kid's responses. Never anonymous.
+CREATE POLICY "comp_owner_delete" ON comprehension_responses
+  FOR DELETE USING (
+    child_profile_id IN (
+      SELECT id FROM child_profiles WHERE user_id = auth.uid()
+    )
+  );

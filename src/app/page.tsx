@@ -21,13 +21,7 @@ import { useEffectsPref } from "@/hooks/useEffectsPref";
 import { useComprehensionPref } from "@/hooks/useComprehensionPref";
 import { loadDraft, clearDraft } from "@/lib/draftStory";
 import { generateStoryFlow, type GenerateStoryFormValues } from "@/lib/generateStory";
-
-interface ChildProfile {
-  id: string;
-  name: string;
-  age: number | null;
-  avatar_emoji: string;
-}
+import type { ChildProfile } from "@/types/story";
 
 interface ReadingHistoryEntry {
   id: string;
@@ -44,16 +38,12 @@ interface ReadingHistoryEntry {
 
 const FREE_STORY_LIMIT = 5;
 
-// ── Dev preview auth bypass ──────────────────────────────────────────
-// Set NEXT_PUBLIC_DEV_AUTH_BYPASS=1 in .env.local to skip Clerk entirely
+// Dev preview auth bypass — see src/lib/devBypass.ts.
 // (dev only). Lets the Claude Code preview browser load the home page
 // without redirecting to Clerk's hosted sign-in — which the preview tool
-// blocks because it only permits localhost URLs. Gated by NODE_ENV so it
-// can't accidentally ship to prod even if the env var leaks through. The
-// bypass injects a mock premium user + a single mock child profile.
-const DEV_AUTH_BYPASS =
-  process.env.NODE_ENV === "development" &&
-  process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === "1";
+// blocks because it only permits localhost URLs. The bypass injects a
+// mock premium user + a single mock child profile.
+import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
 
 // Wrapper around Clerk's useUser that returns a mock signed-in state in
 // bypass mode. Because DEV_AUTH_BYPASS is a module-level constant (not

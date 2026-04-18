@@ -21,17 +21,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
-
-// Local shape. ChildProfile isn't exported from @/types/story (it's
-// declared locally in page.tsx + a few screens). Keeping a minimal
-// version here rather than plumbing a type through — matches the
-// ad-hoc pattern the rest of the profile-aware screens already use.
-interface ChildProfile {
-  id: string;
-  name: string;
-  age: number | null;
-  avatar_emoji: string;
-}
+import type { ChildProfile } from "@/types/story";
 
 interface ReadingHistoryEntry {
   story_id: string;

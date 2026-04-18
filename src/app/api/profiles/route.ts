@@ -79,13 +79,29 @@ export async function DELETE(req: Request) {
 
     const supabase = createServiceClient();
 
-    // Delete this profile's stories first (so the FK cascade — or manual
-    // cleanup — doesn't leave orphans) then delete the profile itself.
-    await supabase
+    // Delete this profile's stories first, then the profile itself. If
+    // the story delete fails we abort — otherwise we'd delete the profile
+    // and leak orphan stories. Supabase-JS doesn't expose PG transactions
+    // to the service-role client (you'd need a Postgres function or
+    // postgrest RPC), so we do a best-effort ordered delete with an
+    // explicit abort on the first step's error.
+    //
+    // Downstream analytics tables (vocabulary_encounters,
+    // comprehension_responses) cascade on child_profile_id so they clean
+    // up automatically when the profile row goes.
+    const { error: storiesErr } = await supabase
       .from("stories")
       .delete()
       .eq("user_id", dbUserId)
       .eq("child_profile_id", profileId);
+    if (storiesErr) {
+      console.error("Failed to delete profile's stories:", storiesErr);
+      // Generic message to the client — avoid leaking constraint details.
+      return NextResponse.json(
+        { error: "Could not delete profile's stories" },
+        { status: 500 },
+      );
+    }
 
     const { error } = await supabase
       .from("child_profiles")
@@ -95,7 +111,12 @@ export async function DELETE(req: Request) {
 
     if (error) {
       console.error("Failed to delete profile:", error);
-      return NextResponse.json({ error: "Database error", details: error.message }, { status: 500 });
+      // Sanitize — the prior version leaked error.message which can
+      // surface constraint names / column types to clients.
+      return NextResponse.json(
+        { error: "Could not delete profile" },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ success: true });
