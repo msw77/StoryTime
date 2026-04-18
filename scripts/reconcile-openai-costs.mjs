@@ -42,7 +42,9 @@ const { error } = await supabase.from("one_time_costs").insert({
   provider: "openai",
   category: "classics",
   cost_cents: OPENAI_MTD_CENTS,
-  occurred_at: new Date().toISOString().slice(0, 10),
+  // Backdate to project-start so "Today" on the dashboard doesn't
+  // treat month-to-date cumulative spend as a single today-expense.
+  occurred_at: "2026-04-03",
   notes: "Reconciled against platform.openai.com/usage (April spend). Covers all TTS calls + Whisper transcriptions for classic audio generation + any in-app voice narration.",
 });
 if (error) {

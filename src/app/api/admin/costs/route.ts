@@ -45,7 +45,19 @@ async function requireAdmin(): Promise<{ ok: true } | { ok: false; response: Nex
 }
 
 // Period options map to a `from` timestamp. `to` is always "now".
-function periodStart(period: string): Date {
+//
+// Timezone note: when the client is in a non-UTC tz (it always is for
+// our US-based user), the server computing "today's midnight" using UTC
+// clock time gives the wrong window — "today" on the server could be
+// up to 24h offset from "today" on the user's screen. So the API
+// PREFERS `fromMs` (a millisecond-epoch lower-bound computed by the
+// client in its own local tz) and only falls back to the old UTC-based
+// logic if the client didn't send it.
+function periodStart(period: string, fromMsOverride?: string | null): Date {
+  if (fromMsOverride) {
+    const n = Number(fromMsOverride);
+    if (Number.isFinite(n) && n > 0) return new Date(n);
+  }
   const now = new Date();
   switch (period) {
     case "today": {
@@ -78,7 +90,8 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
   const period = url.searchParams.get("period") || "month";
-  const from = periodStart(period);
+  const fromMs = url.searchParams.get("fromMs");
+  const from = periodStart(period, fromMs);
 
   const supabase = createServiceClient();
 

@@ -43,7 +43,10 @@ const { error } = await supabase.from("one_time_costs").insert({
   provider: "anthropic",
   category: "classics",
   cost_cents: ANTHROPIC_MTD_CENTS,
-  occurred_at: new Date().toISOString().slice(0, 10),
+  // Backdate to project-start so "Today" on the dashboard doesn't
+  // treat month-to-date cumulative spend as a single today-expense.
+  // "YTD" / "All" still include the entry correctly.
+  occurred_at: "2026-04-03",
   notes: "Reconciled against console.anthropic.com Usage dashboard (Month to date). Covers classic story writing batches + any in-app story generation.",
 });
 if (error) {

@@ -49,7 +49,9 @@ const { error: insertErr } = await supabase.from("one_time_costs").insert({
   provider: "fal",
   category: "classics",
   cost_cents: ACTUAL_FAL_USAGE_CENTS,
-  occurred_at: new Date().toISOString().slice(0, 10),
+  // Backdate to project-start so "Today" on the dashboard doesn't
+  // treat month-to-date cumulative spend as a single today-expense.
+  occurred_at: "2026-04-03",
   notes: "Reconciled against fal.ai billing dashboard. Replaces prior per-batch estimates which under-reported actual spend (Imagen 4 Fast + Nano Banana 2 retries + brand assets combined).",
 });
 if (insertErr) {

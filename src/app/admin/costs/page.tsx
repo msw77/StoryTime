@@ -79,7 +79,14 @@ export default function CostDashboard() {
     let cancelled = false;
     setLoading(true);
     setErr(null);
-    fetch(`/api/admin/costs?period=${period}`)
+    // Compute the period's start in the BROWSER's local timezone, then
+    // pass it to the server as `fromMs`. Otherwise the API falls back
+    // to server-tz (UTC on Vercel) which makes "Today" and "This Week"
+    // count the wrong block of hours for a non-UTC user. See
+    // periodBoundsMs() below for client-side boundary logic.
+    const { start: fromMs } = clientPeriodStart(period);
+    const qs = new URLSearchParams({ period, fromMs: String(fromMs) });
+    fetch(`/api/admin/costs?${qs.toString()}`)
       .then((r) =>
         r.ok ? r.json() : r.json().then((e) => Promise.reject(e.error || r.statusText)),
       )
@@ -248,6 +255,34 @@ export default function CostDashboard() {
       )}
     </div>
   );
+}
+
+// Like periodBoundsMs but WITHOUT flat-row awareness — this is the raw
+// API-query boundary sent to /api/admin/costs for `created_at` filters.
+// We don't need the flat_rows "all time starts at earliest row" logic
+// here because the server's "all" falls back to 2020-01-01 which is
+// before any data anyway.
+function clientPeriodStart(p: Period): { start: number } {
+  const now = Date.now();
+  const DAY = 86_400_000;
+  switch (p) {
+    case "today": {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      return { start: d.getTime() };
+    }
+    case "week":
+      return { start: now - 7 * DAY };
+    case "month":
+      return { start: now - 30 * DAY };
+    case "ytd": {
+      const d = new Date();
+      return { start: new Date(d.getFullYear(), 0, 1).getTime() };
+    }
+    case "all":
+    default:
+      return { start: new Date("2020-01-01").getTime() };
+  }
 }
 
 // Returns the absolute millisecond bounds of the selected period.

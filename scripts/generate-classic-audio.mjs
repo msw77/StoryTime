@@ -355,6 +355,23 @@ async function generateMultiVoicePageAudio(storyId, pageIndex, text, narrator, c
     end: Math.round(w.end * 1000) / 1000,
   }));
 
+  // ── Coverage validation ──────────────────────────────────────────
+  // TTS occasionally truncates the last sentence or two (observed on
+  // Aladdin p1 — output was 30% shorter than expected and the final
+  // 5 words were silently dropped). This leaves the reader skipping
+  // the end of the page. Detect it by comparing Whisper's transcribed
+  // word count to the display word count; if >=3 display words are
+  // unaccounted for, throw so the outer retry loop kicks in.
+  const cleanLen = (w) => (w || "").replace(/[^\p{L}\p{N}]/gu, "").length;
+  const displayWordCount = text.split(/\s+/).filter(Boolean).length;
+  const whisperWordCount = wordTimings.filter((w) => cleanLen(w.word) > 0).length;
+  const missing = displayWordCount - whisperWordCount;
+  if (missing >= 3) {
+    throw new Error(
+      `TTS coverage short by ${missing} words (display=${displayWordCount} whisper=${whisperWordCount}) — likely TTS truncation, retrying`
+    );
+  }
+
   return {
     file: `/audio/${storyId}/page${pageIndex}.mp3`,
     duration: Math.round((whisperResponse.duration || 0) * 100) / 100,

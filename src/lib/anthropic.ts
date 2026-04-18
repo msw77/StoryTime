@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { logApiUsage } from "@/lib/costTracking";
+import { normalizeGeneratedStory } from "@/lib/textNormalization";
 
 function getClient() {
   const apiKey = process.env.STORYTIME_ANTHROPIC_KEY;
@@ -120,6 +121,21 @@ These scene descriptions go DIRECTLY to an image generator. The image generator 
 - If the scene involves other ${request.heroType}s (e.g. Olivia's mermaid friends), make it explicit which one is ${request.heroName} by referring back to their unique features so the illustrator can't confuse the hero with a background character.
 - For Page 1 specifically: this is the child's first look at their hero. The illustration MUST clearly show ${request.heroName} as the ${request.heroType} — centered, unmistakable, matching the character description exactly.
 
+IMPORTANT — READ-ALONG WORD HIGHLIGHTING:
+The story is narrated aloud while each word is highlighted on screen in
+sync with the audio. For the highlight to land on the right word at the
+right moment, the text MUST avoid patterns that confuse speech-to-text
+alignment:
+- Write ALL numbers as words, not digits. "eleven" not "11", "nineteen
+  sixty-nine" not "1969", "five minutes" not "5 minutes". This includes
+  years, ages, counts, and quantities.
+- Avoid hyphenated compound words. "ten year old boy" not "ten-year-old",
+  "well known" not "well-known", "good bye" not "good-bye".
+- Use commas or periods instead of em-dashes or en-dashes. Write "She
+  stopped, just for a moment." never "She stopped — just for a moment."
+  Do not use the characters — or – anywhere in the text.
+- Contractions ("don't", "can't", "it's") are fine — keep them natural.
+
 IMPORTANT RULES:
 - Write approximately ${targetWords} words total
 - Break the story into pages. Each page = one scene or moment (each page gets its own illustration)
@@ -202,5 +218,10 @@ Return valid JSON only, no other text:
     throw new Error("Invalid story response from AI");
   }
 
-  return story;
+  // Belt-and-suspenders: even though the prompt tells Claude to write
+  // numbers as words and avoid em-dashes, the model occasionally slips.
+  // Running every page's `text` through the normalizer guarantees the
+  // display text matches what TTS will say, which keeps the word-
+  // highlight reconciler happy. See src/lib/textNormalization.ts.
+  return normalizeGeneratedStory(story);
 }
