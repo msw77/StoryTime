@@ -1454,38 +1454,25 @@ body > * {
 
 /* ── Word Glow — tap-to-define vocabulary words ──────────────────────
    Science-of-Reading: Pillar 4 (Vocabulary).
-   The AI flags 3–5 vocabulary words per page at story-generation time.
-   Those get a subtle visual cue so the child knows "this word has a
-   secret you can tap".
+   The AI flags 3–5 vocabulary words per page. Those words are
+   silently tappable — no visual treatment at rest, no error-looking
+   underline, no "look at me" badge. The kid taps when they're
+   curious; words with definitions open the modal, words without
+   simply do nothing. Trust the kid to discover.
 
-   Initial design was a dotted underline, but a parent tester flagged
-   that it read as a spellcheck / grammar-suggestion indicator. Swapped
-   to a soft cream-honey background wash — reads as "noteworthy" rather
-   than "incorrect". Deliberately kept lighter than the active-word
-   honey so a vocab word currently BEING narrated doesn't look
-   washed-out. Works in cozy mode (darker backdrop) without special
-   casing — the tint just reads a touch more saturated on dark. */
+   Rationale: any visible treatment on vocab words (dotted underline,
+   background wash, colored text) was flagged by parent testing as
+   either (a) looking like a spellcheck error or (b) too busy with
+   3-5 per page. Zero-formatting solves both. When we ship Sound It
+   Out, tap-to-hear-any-word will become the primary tap behavior
+   and the Word Glow modal layers on top for vocab-flagged words.
+
+   The ONLY concession to discoverability is cursor: pointer on
+   desktop, which is a gentle "you can click this" hint for parents
+   exploring the reader. On touch devices there's no equivalent — and
+   that's fine. */
 .story-text .word.vocab-word {
-  background: rgba(228, 147, 58, 0.14);
-  border-radius: 4px;
   cursor: pointer;
-  transition: background 0.15s ease;
-}
-.story-text .word.vocab-word:hover:not(.active) {
-  background: rgba(228, 147, 58, 0.26);
-}
-.story-text .word.vocab-word:active:not(.active) {
-  background: rgba(228, 147, 58, 0.34);
-}
-/* When a vocab word is ALSO the currently-narrated word, the strong
-   honey highlight takes over — no need to combine. The vocab class's
-   softer wash would look muddy underneath. */
-.story-text .word.vocab-word.active {
-  background: #ff9b70;
-}
-/* Reduced-motion path: keep the wash but kill the transition animation. */
-@media (prefers-reduced-motion: reduce) {
-  .story-text .word.vocab-word { transition: none; }
 }
 
 /* ── Word Glow modal ─────────────────────────────────────────────────
