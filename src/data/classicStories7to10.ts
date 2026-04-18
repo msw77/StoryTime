@@ -2142,10 +2142,7 @@ export const CLASSIC_STORIES_7_10: Story[] = [
         "Page 15",
         "At last, moonlight glimmered on a familiar river. Toad tapped on Rat's little door. Rat flung it open and gasped. 'Toady! You scamp! You scallywag!' But he bundled Toad inside and set hot toast before him. Then Rat's face grew serious. 'I have grim news, old friend. While you were gallivanting, the weasels of the Wild Wood crept in and took Toad Hall.'"
       ],
-      [
-        "Page 16",
-        "Toad's jaw dropped. Toad Hall — his beautiful home — in the paws of weasels! Badger and Mole arrived that very evening, wise faces grave. 'Not to worry,' said Badger, tapping the table. 'I know a secret. There's a tunnel — an old, forgotten passage — that leads right into Toad Hall's pantry. Tomorrow night, the weasels are throwing a great feast. That shall be our moment.'"
-      ],
+      ["Page 16", "Toad's jaw dropped. Toad Hall, his beautiful home, in the paws of weasels! Badger and Mole arrived that very evening, wise faces grave. 'Not to worry,' said Badger, tapping the table. 'I know a secret. There's a tunnel, an old, forgotten passage, that leads right into Toad Hall's pantry. Tomorrow night, the weasels are throwing a great feast. That shall be our moment.'"],
       [
         "Page 17",
         "The next night, armed with stout sticks and brave hearts, the four friends crept through the tunnel. Up they popped into the pantry, right beside the banquet hall. With a tremendous shout they burst in — Badger booming, Rat darting, Mole whooping, Toad hopping! The weasels, taken by surprise, squealed and scattered in every direction. In ten minutes, Toad Hall belonged to Toad once more."
@@ -2404,10 +2401,7 @@ export const CLASSIC_STORIES_7_10: Story[] = [
         "Page 17",
         "Back in Hamelin, the townsfolk walked softly. The Mayor hung his gold chain on a hook and never wore it again. He traveled from door to door, apologizing to every family, learning at last what a promise truly meant. Seasons turned. The fountain froze and thawed and froze. And though the houses felt terribly empty, a small hope glowed in every window — a single candle left burning, waiting, always waiting, for the children to come back."
       ],
-      [
-        "Page 18",
-        "One spring morning, the bells began to ring of themselves. Up the hill road came a long, laughing procession — young men and women now, carrying baskets of apples and books and wonderful new ideas. Behind them walked the piper, smiling his mischievous smile. The town rushed out. Mothers and fathers wept. Children — grown, but still their children — fell into their arms. And Hamelin, from that day on, kept every promise it ever made."
-      ]
+      ["Page 18", "One spring morning, the bells began to ring of themselves. Up the hill road came a long, laughing procession, young men and women now, carrying baskets of apples and books and wonderful new ideas. Behind them walked the piper, smiling his mischievous smile. The town rushed out. Mothers and fathers wept. Children, grown, but still their children, fell into their arms. And Hamelin, from that day on, kept every promise it ever made."]
     ],
     "fullPages": [
       {

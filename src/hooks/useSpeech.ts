@@ -376,10 +376,26 @@ export function prefetchStoryAudio(
 
 // ─── Main hook ───────────────────────────────────────────────────────
 
+// ─── Phase 2: temporal smoothing constants ──────────────────────────
+// Look-ahead (seconds) applied when mapping audio.currentTime → display
+// word. The highlight "arrives" this many ms before the word is
+// actually spoken, which matches how a human eye leads audio when
+// reading along. 50ms is enough to feel intentional without looking
+// ahead of itself. Tuned empirically against gpt-4o-mini-tts output.
+const ANTICIPATION_SECONDS = 0.05;
+// Hysteresis threshold. A display word must be active for at least
+// this long before we'll advance past it, preventing sub-frame flips
+// when two adjacent start-times fall on the same frame boundary.
+const MIN_WORD_DWELL_SECONDS = 0.02;
+
 export function useSpeech(): SpeechControls {
   // Shared state
   const [speaking, setSpeaking] = useState(false);
   const [wordIndex, setWordIndex] = useState(-1);
+  // Sub-word progress 0..1 through the currently-highlighted display
+  // word. Phase 3 will render this as a left-to-right fill sweep so
+  // the highlight feels like it "reads" the word rather than snapping.
+  const [wordProgress, setWordProgress] = useState(0);
   const [words, setWords] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -498,6 +514,7 @@ export function useSpeech(): SpeechControls {
 
     setSpeaking(false);
     setWordIndex(-1);
+    setWordProgress(0);
     setLoading(false);
   }, []);
 
@@ -630,6 +647,7 @@ export function useSpeech(): SpeechControls {
       cleanup();
       setSpeaking(false);
       setWordIndex(-1);
+      setWordProgress(0);
       onEnd?.();
     };
 
@@ -670,41 +688,84 @@ export function useSpeech(): SpeechControls {
       if (!audio.paused) {
         const currentTime = audio.currentTime;
 
-        // Binary-search displayStartTimes[] for the last index whose
-        // start <= currentTime. audio.currentTime is in the audio's own
-        // timeline regardless of playbackRate, and Whisper timings were
-        // computed at 1.0 speed, so this stays correct across 0.85x →
-        // 1.15x playback without any rate-aware math.
-        const idx = findDisplayIndexAtTime(displayStartTimes, currentTime);
-        const clampedIdx = Math.min(Math.max(idx, 0), displayLen - 1);
-        setWordIndex(clampedIdx);
+        // Phase 2 — anticipation. Bias the lookup time slightly forward
+        // so the highlight arrives a touch before the word is spoken.
+        // Matches how human eyes lead audio when reading along. Applied
+        // here (not at Whisper-timing build) so all downstream math
+        // still uses raw audio times.
+        const lookupTime = currentTime + ANTICIPATION_SECONDS;
 
-        // Phase-0 diagnostics: emit a sample only when the highlight
-        // actually advances to a new display word. Guarded so there's
-        // zero allocation on the no-change hot path even in dev.
+        // Binary-search displayStartTimes[] for the last index whose
+        // start <= lookupTime. audio.currentTime advances in the audio's
+        // own timeline regardless of playbackRate, and Whisper timings
+        // were computed at 1.0 speed, so this stays correct across
+        // 0.85x → 1.15x playback without any rate-aware math.
+        const idx = findDisplayIndexAtTime(displayStartTimes, lookupTime);
+        const clampedIdx = Math.min(Math.max(idx, 0), displayLen - 1);
+
+        // Phase 2 — micro-hysteresis. If we're about to advance to a
+        // new word, require the NEW word to have been "entered" for at
+        // least MIN_WORD_DWELL_SECONDS in lookup-time. Prevents a word
+        // from being briefly highlighted and then immediately skipped
+        // when two start times fall on the same RAF frame.
+        let finalIdx = clampedIdx;
+        if (finalIdx > lastEmittedDisplayIdx && lastEmittedDisplayIdx >= 0) {
+          const newStart = displayStartTimes[finalIdx] ?? 0;
+          if (lookupTime - newStart < MIN_WORD_DWELL_SECONDS) {
+            finalIdx = lastEmittedDisplayIdx;
+          }
+        }
+
+        setWordIndex(finalIdx);
+
+        // Phase 2 — sub-word progress. Compute how far through the
+        // current word we are, as a 0..1 fraction of the time until the
+        // next word's start. Updated every frame so Phase 3 can render a
+        // gradient fill that sweeps across the word. Use currentTime
+        // (not lookupTime) so the sweep reaches 100% exactly as audio
+        // finishes speaking the word.
+        if (finalIdx >= 0 && finalIdx < displayLen) {
+          const wStart = displayStartTimes[finalIdx] ?? 0;
+          const wEnd =
+            finalIdx + 1 < displayLen
+              ? displayStartTimes[finalIdx + 1]
+              : audio.duration || wStart + 0.3;
+          const span = Math.max(wEnd - wStart, 0.001);
+          const p = (currentTime - wStart) / span;
+          setWordProgress(Math.min(Math.max(p, 0), 1));
+        }
+
+        // Phase-0 diagnostics: emit a sample only when the committed
+        // display word changes. `finalIdx` is what we actually pushed
+        // to React state (after hysteresis), so the diagnostics overlay
+        // reflects user-visible transitions rather than raw lookup churn.
         if (
           isDiagnosticsEnabled() &&
-          clampedIdx !== lastEmittedDisplayIdx &&
+          finalIdx !== lastEmittedDisplayIdx &&
           displayLen > 0
         ) {
-          lastEmittedDisplayIdx = clampedIdx;
+          lastEmittedDisplayIdx = finalIdx;
           // With the new reconciler the "whisper token" for a given
           // display word is ambiguous (could be real or interpolated).
           // For diagnostics we report the start time we used and flag
           // whether it was a real anchor; the overlay treats drift as
           // (audioTime - chosenStart).
-          const chosenStart = displayStartTimes[clampedIdx] ?? 0;
+          const chosenStart = displayStartTimes[finalIdx] ?? 0;
           emitSample({
-            displayIdx: clampedIdx,
-            displayWord: allWords[clampedIdx] ?? "",
+            displayIdx: finalIdx,
+            displayWord: allWords[finalIdx] ?? "",
             whisperIdx: -1, // sentinel: not a direct whisper token anymore
-            whisperWord: reconciled.isAnchor[clampedIdx] ? "(anchor)" : "(interp)",
+            whisperWord: reconciled.isAnchor[finalIdx] ? "(anchor)" : "(interp)",
             whisperStart: chosenStart,
             audioTime: currentTime,
             playbackRate: audio.playbackRate,
             storyId,
             pageIdx,
           });
+        } else if (finalIdx !== lastEmittedDisplayIdx && displayLen > 0) {
+          // Even without diagnostics, keep the tracker in sync so
+          // hysteresis works correctly.
+          lastEmittedDisplayIdx = finalIdx;
         }
       }
 
@@ -788,6 +849,7 @@ export function useSpeech(): SpeechControls {
       if (sentIdx >= sentences.length) {
         setSpeaking(false);
         setWordIndex(-1);
+        setWordProgress(0);
         onEnd?.();
         return;
       }
@@ -848,6 +910,7 @@ export function useSpeech(): SpeechControls {
         if (!cancelledRef.current) {
           setSpeaking(false);
           setWordIndex(-1);
+          setWordProgress(0);
         }
       };
 
@@ -879,7 +942,7 @@ export function useSpeech(): SpeechControls {
   }, [stop]);
 
   return {
-    speaking, wordIndex, words, speak, stop, loading, prefetch,
+    speaking, wordIndex, wordProgress, words, speak, stop, loading, prefetch,
     voiceMode, setVoiceMode,
     aiVoice, setAiVoice, aiSpeed, setAiSpeed,
     voice, setVoice, rate, setRate, allVoices,

@@ -1433,6 +1433,10 @@ body > * {
   padding: 1px 4px;
   border-radius: 5px;
   display: inline-block;
+  /* Needed for the sweep-underline pseudo-element to position correctly
+     when the word goes active. Leaving this on ALL words (not just
+     active) keeps layout from shifting when the class toggles. */
+  position: relative;
 }
 /* Active word highlight. We intentionally use a soft warm honey tint
    instead of the deep terracotta accent — at full saturation the accent
@@ -1446,6 +1450,39 @@ body > * {
   transform: scale(1.04);
   border-radius: 5px;
   box-shadow: 0 1px 6px rgba(194, 94, 69, 0.28);
+}
+
+/* ── Phase 3: sweep underline ────────────────────────────────────────
+   A narrow terracotta line under the active word that fills left-to-
+   right in real time as the audio speaks the word. Creates the "finger
+   tracing under the words" feeling that makes premium read-along apps
+   (Yoto, Epic) feel magical rather than mechanical.
+
+   The ReaderScreen sets --word-progress on the parent .story-text
+   element as a single 0..1 value, updated every RAF tick from
+   useSpeech's wordProgress state. Only the currently-active word's
+   ::after reads it, so we get one style update per frame instead of
+   one per word per frame. The calc() multiplier keeps the underline
+   inset slightly from the padding edges so it doesn't touch the
+   rounded corners.
+
+   No CSS transition on width — we're already updating at ~60Hz so any
+   transition would lag behind the audio cursor instead of tracking it. */
+.story-text .word.active::after {
+  content: "";
+  position: absolute;
+  left: 4px; /* matches .word padding-left */
+  right: 4px; /* matches .word padding-right */
+  bottom: 0;
+  height: 2px;
+  background: #c25e45; /* brand terracotta accent */
+  border-radius: 2px;
+  transform-origin: left center;
+  transform: scaleX(var(--word-progress, 0));
+  /* A hair of opacity fade on the head of the underline so it feels
+     like a pen nib, not a hard-cut bar. */
+  box-shadow: 0 0 2px rgba(194, 94, 69, 0.35);
+  pointer-events: none;
 }
 
 /* Reading-lamp spotlight REMOVED — was dimming non-active words when

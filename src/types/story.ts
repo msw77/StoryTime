@@ -185,6 +185,16 @@ export type VoiceMode = "ai" | "browser";
 export interface SpeechControls {
   speaking: boolean;
   wordIndex: number;
+  /**
+   * Progress through the currently-highlighted word, 0..1. Updated on
+   * every RAF tick while audio plays. Consumers can use it to drive a
+   * sub-word "fill sweep" effect (Yoto-style) — a gradient background
+   * that advances across the word's letters in real time. At 0 the
+   * word has just activated; at 1 the next word is about to activate.
+   *
+   * When not speaking (or between words), this is 0.
+   */
+  wordProgress: number;
   words: string[];
   speak: (text: string, onEnd?: () => void) => void;
   stop: () => void;
