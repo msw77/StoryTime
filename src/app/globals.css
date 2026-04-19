@@ -2792,13 +2792,23 @@ body > * {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Stretch full viewport so the three sections (top / middle / bottom)
-     space out naturally with flexbox instead of bunching up. */
+  /* Dynamic viewport height + iOS safe-area padding so the detach
+     button at the bottom isn't clipped by the home bar on iPhone
+     PWAs. 100dvh alone handles Safari UI chrome, but the home bar
+     insets via env(safe-area-inset-bottom) and must be added to
+     padding-bottom explicitly.
+     Additionally we cap height at dvh so if content would overflow,
+     it's the middle joke card that absorbs the pressure (via its
+     flex: 1 + overflow), not the bottom button that gets pushed
+     off-screen. */
   min-height: 100vh;
-  min-height: 100dvh; /* iOS safe-area aware */
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
   gap: 0;
   text-align: center;
-  padding: 40px 0 28px;
+  padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px));
+  padding-top: calc(40px + env(safe-area-inset-top, 0px));
   box-sizing: border-box;
   /* Subtle warm gradient background — feels more considered than a
      flat white and ties back to the cozy reader palette. */
@@ -2850,6 +2860,12 @@ body > * {
   justify-content: center;
   width: 100%;
   margin-top: -24px;
+  /* Let the middle section shrink below its intrinsic content height
+     before the bottom button. Without min-height: 0 the joke card's
+     tall content forces the flex parent to exceed dvh and pushes the
+     detach button off the viewport on small phones. */
+  min-height: 0;
+  overflow: hidden;
 }
 .generating .spinner {
   width: 48px;
