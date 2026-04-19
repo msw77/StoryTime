@@ -1116,15 +1116,16 @@ body > * {
     display: none;
   }
   .reader-header {
-    padding-left: 14px;
-    padding-right: 14px;
+    padding-left: 13px;
+    padding-right: 13px;
   }
   .header-controls {
-    /* Tested at 2px — too cramped for thumbs. 6px gives every button
-       a proper visual separator + a ~6px no-mans-land between tap
-       targets so a thumb overshooting one button doesn't accidentally
-       fire the neighbor. */
-    gap: 6px;
+    /* Dialled in over three iterations:
+         2px → too cramped, no visual separation
+         6px → sun icon kissed the right edge
+         4px → halfway; comfortable thumbs + ~8–10px clearance
+       Each gap × 7 controls = ~14px swing across the row. */
+    gap: 4px;
   }
   .hdr-btn {
     /* 32px is still below Apple HIG's 44pt minimum, but reader
