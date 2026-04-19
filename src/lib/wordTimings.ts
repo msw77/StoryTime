@@ -236,13 +236,34 @@ export function reconcileTimings(
     }
   }
 
-  // ── 5. Enforce strict monotonicity ──────────────────────────────
-  // If Whisper anchors ever go backwards (it can happen on rare splits),
-  // nudge later times forward. Also catches interpolated values that
-  // equal their neighbor due to identical midpoints.
+  // ── 5. Enforce strict monotonicity with min-visible-dwell ────────
+  // Whisper occasionally hands us two (or more) tokens at the EXACT
+  // same timestamp — e.g. a quick phrase like "Instead of" can come
+  // back as ("Instead" @ 7.32s, "of" @ 7.32s). Without separation,
+  // the RAF lookup (binary search for last index whose start <= t)
+  // will land on "of" on the very first frame past 7.32, and
+  // "Instead" never spends a frame as the active word — reader sees
+  // the highlight visibly skip it.
+  //
+  // The original 1ms nudge was purely a "strict monotonicity safety
+  // net" and doesn't actually give each word a visible frame. At
+  // 60Hz each frame is ~17ms; to guarantee every word is the active
+  // word for at least one frame we need a nudge > one frame. 40ms
+  // gives us ~2.4 frames of minimum dwell, matching the 20ms
+  // hysteresis MIN_WORD_DWELL_SECONDS in useSpeech so both layers
+  // agree on the minimum visible window.
+  //
+  // Trade-off: a pair of "same-time" Whisper tokens get spread by
+  // 40ms, pushing the second word's highlight 40ms later than raw
+  // audio. At typical narration cadence this is imperceptible —
+  // a 200ms-per-word pace means the pair still both light up inside
+  // the spoken phrase window. Empirically better than losing the
+  // highlight on one of them entirely.
+  const MIN_DWELL_SEC = 0.04;
   for (let i = 1; i < displayLen; i++) {
-    if (displayStartTimes[i] <= displayStartTimes[i - 1]) {
-      displayStartTimes[i] = displayStartTimes[i - 1] + 0.001; // 1ms nudge
+    const minNext = displayStartTimes[i - 1] + MIN_DWELL_SEC;
+    if (displayStartTimes[i] < minNext) {
+      displayStartTimes[i] = minNext;
     }
   }
 
