@@ -1504,40 +1504,53 @@ body > * {
   line-height: 1.75;
 }
 .story-text .word {
-  /* Silky-highlight v2 (2026-04-19): tightened transition from 5
-     properties over 250ms down to only background-color over 140ms.
-     The prior declaration animated transform/opacity/filter/color
-     that never actually changed on the active state, which still
-     forced the compositor to track them per-word per-frame. Parents
-     reported a "shuttery" feel; profiling pointed at three culprits:
-       1. transform: scale(1.04) on inline-block = subpixel text
-          repaint on iOS Safari every frame (killed below)
-       2. 250ms transition overlapping with ~200ms word cadence meant
-          two words were always mid-fade simultaneously (tightened)
-       3. 5-property transition list bloated compositor work (trimmed)
-     140ms is short enough to feel lock-on, long enough to feel like
-     a fade rather than a binary flash. */
-  transition: background-color 0.14s ease-out;
+  /* Highlight model v3 (2026-04-19): "spotlight" paradigm.
+     Instead of painting a strong background behind the active word
+     (visually competing with the text itself), we DIM the whole
+     paragraph while the narrator is speaking and let the active
+     word stay fully dark + get a whisper of warm tint. The word
+     IS the signal, not a backdrop overlay.
+
+     Transition covers color + background-color so both animate
+     together when .reading toggles on the parent or .active
+     toggles on the word. 140ms matches the earlier silky-highlight
+     timing. */
+  transition: color 0.14s ease-out, background-color 0.14s ease-out;
   padding: 1px 4px;
   border-radius: 5px;
   display: inline-block;
   position: relative;
 }
-/* Active word highlight. Honey tint reads as a highlighter marker on
-   paper — strong enough to track, soft enough not to "shout" as the
-   cursor moves. Text stays dark for contrast.
-   NO transform — the scale(1.04) "breath" looked nice on desktop but
-   on iOS Safari, inline-block + transform + simultaneous background
-   change forced a full re-rasterization of the glyphs every frame.
-   Removing it is the single biggest contributor to the new silky feel.
-   will-change scoped to .active only (not all words) so the
-   compositor layer promotion is bounded to ~1 element at a time. */
+
+/* While speech is playing, every word dims to a muted warm gray —
+   EXCEPT the currently-active word, which stays full contrast thanks
+   to its more-specific .active selector below. When speech stops
+   (pause, page end, modal open) this class drops and every word
+   returns to full dark contrast, restoring readability for a parent
+   to review or a child to read ahead. */
+.story-text.reading .word {
+  color: #8a7f72;
+}
+
+/* Active word. Full-dark text + a barely-there warm tint as a
+   secondary cue so a child relying on color still has something to
+   track. Tint is about ¼ the intensity of the v2 solid #ff9b70 —
+   soft enough to sit under the text, strong enough to register on
+   cream paper. No box-shadow — the color contrast alone carries the
+   weight now, and shadows were adding paint cost. */
 .story-text .word.active {
-  background: #ff9b70;
+  background: rgba(255, 155, 112, 0.22);
   color: var(--text);
   border-radius: 5px;
-  box-shadow: 0 1px 6px rgba(194, 94, 69, 0.28);
   will-change: background-color;
+}
+/* Explicitly force full-contrast text on the active word even inside
+   .reading. Needed because .story-text.reading .word has the same
+   specificity as .story-text .word.active would without this rule —
+   the cascade order saves us but an explicit declaration documents
+   intent and prevents future edits from breaking the spotlight. */
+.story-text.reading .word.active {
+  color: var(--text);
 }
 
 /* ── Word Glow — tap-to-define vocabulary words ──────────────────────
@@ -2368,12 +2381,20 @@ body > * {
 .reader.cozy .story-text {
   color: #e8e2d4;
 }
+/* Cozy-mode spotlight. Dim shade is a desaturated warm brown that
+   reads as "faded" against the sepia backdrop without going dark
+   enough to disappear. Active word keeps the light cream/amber
+   color — full contrast against the dark background. */
+.reader.cozy .story-text.reading .word {
+  color: #8c7a66;
+}
 .reader.cozy .story-text .word.active {
-  /* Keep the warm highlight but tone it down so it's not blinding
-     against the dark background. */
-  background: #d4875a;
-  color: #3a4152;
-  box-shadow: 0 1px 10px rgba(212, 135, 90, 0.4);
+  background: rgba(212, 135, 90, 0.28);
+  color: #f5e9d0;
+  border-radius: 5px;
+}
+.reader.cozy .story-text.reading .word.active {
+  color: #f5e9d0;
 }
 .reader.cozy .reader-progress {
   background: #4a5263;

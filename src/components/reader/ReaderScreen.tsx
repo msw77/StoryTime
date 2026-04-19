@@ -780,7 +780,7 @@ export function ReaderScreen({
                typically have no vocabWords (definitions are skipped),
                so this is a no-op there. */}
           <div
-            className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}`}
+            className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}${speech.speaking ? " reading" : ""}`}
           >
             {tw.map((w, i) => (
               <Word
