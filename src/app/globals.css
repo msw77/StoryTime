@@ -1334,13 +1334,15 @@ body > * {
     ) left top / 42px 100% no-repeat,
     linear-gradient(
       to left,
-      #c9ba92 0, #c9ba92 1px,
-      transparent 1px, transparent 3px,
-      #d4c7a6 3px, #d4c7a6 4px,
-      transparent 4px, transparent 5px,
-      #dfd1aa 5px, #dfd1aa 6px,
-      transparent 6px
-    ) right top / 6px 100% no-repeat,
+      #c9ba92 0, #c9ba92 2px,
+      transparent 2px, transparent 3px,
+      #d4c7a6 3px, #d4c7a6 5px,
+      transparent 5px, transparent 6px,
+      #dfd1aa 6px, #dfd1aa 8px,
+      transparent 8px, transparent 9px,
+      #e5d8b3 9px, #e5d8b3 11px,
+      transparent 11px
+    ) right top / 11px 100% no-repeat,
     linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
 
   box-shadow: inset 0 -20px 24px -24px rgba(120, 78, 48, 0.14);
@@ -2498,13 +2500,15 @@ body > * {
     ) left top / 42px 100% no-repeat,
     linear-gradient(
       to left,
-      #4c5364 0, #4c5364 1px,
-      transparent 1px, transparent 3px,
-      #545c70 3px, #545c70 4px,
-      transparent 4px, transparent 5px,
-      #5c6478 5px, #5c6478 6px,
-      transparent 6px
-    ) right top / 6px 100% no-repeat,
+      #4c5364 0, #4c5364 2px,
+      transparent 2px, transparent 3px,
+      #545c70 3px, #545c70 5px,
+      transparent 5px, transparent 6px,
+      #5c6478 6px, #5c6478 8px,
+      transparent 8px, transparent 9px,
+      #666c80 9px, #666c80 11px,
+      transparent 11px
+    ) right top / 11px 100% no-repeat,
     linear-gradient(to bottom, #3a4152 0%, #353c4c 100%);
   box-shadow: inset 0 -20px 24px -24px rgba(0, 0, 0, 0.28);
 }
