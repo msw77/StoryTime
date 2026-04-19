@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { Story, SpeechControls } from "@/types/story";
 import { SoundEffects } from "@/hooks/useSoundEffects";
 import { hydrateStoredAudio } from "@/hooks/useSpeech";
@@ -11,6 +11,74 @@ import { enableDiagnostics } from "@/lib/highlightDiagnostics";
 import { VocabWordModal } from "./VocabWordModal";
 import { ComprehensionQuestionsScreen } from "./ComprehensionQuestionsScreen";
 import type { VocabWord } from "@/types/story";
+
+// ── Memoized single-word render ──────────────────────────────────────
+// Why this exists: on every RAF tick during narration, useSpeech bumps
+// speech.wordIndex. That triggers a ReaderScreen re-render, which in
+// turn re-invokes tw.map(...), producing ~100 JSX elements 60 times a
+// second. React will diff each span against the prior tree to figure
+// out that only 2 children's className actually changed (the outgoing
+// active word and the incoming one) — but the diff itself still costs
+// work for all 100 children on every tick. Parents reported the result
+// as a "shuttery" highlight.
+//
+// Wrapping the word in React.memo with primitive props means React
+// skips rendering 98 out of 100 words per tick (shallow-equal props).
+// Only the two whose isActive actually changes do render work. That
+// plus the CSS cleanup (no scale transform, single-property
+// transition) is what makes the highlight feel silky.
+//
+// Prop stability rules we rely on:
+//   - text, isActive, effect, wordIdx are primitives → always stable
+//   - vocab is a ref from useMemo → stable while page doesn't change
+//   - onVocabTap is a useCallback from the parent → stable while its
+//     deps don't change (which they don't mid-page)
+const Word = memo(function Word({
+  text,
+  wordIdx,
+  isActive,
+  effect,
+  vocab,
+  onVocabTap,
+}: {
+  text: string;
+  wordIdx: number;
+  isActive: boolean;
+  effect: string | undefined;
+  vocab: VocabWord | null;
+  onVocabTap: (vocab: VocabWord, wordIdx: number) => void;
+}) {
+  const classes =
+    "word" +
+    (isActive ? " active" : "") +
+    (effect ? ` word-fx word-fx-${effect}` : "") +
+    (vocab ? " vocab-word" : "");
+
+  if (!vocab) {
+    // Fast path — no handlers, no a11y affordances, just a plain span.
+    // Skipping the role/tabIndex/onClick props shaves a few bytes of
+    // attribute diffing per non-vocab word on each render.
+    return <span className={classes}>{text}{" "}</span>;
+  }
+
+  return (
+    <span
+      className={classes}
+      role="button"
+      tabIndex={0}
+      onClick={() => onVocabTap(vocab, wordIdx)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onVocabTap(vocab, wordIdx);
+        }
+      }}
+      aria-label={`${text.replace(/[^\w']/g, "")} — tap for definition`}
+    >
+      {text}{" "}
+    </span>
+  );
+});
 
 interface ReaderScreenProps {
   story: Story;
@@ -714,34 +782,17 @@ export function ReaderScreen({
           <div
             className={`story-text ${story.age === "2-4" ? "story-text--young" : ""}`}
           >
-            {tw.map((w, i) => {
-              const effect = effectsForWord[i];
-              const vocab = vocabForWordAt(i);
-              const classes = [
-                "word",
-                speech.speaking && i === speech.wordIndex ? "active" : "",
-                effect ? `word-fx word-fx-${effect}` : "",
-                vocab ? "vocab-word" : "",
-              ].filter(Boolean).join(" ");
-              return (
-                <span
-                  key={i}
-                  className={classes}
-                  role={vocab ? "button" : undefined}
-                  tabIndex={vocab ? 0 : undefined}
-                  onClick={vocab ? () => openVocabModal(vocab, i) : undefined}
-                  onKeyDown={vocab ? (e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      openVocabModal(vocab, i);
-                    }
-                  } : undefined}
-                  aria-label={vocab ? `${w.replace(/[^\w']/g, "")} — tap for definition` : undefined}
-                >
-                  {w}{" "}
-                </span>
-              );
-            })}
+            {tw.map((w, i) => (
+              <Word
+                key={i}
+                text={w}
+                wordIdx={i}
+                isActive={speech.speaking && i === speech.wordIndex}
+                effect={effectsForWord[i]}
+                vocab={vocabForWordAt(i)}
+                onVocabTap={openVocabModal}
+              />
+            ))}
           </div>
         </div>
       </div>

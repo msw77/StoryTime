@@ -1094,6 +1094,59 @@ body > * {
   background: rgba(228, 147, 58, 0.15);
 }
 
+/* ── Mobile header tightening ───────────────────────────────────────
+   On narrow phones the reader header packs the back arrow, story
+   title, page count, prev/play/next, speed chip, autoplay toggle,
+   and cozy-mode icon into one row. That's ~9 items competing for
+   ~360px of viewport — with the baseline 36px buttons + 4px gaps
+   + 18px title font, the rightmost (cozy-mode ☀️) gets clipped
+   outside the viewport.
+
+   Fix: compact mode for all reader-header controls under 600px.
+   - hdr-btn: 36px → 30px (play button: 40px → 34px)
+   - gap: 4px → 2px
+   - Hide the story title entirely — page-num "1/13" carries the
+     navigation context; the title is already shown on the
+     library card the user tapped to get here.
+   - Shrink speed-chip padding + font so it fits in the row.
+
+   On >=600px everything stays at the original desktop sizes. */
+@media (max-width: 600px) {
+  .reader-header h2 {
+    display: none;
+  }
+  .reader-header {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .header-controls {
+    gap: 2px;
+  }
+  .hdr-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+  .hdr-btn.play {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+  .speed-chip {
+    padding: 0 8px;
+    font-size: 11px;
+    min-height: 26px;
+  }
+  .autoplay-toggle {
+    min-height: 26px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+  .cozy-toggle {
+    min-height: 26px;
+  }
+}
+
 /* Reading-speed dropdown — native <select> styled to match the autoplay
    and cozy-mode pills so all three controls line up as a visual set.
    Same border, same radius, same padding structure. Native select arrow
@@ -1443,28 +1496,40 @@ body > * {
   line-height: 1.75;
 }
 .story-text .word {
-  transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease,
-              opacity 0.35s ease, filter 0.35s ease;
+  /* Silky-highlight v2 (2026-04-19): tightened transition from 5
+     properties over 250ms down to only background-color over 140ms.
+     The prior declaration animated transform/opacity/filter/color
+     that never actually changed on the active state, which still
+     forced the compositor to track them per-word per-frame. Parents
+     reported a "shuttery" feel; profiling pointed at three culprits:
+       1. transform: scale(1.04) on inline-block = subpixel text
+          repaint on iOS Safari every frame (killed below)
+       2. 250ms transition overlapping with ~200ms word cadence meant
+          two words were always mid-fade simultaneously (tightened)
+       3. 5-property transition list bloated compositor work (trimmed)
+     140ms is short enough to feel lock-on, long enough to feel like
+     a fade rather than a binary flash. */
+  transition: background-color 0.14s ease-out;
   padding: 1px 4px;
   border-radius: 5px;
   display: inline-block;
-  /* Needed for the sweep-underline pseudo-element to position correctly
-     when the word goes active. Leaving this on ALL words (not just
-     active) keeps layout from shifting when the class toggles. */
   position: relative;
 }
-/* Active word highlight. We intentionally use a soft warm honey tint
-   instead of the deep terracotta accent — at full saturation the accent
-   felt "muddy" on every word as the narrator advanced. The honey tint
-   reads as a highlighter marker on paper rather than a solid pill, which
-   is the vibe we want for an editorial reader. Text stays dark for
-   contrast (no white-on-yellow legibility hit). */
+/* Active word highlight. Honey tint reads as a highlighter marker on
+   paper — strong enough to track, soft enough not to "shout" as the
+   cursor moves. Text stays dark for contrast.
+   NO transform — the scale(1.04) "breath" looked nice on desktop but
+   on iOS Safari, inline-block + transform + simultaneous background
+   change forced a full re-rasterization of the glyphs every frame.
+   Removing it is the single biggest contributor to the new silky feel.
+   will-change scoped to .active only (not all words) so the
+   compositor layer promotion is bounded to ~1 element at a time. */
 .story-text .word.active {
   background: #ff9b70;
   color: var(--text);
-  transform: scale(1.04);
   border-radius: 5px;
   box-shadow: 0 1px 6px rgba(194, 94, 69, 0.28);
+  will-change: background-color;
 }
 
 /* ── Word Glow — tap-to-define vocabulary words ──────────────────────
@@ -2172,12 +2237,11 @@ body > * {
 }
 
 /* ── Reduced-motion respect ──────────────────────────────────────────
-   Users who've opted into prefers-reduced-motion get a flatter active-
-   word state (no scale breath, faster background fade) while keeping
-   the highlight visible so read-along utility is preserved. */
+   Users with prefers-reduced-motion get an instant background swap
+   instead of the 140ms fade. The post-v2 highlight already has no
+   transform, so there's nothing else to flatten here. */
 @media (prefers-reduced-motion: reduce) {
-  .story-text .word { transition: background 0.15s linear; }
-  .story-text .word.active { transform: none; }
+  .story-text .word { transition: none; }
 }
 
 /* ── Phase 3 rollback — sweep-underline removed ──────────────────────
