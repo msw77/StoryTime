@@ -794,6 +794,13 @@ export function ReaderScreen({
               />
             ))}
           </div>
+          {/* Book-style running footer — small italic page indicator
+              like a real book's bottom-outside corner. Quiet, matches
+              the serif body treatment. "—  p. 3  —" format is a
+              classic print-book convention. */}
+          <div className="reader-page-footer" aria-hidden="true">
+            — p. {pageIdx + 1} —
+          </div>
         </div>
       </div>
       {debugHighlight && <HighlightDebugOverlay />}

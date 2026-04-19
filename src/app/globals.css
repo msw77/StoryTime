@@ -1293,6 +1293,25 @@ body > * {
   flex-direction: column;
   min-height: 0;
   padding: 16px 24px 0;
+  /* Open-book aesthetic (2026-04-19). A layered background that reads
+     as "a single open page of a real book sitting under the header":
+       1. Base: warm cream paper (#fbf5e4), nudged slightly yellower
+          than the app bg so the page stands out from the surround.
+       2. Linear gradient darkening toward the bottom by ~4%, mimicking
+          the natural page-curl shadow that falls on a lit page.
+       3. Inset box-shadow on the left edge (spine) and a softer one
+          on the right edge (outer page edge) — multi-layer so the
+          left is twice as prominent (book spine is heavier than a
+          free edge).
+     All effects are subtle enough that the text legibility is
+     unaffected; they register as atmosphere, not decoration. */
+  background:
+    linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
+  box-shadow:
+    inset 14px 0 28px -18px rgba(120, 78, 48, 0.28),
+    inset -10px 0 20px -16px rgba(120, 78, 48, 0.14),
+    inset 0 -20px 24px -24px rgba(120, 78, 48, 0.12);
+  position: relative;
 }
 .reader-image-fixed {
   flex-shrink: 0;
@@ -1492,17 +1511,48 @@ body > * {
   margin-bottom: 12px;
 }
 .story-text {
+  /* Open-book aesthetic: switch body font to Fraunces (our display
+     serif, already loaded in layout.tsx). Serif body reads
+     unambiguously as "book" rather than "app." Fraunces's variable-
+     font optical sizing means the text-size cut still reads cleanly
+     at 17-22px body; no paired fallback font needed.
+     Weight 500 is the text-optical weight — 600 felt too assertive
+     for body copy once we switched off sans-serif. */
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
   font-size: 17px;
-  line-height: 1.7;
-  font-weight: 600;
+  line-height: 1.65;
+  font-weight: 500;
   color: var(--text);
+  /* Slightly warmer text color than pure --text so it melts into the
+     paper palette instead of contrasting like ink on a screen. */
+  color: #2e2620;
+  letter-spacing: 0.005em;
 }
 /* Younger kids get noticeably bigger text — 2-4 stories have far less
    text per page, so there's plenty of room, and larger glyphs help
    pre-readers follow the word highlight. */
 .story-text.story-text--young {
   font-size: 22px;
-  line-height: 1.75;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+/* Book-style running footer — a small italic page indicator at the
+   bottom of every page, like print books do. "— p. 3 —" format is
+   the convention. Subtle enough that it doesn't compete with the
+   story; just enough that the eye knows it's looking at a bound
+   page rather than a feed. */
+.reader-page-footer {
+  text-align: center;
+  font-family: var(--font-heading), "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(120, 78, 48, 0.45);
+  letter-spacing: 0.08em;
+  margin-top: 32px;
+  padding-bottom: 8px;
+  user-select: none;
 }
 .story-text .word {
   /* Highlight model v3 (2026-04-19): "spotlight" paradigm.
@@ -2381,6 +2431,20 @@ body > * {
 }
 .reader.cozy .story-text {
   color: #e8e2d4;
+}
+/* Cozy-mode open-book: the page goes sepia-dim instead of cream, and
+   the spine/edge shadows deepen so they read on the darker backdrop.
+   Page footer warms up for readability. */
+.reader.cozy .reader-body {
+  background:
+    linear-gradient(to bottom, #3d342a 0%, #312820 100%);
+  box-shadow:
+    inset 14px 0 28px -18px rgba(0, 0, 0, 0.55),
+    inset -10px 0 20px -16px rgba(0, 0, 0, 0.35),
+    inset 0 -20px 24px -24px rgba(0, 0, 0, 0.35);
+}
+.reader.cozy .reader-page-footer {
+  color: rgba(240, 220, 185, 0.45);
 }
 /* Cozy-mode spotlight. Dim shade is a desaturated warm brown that
    reads as "faded" against the sepia backdrop without going dark
