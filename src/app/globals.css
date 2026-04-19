@@ -1342,16 +1342,53 @@ body > * {
       #dfd1aa 5px, #dfd1aa 6px,
       transparent 6px
     ) right top / 6px 100% no-repeat,
-    linear-gradient(
-      to top,
-      #7a3526 0, #7a3526 12px,
-      #d8c8a0 12px, #d8c8a0 13px,
-      #fdf7e6 13px, #fdf7e6 14px,
-      transparent 14px
-    ) left bottom env(safe-area-inset-bottom, 0px) / 100% 14px no-repeat,
     linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
 
   box-shadow: inset 0 -20px 24px -24px rgba(120, 78, 48, 0.14);
+}
+
+/* Bottom hardcover lip — extends the cover color from its visible
+   "lip" all the way through the iPhone safe-area / home-bar zone
+   to the actual viewport bottom. The home bar overlays the lower
+   portion of the cover, which reads correctly as "the book extends
+   off the bottom of the screen" rather than the awkward v4 result
+   where a ~34px strip of beige paper showed below the brown lip.
+
+   Layout:
+     - bottom: 0 (stretches to real viewport bottom)
+     - height: 14px visible lip + safe-area inset below
+     - Top 2px of the element = page-edge highlight (#fdf7e6) +
+       shadow (#d8c8a0) — the tiny page/cover seam
+     - Everything below those 2px = solid hardcover cloth (#7a3526)
+
+   pointer-events: none so it never captures taps meant for content. */
+.reader-body::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(14px + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    #fdf7e6 0,
+    #fdf7e6 1px,
+    #d8c8a0 1px,
+    #d8c8a0 2px,
+    #7a3526 2px
+  );
+  z-index: 1;
+}
+
+/* Content inside reader-body should stack above the hardcover strip
+   so a story whose final line sits close to the page bottom doesn't
+   get visually covered by the cloth. The strip still registers
+   because reader-body has padding-bottom reserving space for it. */
+.reader-image-fixed,
+.reader-text-scroll {
+  position: relative;
+  z-index: 2;
 }
 .reader-image-fixed {
   flex-shrink: 0;
@@ -2495,15 +2532,18 @@ body > * {
       #786545 5px, #786545 6px,
       transparent 6px
     ) right top / 6px 100% no-repeat,
-    linear-gradient(
-      to top,
-      #3a1a0f 0, #3a1a0f 12px,
-      #5c4a32 12px, #5c4a32 13px,
-      #786552 13px, #786552 14px,
-      transparent 14px
-    ) left bottom env(safe-area-inset-bottom, 0px) / 100% 14px no-repeat,
     linear-gradient(to bottom, #3d342a 0%, #312820 100%);
   box-shadow: inset 0 -20px 24px -24px rgba(0, 0, 0, 0.35);
+}
+.reader.cozy .reader-body::after {
+  background: linear-gradient(
+    to bottom,
+    #786552 0,
+    #786552 1px,
+    #5c4a32 1px,
+    #5c4a32 2px,
+    #3a1a0f 2px
+  );
 }
 .reader.cozy .reader-page-footer {
   color: rgba(240, 220, 185, 0.45);
