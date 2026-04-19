@@ -1156,86 +1156,10 @@ body > * {
   }
 }
 
-/* ── Phone-landscape two-page spread ─────────────────────────────────
-   In portrait, the reader stacks image → text. On a phone in
-   landscape (<=520px tall), the image eats nearly all vertical
-   space and text has no room to breathe — parents reported seeing
-   only one row of text before needing to scroll.
-
-   Switch to a side-by-side spread in short-landscape viewports:
-   illustration on the LEFT half, text on the RIGHT half. That's
-   actually the classic picture-book spread (image page + text
-   page), so it reads even more "book-like" in this orientation.
-
-   Scoped by max-height (not just orientation) so iPad/tablet
-   landscape — which still has ~800px of vertical — keeps the
-   portrait layout where that's fine. */
-@media (max-height: 600px) and (orientation: landscape) {
-  /* Kill the 700px max-width + centered margin from the base .reader
-     rule. In portrait that cap keeps the single-column layout from
-     turning into a huge wide block on tablets; in phone-landscape it
-     was confining the two-page spread to 700px of the ~840-930px
-     viewport, leaving empty slate on both sides — which read to the
-     user as "empty right half, no binding." Let the spread fill the
-     whole landscape viewport instead. */
-  .reader {
-    max-width: none;
-    margin: 0;
-  }
-  .reader-body {
-    flex-direction: row;
-    gap: 18px;
-    align-items: stretch;
-    /* Drop the left-spine + right-page-stack background treatments
-       in this layout — they were designed for a tall single page
-       and don't align visually when the body is a wide row. We
-       keep just the base paper gradient; the split itself does the
-       book-spread work. Cozy override below mirrors this. */
-    background: linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
-    padding: 12px 16px calc(8px + env(safe-area-inset-bottom, 0px));
-  }
-  .reader-image-fixed {
-    flex: 1 1 50%;
-    max-width: 50%;
-    min-width: 0;
-    min-height: 0;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
-  }
-  /* Force illustration to respect vertical viewport instead of
-     its default 4:3 aspect-ratio, which would overflow in landscape
-     where vertical is the scarce dimension. */
-  .reader-image-fixed .ai-illustration {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    aspect-ratio: auto;
-    margin: 0;
-  }
-  .reader-image-fixed .ai-illustration img {
-    max-height: 100%;
-    width: auto;
-    object-fit: contain;
-  }
-  .reader-text-scroll {
-    flex: 1 1 50%;
-    max-width: 50%;
-    min-width: 0;
-    padding: 0 4px;
-  }
-  /* Page footer sits below the text column; running footer makes
-     less sense in a split spread since the "pages" aren't stacked
-     the same way. Hide it in this mode — the page count in the
-     header still shows context. */
-  .reader-page-footer { display: none; }
-
-  /* Cozy variant: same flatten + slate base */
-  .reader.cozy .reader-body {
-    background: linear-gradient(to bottom, #3a4152 0%, #353c4c 100%);
-  }
-}
+/* Phone-landscape two-page spread lives below the base .reader-body
+   rule. CSS "last declared wins" means placing it above would let the
+   portrait-layout base rules override our landscape overrides. See
+   the block after .reader-text-scroll::-webkit-scrollbar-thumb. */
 
 /* Reading-speed dropdown — native <select> styled to match the autoplay
    and cozy-mode pills so all three controls line up as a visual set.
@@ -1458,6 +1382,96 @@ body > * {
   background: rgba(0, 0, 0, 0.08);
   border-radius: 100px;
 }
+
+/* ── Phone-landscape two-page spread ─────────────────────────────────
+   In portrait, the reader stacks image → text. On a phone in
+   landscape (<=600px tall), the image eats nearly all vertical
+   space and text has no room to breathe — parents reported seeing
+   only one row of text before needing to scroll.
+
+   Switch to a side-by-side spread in short-landscape viewports:
+   illustration on the LEFT half, text on the RIGHT half. That's
+   actually the classic picture-book spread (image page + text
+   page), so it reads even more "book-like" in this orientation.
+
+   Scoped by max-height (not just orientation) so iPad/tablet
+   landscape — which still has ~800px of vertical — keeps the
+   portrait layout where that's fine.
+
+   CRITICAL: this block must live AFTER the base .reader-body /
+   .reader-image-fixed / .reader-text-scroll rules above. Earlier
+   attempts placed it near the top of the Reader section, which
+   meant the base portrait rules (declared later in source order)
+   overrode these landscape overrides despite the media query —
+   source order beats media-query grouping for equal-specificity
+   selectors. */
+@media (max-height: 600px) and (orientation: landscape) {
+  /* Kill the 700px max-width + centered margin from the base .reader
+     rule. In portrait that cap keeps the single-column layout from
+     turning into a huge wide block on tablets; in phone-landscape it
+     was confining the two-page spread to 700px of the ~840-930px
+     viewport, leaving empty slate on both sides — which read to the
+     user as "empty right half, no binding." Let the spread fill the
+     whole landscape viewport instead. */
+  .reader {
+    max-width: none;
+    margin: 0;
+  }
+  .reader-body {
+    flex-direction: row;
+    gap: 18px;
+    align-items: stretch;
+    /* Drop the left-spine + right-page-stack background treatments
+       in this layout — they were designed for a tall single page
+       and don't align visually when the body is a wide row. We
+       keep just the base paper gradient; the split itself does the
+       book-spread work. Cozy override below mirrors this. */
+    background: linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
+    padding: 12px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+  .reader-image-fixed {
+    flex: 1 1 50%;
+    max-width: 50%;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Force illustration to respect vertical viewport instead of
+     its default 4:3 aspect-ratio, which would overflow in landscape
+     where vertical is the scarce dimension. */
+  .reader-image-fixed .ai-illustration {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+  .reader-image-fixed .ai-illustration img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+  .reader-text-scroll {
+    flex: 1 1 50%;
+    max-width: 50%;
+    min-width: 0;
+    padding: 0 4px;
+  }
+  /* Page footer sits below the text column; running footer makes
+     less sense in a split spread since the "pages" aren't stacked
+     the same way. Hide it in this mode — the page count in the
+     header still shows context. */
+  .reader-page-footer { display: none; }
+
+  /* Cozy variant: same flatten + slate base */
+  .reader.cozy .reader-body {
+    background: linear-gradient(to bottom, #3a4152 0%, #353c4c 100%);
+  }
+}
+
 /* ── Chapter banner ──────────────────────────────────────────────────
    Renders at the top of the first page of each chapter in Medium/Long
    AI stories. The banner is deliberately book-like: small-caps number
