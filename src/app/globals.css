@@ -1295,32 +1295,34 @@ body > * {
   /* Nudge content right so it clears the spine crease. Without this
      the first characters of each line would land on the darkest part
      of the binding shadow. 28px left gutter lets the crease live at
-     14-20px and text start at ~24-32px of padding-left. */
-  padding: 16px 24px 0 36px;
+     14-20px and text start at ~24-32px of padding-left.
+     padding-bottom: 10px reserves room for the bottom hardcover lip
+     so the running footer doesn't overlap with the cover strip. */
+  padding: 16px 24px 10px 36px;
   position: relative;
 
-  /* Open-book aesthetic v2 (Option A).
-     Three layered backgrounds paint the book effect, from TOP to
-     BOTTOM in the stack (CSS background order is front-to-back):
+  /* Open-book aesthetic v3 (Option A + bottom hardcover).
+     Four layered backgrounds, CSS order front-to-back:
 
-     1. LEFT SPINE CREASE — a 40px-wide gradient that dips into a
-        shadow peak at x=16px, simulating the page bending into the
-        binding. The dip (peak) is where the paper curves into the
-        spine and catches the least light.
+     1. LEFT SPINE CREASE — 42px-wide gradient with shadow peak at
+        x=16px. Reads as the page bending into the binding.
 
-     2. RIGHT PAGE-STACK — thin repeating hairlines painted at the
-        right edge at x=1, 3, 5 px. Each line is ~1px and slightly
-        different shades of aged-paper brown, reading as "the edges
-        of the pages beneath this one." When you're halfway through
-        a thick book, you see exactly this pattern along the free
-        edge of the open page.
+     2. RIGHT PAGE-STACK — hairlines at x=1/3/5, progressively darker
+        aged-paper browns. Reads as "more pages underneath."
 
-     3. BASE PAPER — our warm cream gradient (top → bottom curl
-        darkening) from v1.
+     3. BOTTOM HARDCOVER LIP — the new addition. 10px tall strip at
+        bottom composed of:
+          1px highlight (#fdf7e6) — bottom edge of the top page
+          1px shadow (#d8c8a0) — the tiny gap between page edge and
+            hardcover
+          8px hardcover cloth (#7a3526, deep terracotta) — the
+            hardcover's top surface visible when the book is tilted
+            slightly toward you
+        Color chosen to harmonize with our brand terracotta accent
+        #c25e45 while being dark/saturated enough to read as cloth
+        or book-linen rather than paper.
 
-     box-shadow is simplified to just a bottom page-curl shadow —
-     the spine is now handled by background gradient, and the right
-     edge has the page-stack treatment instead of a plain shadow. */
+     4. BASE PAPER — warm cream gradient (top → bottom curl). */
   background:
     linear-gradient(
       to right,
@@ -1339,6 +1341,13 @@ body > * {
       #dfd1aa 5px, #dfd1aa 6px,
       transparent 6px
     ) right top / 6px 100% no-repeat,
+    linear-gradient(
+      to top,
+      #7a3526 0, #7a3526 8px,
+      #d8c8a0 8px, #d8c8a0 9px,
+      #fdf7e6 9px, #fdf7e6 10px,
+      transparent 10px
+    ) left bottom / 100% 10px no-repeat,
     linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
 
   box-shadow: inset 0 -20px 24px -24px rgba(120, 78, 48, 0.14);
@@ -2485,6 +2494,13 @@ body > * {
       #786545 5px, #786545 6px,
       transparent 6px
     ) right top / 6px 100% no-repeat,
+    linear-gradient(
+      to top,
+      #3a1a0f 0, #3a1a0f 8px,
+      #5c4a32 8px, #5c4a32 9px,
+      #786552 9px, #786552 10px,
+      transparent 10px
+    ) left bottom / 100% 10px no-repeat,
     linear-gradient(to bottom, #3d342a 0%, #312820 100%);
   box-shadow: inset 0 -20px 24px -24px rgba(0, 0, 0, 0.35);
 }
