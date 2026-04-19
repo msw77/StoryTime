@@ -1292,26 +1292,56 @@ body > * {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 16px 24px 0;
-  /* Open-book aesthetic (2026-04-19). A layered background that reads
-     as "a single open page of a real book sitting under the header":
-       1. Base: warm cream paper (#fbf5e4), nudged slightly yellower
-          than the app bg so the page stands out from the surround.
-       2. Linear gradient darkening toward the bottom by ~4%, mimicking
-          the natural page-curl shadow that falls on a lit page.
-       3. Inset box-shadow on the left edge (spine) and a softer one
-          on the right edge (outer page edge) — multi-layer so the
-          left is twice as prominent (book spine is heavier than a
-          free edge).
-     All effects are subtle enough that the text legibility is
-     unaffected; they register as atmosphere, not decoration. */
-  background:
-    linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
-  box-shadow:
-    inset 14px 0 28px -18px rgba(120, 78, 48, 0.28),
-    inset -10px 0 20px -16px rgba(120, 78, 48, 0.14),
-    inset 0 -20px 24px -24px rgba(120, 78, 48, 0.12);
+  /* Nudge content right so it clears the spine crease. Without this
+     the first characters of each line would land on the darkest part
+     of the binding shadow. 28px left gutter lets the crease live at
+     14-20px and text start at ~24-32px of padding-left. */
+  padding: 16px 24px 0 36px;
   position: relative;
+
+  /* Open-book aesthetic v2 (Option A).
+     Three layered backgrounds paint the book effect, from TOP to
+     BOTTOM in the stack (CSS background order is front-to-back):
+
+     1. LEFT SPINE CREASE — a 40px-wide gradient that dips into a
+        shadow peak at x=16px, simulating the page bending into the
+        binding. The dip (peak) is where the paper curves into the
+        spine and catches the least light.
+
+     2. RIGHT PAGE-STACK — thin repeating hairlines painted at the
+        right edge at x=1, 3, 5 px. Each line is ~1px and slightly
+        different shades of aged-paper brown, reading as "the edges
+        of the pages beneath this one." When you're halfway through
+        a thick book, you see exactly this pattern along the free
+        edge of the open page.
+
+     3. BASE PAPER — our warm cream gradient (top → bottom curl
+        darkening) from v1.
+
+     box-shadow is simplified to just a bottom page-curl shadow —
+     the spine is now handled by background gradient, and the right
+     edge has the page-stack treatment instead of a plain shadow. */
+  background:
+    linear-gradient(
+      to right,
+      rgba(90, 58, 30, 0.28) 0,
+      rgba(90, 58, 30, 0.10) 10px,
+      rgba(90, 58, 30, 0.22) 16px,
+      rgba(90, 58, 30, 0.04) 28px,
+      transparent 42px
+    ) left top / 42px 100% no-repeat,
+    linear-gradient(
+      to left,
+      #c9ba92 0, #c9ba92 1px,
+      transparent 1px, transparent 3px,
+      #d4c7a6 3px, #d4c7a6 4px,
+      transparent 4px, transparent 5px,
+      #dfd1aa 5px, #dfd1aa 6px,
+      transparent 6px
+    ) right top / 6px 100% no-repeat,
+    linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
+
+  box-shadow: inset 0 -20px 24px -24px rgba(120, 78, 48, 0.14);
 }
 .reader-image-fixed {
   flex-shrink: 0;
@@ -2432,16 +2462,31 @@ body > * {
 .reader.cozy .story-text {
   color: #e8e2d4;
 }
-/* Cozy-mode open-book: the page goes sepia-dim instead of cream, and
-   the spine/edge shadows deepen so they read on the darker backdrop.
-   Page footer warms up for readability. */
+/* Cozy-mode open-book: the page goes sepia-dim instead of cream.
+   Spine crease deepens significantly (binding shadow is much more
+   prominent in low light) and the page-stack hairlines shift to
+   warmer browns visible against the dark backdrop. */
 .reader.cozy .reader-body {
   background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.55) 0,
+      rgba(0, 0, 0, 0.28) 10px,
+      rgba(0, 0, 0, 0.48) 16px,
+      rgba(0, 0, 0, 0.14) 28px,
+      transparent 42px
+    ) left top / 42px 100% no-repeat,
+    linear-gradient(
+      to left,
+      #5c4a32 0, #5c4a32 1px,
+      transparent 1px, transparent 3px,
+      #6a573c 3px, #6a573c 4px,
+      transparent 4px, transparent 5px,
+      #786545 5px, #786545 6px,
+      transparent 6px
+    ) right top / 6px 100% no-repeat,
     linear-gradient(to bottom, #3d342a 0%, #312820 100%);
-  box-shadow:
-    inset 14px 0 28px -18px rgba(0, 0, 0, 0.55),
-    inset -10px 0 20px -16px rgba(0, 0, 0, 0.35),
-    inset 0 -20px 24px -24px rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 -20px 24px -24px rgba(0, 0, 0, 0.35);
 }
 .reader.cozy .reader-page-footer {
   color: rgba(240, 220, 185, 0.45);
