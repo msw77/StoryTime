@@ -1437,11 +1437,12 @@ body > * {
     padding: 0;
     /* Align image to the TOP of its column so the top edge of the
        illustration lines up with the first line of text on the right
-       page — classic picture-book spread. (Previously center-center,
-       which made short images float mid-column and feel disconnected
-       from the text baseline.) */
-    align-items: center;
-    justify-content: flex-start;
+       page — classic picture-book spread. This container is a row-
+       direction flex, so align-items is the vertical axis (top) and
+       justify-content is horizontal (center the image left-to-right
+       within its half). */
+    align-items: flex-start;
+    justify-content: center;
   }
   /* Force illustration to respect vertical viewport instead of
      its default 4:3 aspect-ratio, which would overflow in landscape
