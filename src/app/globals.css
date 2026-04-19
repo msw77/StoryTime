@@ -1170,7 +1170,18 @@ body > * {
    Scoped by max-height (not just orientation) so iPad/tablet
    landscape — which still has ~800px of vertical — keeps the
    portrait layout where that's fine. */
-@media (max-height: 520px) and (orientation: landscape) {
+@media (max-height: 600px) and (orientation: landscape) {
+  /* Kill the 700px max-width + centered margin from the base .reader
+     rule. In portrait that cap keeps the single-column layout from
+     turning into a huge wide block on tablets; in phone-landscape it
+     was confining the two-page spread to 700px of the ~840-930px
+     viewport, leaving empty slate on both sides — which read to the
+     user as "empty right half, no binding." Let the spread fill the
+     whole landscape viewport instead. */
+  .reader {
+    max-width: none;
+    margin: 0;
+  }
   .reader-body {
     flex-direction: row;
     gap: 18px;
