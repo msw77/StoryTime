@@ -1296,9 +1296,10 @@ body > * {
      the first characters of each line would land on the darkest part
      of the binding shadow. 28px left gutter lets the crease live at
      14-20px and text start at ~24-32px of padding-left.
-     padding-bottom: 10px reserves room for the bottom hardcover lip
-     so the running footer doesn't overlap with the cover strip. */
-  padding: 16px 24px 10px 36px;
+     padding-bottom: reserves room for the hardcover lip PLUS the
+     iPhone home-bar safe area so the running footer never overlaps
+     either the cover strip or the home-bar gesture zone. */
+  padding: 16px 24px calc(14px + env(safe-area-inset-bottom, 0px)) 36px;
   position: relative;
 
   /* Open-book aesthetic v3 (Option A + bottom hardcover).
@@ -1343,11 +1344,11 @@ body > * {
     ) right top / 6px 100% no-repeat,
     linear-gradient(
       to top,
-      #7a3526 0, #7a3526 8px,
-      #d8c8a0 8px, #d8c8a0 9px,
-      #fdf7e6 9px, #fdf7e6 10px,
-      transparent 10px
-    ) left bottom / 100% 10px no-repeat,
+      #7a3526 0, #7a3526 12px,
+      #d8c8a0 12px, #d8c8a0 13px,
+      #fdf7e6 13px, #fdf7e6 14px,
+      transparent 14px
+    ) left bottom env(safe-area-inset-bottom, 0px) / 100% 14px no-repeat,
     linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
 
   box-shadow: inset 0 -20px 24px -24px rgba(120, 78, 48, 0.14);
@@ -2496,11 +2497,11 @@ body > * {
     ) right top / 6px 100% no-repeat,
     linear-gradient(
       to top,
-      #3a1a0f 0, #3a1a0f 8px,
-      #5c4a32 8px, #5c4a32 9px,
-      #786552 9px, #786552 10px,
-      transparent 10px
-    ) left bottom / 100% 10px no-repeat,
+      #3a1a0f 0, #3a1a0f 12px,
+      #5c4a32 12px, #5c4a32 13px,
+      #786552 13px, #786552 14px,
+      transparent 14px
+    ) left bottom env(safe-area-inset-bottom, 0px) / 100% 14px no-repeat,
     linear-gradient(to bottom, #3d342a 0%, #312820 100%);
   box-shadow: inset 0 -20px 24px -24px rgba(0, 0, 0, 0.35);
 }
