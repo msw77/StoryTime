@@ -1116,34 +1116,42 @@ body > * {
     display: none;
   }
   .reader-header {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 14px;
+    padding-right: 14px;
   }
   .header-controls {
-    gap: 2px;
+    /* Tested at 2px — too cramped for thumbs. 6px gives every button
+       a proper visual separator + a ~6px no-mans-land between tap
+       targets so a thumb overshooting one button doesn't accidentally
+       fire the neighbor. */
+    gap: 6px;
   }
   .hdr-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 15px;
+    /* 32px is still below Apple HIG's 44pt minimum, but reader
+       nav buttons aren't safety-critical — and the tradeoff of
+       fitting the full set on one row wins over the "perfect"
+       tap-target spec. Gap adds effective target diameter anyway. */
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
   }
   .hdr-btn.play {
-    width: 34px;
-    height: 34px;
-    font-size: 15px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
   .speed-chip {
-    padding: 0 8px;
+    padding: 0 10px;
     font-size: 11px;
-    min-height: 26px;
+    min-height: 28px;
   }
   .autoplay-toggle {
-    min-height: 26px;
-    padding: 0 8px;
+    min-height: 28px;
+    padding: 0 10px;
     font-size: 11px;
   }
   .cozy-toggle {
-    min-height: 26px;
+    min-height: 28px;
   }
 }
 
