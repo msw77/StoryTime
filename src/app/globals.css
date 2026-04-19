@@ -1296,10 +1296,9 @@ body > * {
      the first characters of each line would land on the darkest part
      of the binding shadow. 28px left gutter lets the crease live at
      14-20px and text start at ~24-32px of padding-left.
-     padding-bottom: reserves room for the hardcover lip PLUS the
-     iPhone home-bar safe area so the running footer never overlaps
-     either the cover strip or the home-bar gesture zone. */
-  padding: 16px 24px calc(14px + env(safe-area-inset-bottom, 0px)) 36px;
+     padding-bottom includes the iOS home-bar safe area so the
+     running footer never lands in the home-bar gesture zone. */
+  padding: 16px 24px calc(12px + env(safe-area-inset-bottom, 0px)) 36px;
   position: relative;
 
   /* Open-book aesthetic v3 (Option A + bottom hardcover).
@@ -1347,49 +1346,14 @@ body > * {
   box-shadow: inset 0 -20px 24px -24px rgba(120, 78, 48, 0.14);
 }
 
-/* Bottom hardcover lip — extends the cover color from its visible
-   "lip" all the way through the iPhone safe-area / home-bar zone
-   to the actual viewport bottom. The home bar overlays the lower
-   portion of the cover, which reads correctly as "the book extends
-   off the bottom of the screen" rather than the awkward v4 result
-   where a ~34px strip of beige paper showed below the brown lip.
-
-   Layout:
-     - bottom: 0 (stretches to real viewport bottom)
-     - height: 14px visible lip + safe-area inset below
-     - Top 2px of the element = page-edge highlight (#fdf7e6) +
-       shadow (#d8c8a0) — the tiny page/cover seam
-     - Everything below those 2px = solid hardcover cloth (#7a3526)
-
-   pointer-events: none so it never captures taps meant for content. */
-.reader-body::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(14px + env(safe-area-inset-bottom, 0px));
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    #fdf7e6 0,
-    #fdf7e6 1px,
-    #d8c8a0 1px,
-    #d8c8a0 2px,
-    #7a3526 2px
-  );
-  z-index: 1;
-}
-
-/* Content inside reader-body should stack above the hardcover strip
-   so a story whose final line sits close to the page bottom doesn't
-   get visually covered by the cloth. The strip still registers
-   because reader-body has padding-bottom reserving space for it. */
-.reader-image-fixed,
-.reader-text-scroll {
-  position: relative;
-  z-index: 2;
-}
+/* Bottom hardcover strip was tried in v3/v4/v5 and reverted. On
+   iPhone portrait the iOS safe-area + screen curvature made the
+   strip either vanish or render as an awkward "brown line with
+   beige below it." Dropped for now — spine crease + right-edge
+   page stack carry enough book-ness on their own. If we revisit,
+   the bottom is probably better done at the app-shell level with
+   a genuine "book sits on a surface" background, not as an inset
+   strip inside the reader. */
 .reader-image-fixed {
   flex-shrink: 0;
   display: flex;
@@ -2490,8 +2454,16 @@ body > * {
 .reader.cozy {
   background: #3a4152;
 }
+/* Header goes a shade darker than the body slate so there's a
+   visible seam between "navigation chrome" and "book page."
+   Previously the header and body were the same #3a4152 which made
+   the top of the reader feel like one flat pane; the darker
+   header now reads as "controls sit above the page," matching
+   the visual separation you get on a physical book where a
+   cover stripe or table surface frames the page. */
 .reader.cozy .reader-header {
-  background: #3a4152;
+  background: #2b3141;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 .reader.cozy .reader-header h2,
 .reader.cozy .page-num {
@@ -2509,44 +2481,35 @@ body > * {
 .reader.cozy .story-text {
   color: #e8e2d4;
 }
-/* Cozy-mode open-book: the page goes sepia-dim instead of cream.
-   Spine crease deepens significantly (binding shadow is much more
-   prominent in low light) and the page-stack hairlines shift to
-   warmer browns visible against the dark backdrop. */
+/* Cozy-mode — kept slate-blue palette (rather than the warm sepia
+   tried briefly). Tester preferred slate; warm brown read "too
+   vintage hardback" and less "cozy bedtime." The spine crease and
+   page-stack carry over in cooler gray-slate tones so they still
+   register as book structure without competing with the calm mood. */
 .reader.cozy .reader-body {
   background:
     linear-gradient(
       to right,
-      rgba(0, 0, 0, 0.55) 0,
-      rgba(0, 0, 0, 0.28) 10px,
-      rgba(0, 0, 0, 0.48) 16px,
-      rgba(0, 0, 0, 0.14) 28px,
+      rgba(0, 0, 0, 0.45) 0,
+      rgba(0, 0, 0, 0.22) 10px,
+      rgba(0, 0, 0, 0.40) 16px,
+      rgba(0, 0, 0, 0.10) 28px,
       transparent 42px
     ) left top / 42px 100% no-repeat,
     linear-gradient(
       to left,
-      #5c4a32 0, #5c4a32 1px,
+      #4c5364 0, #4c5364 1px,
       transparent 1px, transparent 3px,
-      #6a573c 3px, #6a573c 4px,
+      #545c70 3px, #545c70 4px,
       transparent 4px, transparent 5px,
-      #786545 5px, #786545 6px,
+      #5c6478 5px, #5c6478 6px,
       transparent 6px
     ) right top / 6px 100% no-repeat,
-    linear-gradient(to bottom, #3d342a 0%, #312820 100%);
-  box-shadow: inset 0 -20px 24px -24px rgba(0, 0, 0, 0.35);
-}
-.reader.cozy .reader-body::after {
-  background: linear-gradient(
-    to bottom,
-    #786552 0,
-    #786552 1px,
-    #5c4a32 1px,
-    #5c4a32 2px,
-    #3a1a0f 2px
-  );
+    linear-gradient(to bottom, #3a4152 0%, #353c4c 100%);
+  box-shadow: inset 0 -20px 24px -24px rgba(0, 0, 0, 0.28);
 }
 .reader.cozy .reader-page-footer {
-  color: rgba(240, 220, 185, 0.45);
+  color: rgba(232, 226, 212, 0.40);
 }
 /* Cozy-mode spotlight. Dim shade is a desaturated warm brown that
    reads as "faded" against the sepia backdrop without going dark
