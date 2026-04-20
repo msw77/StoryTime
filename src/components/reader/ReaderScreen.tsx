@@ -305,21 +305,26 @@ export function ReaderScreen({
 
     const run = async () => {
       try {
-        // One image per request, not batched. fal.ai takes ~30-45s
-        // per image; when we bundled 3 into one /api/generate-images
-        // call, any single slow image dragged the whole batch past
-        // Vercel's serverless function timeout (confirmed from logs:
-        // 504 "Vercel Runtime Timeout Error" at ~15s on batched calls,
-        // while single-image requests complete in ~4s). Making each
-        // image its own request keeps every call well under the
-        // timeout at the cost of slightly longer total wall-clock
-        // time for fully reloading a story's images — which is fine
-        // because it all happens in the background as the reader
-        // opens.
-        for (const pageIdx of needsImage) {
-          if (cancelled) return;
+        // One image per request, fired in PARALLEL from the client.
+        //
+        // Server-side: each /api/generate-images call handles one page,
+        // completes in ~4-8s, well under any timeout.
+        //
+        // Client-side: we issue all N requests concurrently and let
+        // the browser's built-in HTTP connection pool (max ~6 per host)
+        // queue them naturally. Each resolves independently and updates
+        // its own image slot in state, so pages pop in progressively —
+        // page 2 is typically ready within 5-8s of the reader opening,
+        // and the full story is loaded in roughly `ceil(N/6) * 8s`.
+        //
+        // Prior version bundled 3 pages per request server-side. That
+        // made the worst case (one slow image in a batch of 3) take
+        // 30-45s, which regularly hit Vercel's 504 runtime timeout.
+        // See commit de00f57 for the de-batching fix, and this commit
+        // for the parallel-client-side follow-up.
+        const jobs = needsImage.map(async (idx) => {
           try {
-            const results = await fetchImages([pageIdx], story.fullPages!, charDesc);
+            const results = await fetchImages([idx], story.fullPages!, charDesc);
             if (cancelled) return;
             setAiImages((prev) => {
               const next = [...prev];
@@ -329,11 +334,12 @@ export function ReaderScreen({
               return next;
             });
           } catch (err) {
-            // One page failing doesn't block the others. The image
-            // slot stays null → emoji fallback for that page only.
-            console.warn(`Image gen failed for page ${pageIdx}:`, err);
+            // One page failing doesn't block the others. Image slot
+            // stays null → emoji fallback for that page only.
+            console.warn(`Image gen failed for page ${idx}:`, err);
           }
-        }
+        });
+        await Promise.allSettled(jobs);
       } catch (err) {
         console.warn("Image generation error:", err);
       } finally {
