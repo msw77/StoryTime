@@ -681,6 +681,23 @@ export function useSpeech(): SpeechControls {
     // of duplicate rows). `-1` guarantees the first real word emits.
     let lastEmittedDisplayIdx = -1;
 
+    // ── Stall watchdog state ─────────────────────────────────────────
+    // User reports audio sometimes stops mid-page with no pause event
+    // firing. Symptom: highlight advances briefly, then freezes mid-
+    // word. Distinct from the onpause self-heal case because
+    // audio.paused stays false — the element thinks it's playing,
+    // but currentTime stops advancing (iOS audio-focus stall, buffer
+    // loss, media-session ping, etc.).
+    //
+    // Watchdog approach: each RAF frame, compare currentTime to the
+    // value we saw on the previous frame. If they're identical for
+    // more than ~1.5s while audio.paused === false, attempt one
+    // automatic audio.play() call to kick the element back into
+    // action. Single-shot per page to avoid thrash.
+    let lastObservedTime = -1;
+    let stuckSinceMs = 0;
+    let watchdogFired = false;
+
     const cleanup = () => {
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
@@ -744,6 +761,35 @@ export function useSpeech(): SpeechControls {
       // Update word highlight if audio is playing
       if (!audio.paused) {
         const currentTime = audio.currentTime;
+
+        // ── Stall watchdog ──────────────────────────────────────────
+        // If currentTime hasn't advanced across consecutive frames
+        // while audio.paused is false, the element has stalled.
+        // Track how long this has been going on; if it's been
+        // stuck for more than STALL_THRESHOLD_MS, force one
+        // audio.play() to kick it back into motion.
+        const STALL_THRESHOLD_MS = 1500;
+        const nowMs = performance.now();
+        if (currentTime === lastObservedTime) {
+          if (stuckSinceMs === 0) {
+            stuckSinceMs = nowMs;
+          } else if (
+            !watchdogFired &&
+            nowMs - stuckSinceMs > STALL_THRESHOLD_MS
+          ) {
+            watchdogFired = true;
+            console.warn(
+              `[Audio] stall detected — currentTime=${currentTime.toFixed(2)} frozen for ${((nowMs - stuckSinceMs) / 1000).toFixed(1)}s, attempting resume`,
+            );
+            audio.play().catch((err) => {
+              console.warn("[Audio] stall-resume failed:", err);
+            });
+          }
+        } else {
+          // Time advanced — reset the stuck tracker.
+          lastObservedTime = currentTime;
+          stuckSinceMs = 0;
+        }
 
         // Phase 2 — anticipation. Bias the lookup time slightly forward
         // so the highlight arrives a touch before the word is spoken.
