@@ -8,6 +8,7 @@ import {
   resetSequence,
 } from "@/lib/highlightDiagnostics";
 import { reconcileTimings, findDisplayIndexAtTime } from "@/lib/wordTimings";
+import { authedFetch } from "@/lib/authedFetch";
 
 // ─── Browser voice helpers ───────────────────────────────────────────
 
@@ -206,7 +207,11 @@ async function fetchTTSFromAPI(
   const label = text.slice(0, 30).replace(/\s+/g, " ");
   console.log(`[Audio] fetch start: "${label}..."`);
   try {
-    const res = await fetch("/api/tts", {
+    // authedFetch transparently handles transient Clerk 401s: if the
+    // session cookie is stale it reloads Clerk's session and retries
+    // once. Without this, a brief auth refresh race produced the
+    // silent-audio bug on page 2+ that Vercel logs caught.
+    const res = await authedFetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, voice: aiVoice, speed: 1.0 }),

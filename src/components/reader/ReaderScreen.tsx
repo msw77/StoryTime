@@ -8,6 +8,7 @@ import { SceneIllustration } from "./SceneIllustration";
 import { useWordMoments } from "@/hooks/useWordMoments";
 import { HighlightDebugOverlay } from "./HighlightDebugOverlay";
 import { enableDiagnostics } from "@/lib/highlightDiagnostics";
+import { authedFetch } from "@/lib/authedFetch";
 import { VocabWordModal } from "./VocabWordModal";
 import { ComprehensionQuestionsScreen } from "./ComprehensionQuestionsScreen";
 import type { VocabWord } from "@/types/story";
@@ -233,7 +234,7 @@ export function ReaderScreen({
     fullPages: NonNullable<typeof story.fullPages>,
     charDesc: string,
   ) => {
-    const res = await fetch("/api/generate-images", {
+    const res = await authedFetch("/api/generate-images", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

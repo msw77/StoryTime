@@ -19,13 +19,14 @@ import { useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { AIVoiceName, AI_VOICES } from "@/types/story";
 import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
+import { authedFetch } from "@/lib/authedFetch";
 
 // Preview a voice's narration with a canned sentence. Fire-and-forget;
 // we don't cache or manage the Audio element beyond the single play —
 // parents tap between voices rapidly and expect instant feedback.
 async function previewVoice(voice: AIVoiceName, speed: number) {
   try {
-    const res = await fetch("/api/tts", {
+    const res = await authedFetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

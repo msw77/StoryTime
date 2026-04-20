@@ -20,6 +20,7 @@ import { GENRES, REAL_GENRES } from "@/data/genres";
 import { generateStoryOffline } from "@/lib/storyEngine";
 import { prefetchStoryAudio } from "@/hooks/useSpeech";
 import { saveDraft } from "@/lib/draftStory";
+import { authedFetch } from "@/lib/authedFetch";
 
 export interface GenerateStoryFormValues {
   heroName: string;
@@ -82,7 +83,7 @@ export async function generateStoryFlow(
     // ── Phase 1: Claude story text ─────────────────────────────────────
     cb.onPhase?.("story");
     mark("story generation started");
-    const res = await fetch("/api/generate-story", {
+    const res = await authedFetch("/api/generate-story", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -138,7 +139,7 @@ export async function generateStoryFlow(
     if (data.fullPages && data.fullPages.length > 0 && data.fullPages[0]?.scene) {
       const charDesc = data.characterDescription || "";
       try {
-        const imgRes = await fetch("/api/generate-images", {
+        const imgRes = await authedFetch("/api/generate-images", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
