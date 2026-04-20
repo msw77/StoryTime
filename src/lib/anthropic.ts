@@ -302,11 +302,30 @@ Return valid JSON only, no other text:
   const model = "claude-sonnet-4-20250514";
   const response = await anthropic.messages.create({
     model,
-    max_tokens: 8192,
+    // Bumped from 8192 → 16384 on 2026-04-20 after a production
+    // failure: SyntaxError "Unterminated string in JSON at position
+    // 31165" on a long custom story. 31k characters ≈ 8k tokens, so
+    // we were hitting max_tokens exactly and Claude was being
+    // truncated mid-string, leaving invalid JSON for JSON.parse.
+    // Detailed stories with fullPages + vocab + comprehension
+    // questions across 10-13 pages can easily exceed 8k; 16k gives
+    // real headroom without meaningfully increasing cost (we only
+    // pay for tokens actually used, not the ceiling).
+    max_tokens: 16384,
     messages: [
       { role: "user", content: prompt },
     ],
   });
+
+  // Safety log: if Claude ever stops for max_tokens rather than
+  // end_turn, we've still hit the ceiling. JSON.parse will fail
+  // downstream; log it so we know to bump again rather than
+  // chasing a mysterious-looking JSON syntax error.
+  if (response.stop_reason === "max_tokens") {
+    console.warn(
+      `[anthropic] Claude hit max_tokens (${16384}) generating story — output likely truncated. Consider raising the ceiling.`,
+    );
+  }
 
   // Fire-and-forget cost logging. Category is "user-story" since this
   // path runs when a parent generates a custom story through the app.
