@@ -827,6 +827,58 @@ export function useSpeech(): SpeechControls {
 
     audio.onended = handleEnd;
 
+    // ── Self-heal: mid-play unexpected pause ─────────────────────────
+    // Reports from production: on both classic AND AI-generated
+    // stories, audio sometimes stops mid-page while the word highlight
+    // keeps advancing. Tapping pause → play manually fixes it. The
+    // pattern strongly suggests the <audio> element is being paused
+    // externally — not by our stop() path (that clears the ref and
+    // bumps the epoch, so trackWords would have exited).
+    //
+    // Known culprits of external audio.pause() we can't prevent:
+    //   - iOS audio-focus handoff (incoming call, Siri, a sound effect
+    //     briefly claiming focus, control-center opening, lock screen)
+    //   - Browser memory-pressure releases a decoded buffer and the
+    //     element pauses while it refetches
+    //   - Backgrounding the tab for a split second
+    //
+    // Rather than chase each one individually, we watch for any
+    // unexpected pause and attempt one automatic resume. Guards:
+    //   - Skip if already ended (natural end fires pause too on some
+    //     browsers, and handleEnd already ran)
+    //   - Skip if stop()/another call has superseded us — cancelledRef
+    //     or an epoch mismatch means we're no longer the live call
+    //   - Skip if we're near the end of the audio (within 200ms of
+    //     duration) — that's likely a pause firing just before the
+    //     ended event on some browsers
+    // Single-shot only: if the first resume also fails / gets paused
+    // again, we give up and let the safety timer below eventually
+    // trigger handleEnd.
+    let autoResumed = false;
+    audio.onpause = () => {
+      if (
+        autoResumed ||
+        audio.ended ||
+        endHandled ||
+        cancelledRef.current ||
+        isStale()
+      ) {
+        return;
+      }
+      // If we're very close to the end, don't bother resuming —
+      // the ended event is probably about to fire.
+      const dur = audio.duration || 0;
+      if (dur > 0 && audio.currentTime >= dur - 0.2) {
+        return;
+      }
+      autoResumed = true;
+      audio
+        .play()
+        .catch((err) => {
+          console.warn("Audio auto-resume after unexpected pause failed:", err);
+        });
+    };
+
     audio.onerror = () => {
       // Stale check first — a zombie error handler from an old cached
       // audio element shouldn't trigger a browser-voice fallback while
