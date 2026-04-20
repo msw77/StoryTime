@@ -141,26 +141,52 @@ async function loadBuiltinAudio(storyId: string, pageIdx: number): Promise<Cache
       }
     };
 
-    // Use 'canplay' — enough data to start, don't wait for full buffer
+    // Wait for 'canplay' (readyState 3, HAVE_FUTURE_DATA) before
+    // marking ready — i.e. the browser has buffered enough to start
+    // playback without an immediate underrun.
+    //
+    // CRITICAL: we intentionally do NOT listen for 'loadedmetadata'.
+    // That event fires at readyState 1 (HAVE_METADATA) — the browser
+    // knows the duration and format but has downloaded ZERO audio
+    // samples. If we mark the cache ready at that point, speakAI can
+    // call play() on an element with no decoded audio, which produces
+    // the exact "highlight advances silently, then stops at word N"
+    // bug parents reported on classic stories. audio.currentTime still
+    // ticks forward on a silent-playing element (hence highlight
+    // advances), then the element internally pauses at end of buffer
+    // (hence highlight stops). A silent, frustrating failure.
+    //
+    // canplay is "safe to start" — buffered enough ahead of currentTime
+    // to avoid immediate re-buffering. Combined with preload: "auto"
+    // set above, the browser typically reaches canplay within a few
+    // hundred ms for our ~30-60s MP3s hosted locally.
     audio.oncanplay = () => done(true);
-    audio.onloadedmetadata = () => done(true);
+    audio.oncanplaythrough = () => done(true);
     audio.onerror = () => done(false);
 
     // Set source to trigger loading
     audio.src = pageData.file;
 
-    // Handle instant cache hit (browser already has this file)
-    if (audio.readyState >= 1) {
+    // Handle instant cache hit (browser already has this file fully
+    // buffered from a prior load). Only treat as ready if the browser
+    // is actually at HAVE_FUTURE_DATA or better — readyState >= 3 —
+    // same reason as the event-listener choice above.
+    if (audio.readyState >= 3) {
       done(true);
     }
 
     // Short timeout — these are local files, should be fast
     setTimeout(() => {
       if (!resolved) {
-        if (audio.readyState >= 1) {
+        // Fall back if we've at least reached canplay territory.
+        // Do NOT accept HAVE_METADATA (readyState 1) as ready here —
+        // that would re-introduce the silent-playback bug after 2.5s
+        // on slow networks, which is the exact scenario where the
+        // bug is most likely to manifest.
+        if (audio.readyState >= 3) {
           done(true);
         } else {
-          console.warn(`Builtin audio timeout: ${pageData.file}`);
+          console.warn(`Builtin audio timeout: ${pageData.file} (readyState=${audio.readyState})`);
           done(false);
         }
       }
