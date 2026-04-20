@@ -42,16 +42,21 @@ interface Problem {
   answer: number;
 }
 
-/** Generate a fresh two-digit addition problem with a guaranteed carry.
- *  Requiring a carry nudges difficulty up slightly — "27 + 14" feels
- *  harder than "21 + 14" — and rules out trivially easy additions
- *  like "10 + 20" that a 5-year-old could fluke. */
+/** Generate a fresh two-digit addition problem with a guaranteed carry,
+ *  and a sum that stays under 100 (i.e. the answer is always two
+ *  digits, never three). User feedback: some parents tripped over
+ *  three-digit sums like 78 + 56 = 134 — the carry into the hundreds
+ *  column is the part that trips adults who haven't mental-mathed in
+ *  a decade. Constraining both addends to 10–49 keeps sums in the
+ *  19–98 range while still requiring regrouping in the ones column,
+ *  which is what keeps it kid-proof (kids <~8 haven't learned carry
+ *  regrouping). */
 function makeProblem(): Problem {
   // Loop until we get a problem where the ones digits force a carry.
   // In practice this loops at most 2-3 times on average.
   while (true) {
-    const a = 10 + Math.floor(Math.random() * 80); // 10–89
-    const b = 10 + Math.floor(Math.random() * 80); // 10–89
+    const a = 10 + Math.floor(Math.random() * 40); // 10–49
+    const b = 10 + Math.floor(Math.random() * 40); // 10–49
     if ((a % 10) + (b % 10) >= 10) {
       return { a, b, answer: a + b };
     }

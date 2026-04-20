@@ -159,17 +159,54 @@ export function ParentSettingsModal({
           setAiSpeed={setAiSpeed}
         />
 
+        {/* Reading-experience section header. "View reading progress"
+            used to sit as a full-width button below the toggles — took
+            a whole row of vertical space for what's really a
+            secondary link. Moved inline with the section label so the
+            section heading carries its own "drill-down" affordance,
+            freeing up ~50px of modal height on mobile so the Account
+            section sits above the fold without scrolling. */}
         <div
           style={{
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "var(--muted)",
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
             marginBottom: 8,
+            gap: 12,
           }}
         >
-          Reading experience
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+            }}
+          >
+            Reading experience
+          </span>
+          {onOpenDashboard && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenDashboard();
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                fontSize: 12,
+                fontWeight: 700,
+                color: "var(--accent)",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              View progress →
+            </button>
+          )}
         </div>
 
         {/* Audio & visual effects master toggle.
@@ -182,9 +219,8 @@ export function ParentSettingsModal({
           <div className="settings-row-info">
             <div className="settings-row-title">Audio &amp; visual effects</div>
             <div className="settings-row-desc">
-              Ken Burns pan on illustrations, page-flip animation,
-              ambient sounds, and inline sound effects during stories.
-              Turn off for a calmer, quieter reading experience.
+              Page flips, image pans, ambient sounds, and sound effects.
+              Turn off for a calmer, quieter read.
             </div>
           </div>
           <button
@@ -211,10 +247,8 @@ export function ParentSettingsModal({
           <div className="settings-row-info">
             <div className="settings-row-title">Story questions</div>
             <div className="settings-row-desc">
-              After each story (ages 4+), show a few warm questions
-              about what happened. No scores shown to the child —
-              results land in the parent dashboard. Turn off for quiet
-              wind-down reads.
+              After each story (ages 4+), a few warm questions about what
+              happened. Results go to your dashboard.
             </div>
           </div>
           <button
@@ -232,20 +266,9 @@ export function ParentSettingsModal({
           </button>
         </div>
 
-        {onOpenDashboard && (
-          <div style={{ marginTop: 18, textAlign: "center" }}>
-            <button
-              type="button"
-              className="pill-btn secondary"
-              onClick={() => {
-                onClose();
-                onOpenDashboard();
-              }}
-            >
-              View reading progress →
-            </button>
-          </div>
-        )}
+        {/* "View reading progress" moved up into the Reading
+            Experience section header as a compact inline link —
+            see above. */}
 
         {/* Account section — previously the Clerk UserButton sat in the
             header. Moving it behind the parent gate keeps toddlers from
