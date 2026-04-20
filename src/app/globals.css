@@ -1449,8 +1449,15 @@ body > * {
   }
   /* Force illustration to respect vertical viewport instead of
      its default 4:3 aspect-ratio, which would overflow in landscape
-     where vertical is the scarce dimension. */
-  .reader-image-fixed .ai-illustration {
+     where vertical is the scarce dimension.
+     Also covers the .wide variant explicitly because .ai-illustration.wide
+     rules (max-width: 440px, aspect-ratio: 16/9) live later in source
+     order and would otherwise win the cascade for same specificity —
+     affecting classic stories whose illustrations are 16:9 and thus
+     trigger the `wide` class, while AI-generated stories are squarer
+     and never hit this rule. */
+  .reader-image-fixed .ai-illustration,
+  .reader-image-fixed .ai-illustration.wide {
     max-width: 100%;
     max-height: 100%;
     width: auto;
