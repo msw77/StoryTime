@@ -3021,6 +3021,45 @@ body > * {
   padding: 40px;
   gap: 16px;
   min-height: 70vh;
+  /* Always allow scrolling if the content outgrows the viewport —
+     same safety net we put on comprehension-screen. Especially
+     needed in phone landscape where emoji + heading + stars + 3
+     buttons easily exceed 400px of vertical space. */
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Phone-landscape — compress the end screen so "Back to Library"
+   sits above the fold. Smaller emoji, tighter gaps, smaller title.
+   Keeps the celebratory feel but fits a short viewport. */
+@media (max-height: 600px) and (orientation: landscape) {
+  .end-screen {
+    padding: 16px 24px calc(12px + env(safe-area-inset-bottom, 0px));
+    gap: 8px;
+    /* Drop the 70vh minimum — in short-landscape it forces the
+       screen taller than the viewport, creating a need to scroll
+       that shouldn't exist. */
+    min-height: 0;
+    justify-content: flex-start;
+  }
+  .end-screen .big-emoji {
+    font-size: 40px;
+  }
+  .end-screen h2 {
+    font-size: 20px;
+    margin: 0;
+  }
+  .end-screen .stars {
+    gap: 4px;
+  }
+  .end-screen .star {
+    font-size: 26px;
+  }
+  .end-screen .pill-btn {
+    padding: 8px 18px;
+    font-size: 14px;
+  }
 }
 .end-screen .big-emoji {
   font-size: 64px;
