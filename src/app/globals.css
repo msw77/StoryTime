@@ -1459,8 +1459,16 @@ body > * {
     margin: 0;
   }
   .reader-image-fixed .ai-illustration img {
+    /* Constrain on BOTH axes. Without max-width, the img renders at
+       its natural size (AI illustrations are typically 1024×1024),
+       blowing past the 50% column and overlapping the text page.
+       max-width: 100% clamps it to the column width; max-height: 100%
+       keeps it inside the vertical space. object-fit: contain preserves
+       the aspect ratio inside whichever axis hits the limit first. */
+    max-width: 100%;
     max-height: 100%;
     width: auto;
+    height: auto;
     object-fit: contain;
   }
   .reader-text-scroll {
