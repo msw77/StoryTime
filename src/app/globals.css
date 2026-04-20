@@ -5196,3 +5196,195 @@ body > * {
   color: var(--text);
   white-space: nowrap;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   iPad and larger tablets
+   ═══════════════════════════════════════════════════════════════════
+
+   Design intent (decided with user 2026-04-20):
+   - iPad portrait: "looks like a big phone portrait" — same layout,
+     everything scaled up with more breathing room.
+   - iPad landscape: two-page spread on the reader (image on left page,
+     text on right page), matching the iPhone-landscape spread we
+     built earlier but with iPad-appropriate sizes.
+   - Other screens in iPad landscape: fall through to portrait scaled
+     up. Deferred until there's specific feedback on individual screens.
+
+   Breakpoint: 768px matches iPad Mini portrait width, which is also
+   the standard tablet breakpoint across responsive frameworks. Does
+   not affect iPhone (max ~430px landscape width) or large desktop
+   (~1200px+).
+
+   Placed at the END of the file on purpose — wins source-order
+   tiebreakers against any earlier rule with the same specificity,
+   same pattern we used for the iPhone-landscape spread. */
+
+/* ── iPad (both orientations) — bigger, roomier ──────────────────── */
+@media (min-width: 768px) {
+  /* Wider column for the main app shell. 480px looked right on a
+     phone, stranded on an iPad. 720px keeps the one-column feel
+     while using the available width. */
+  .app {
+    max-width: 720px;
+  }
+  .app.app-reading {
+    max-width: 900px;
+  }
+
+  /* Bump base body font so descriptions, metadata, and story text
+     all scale up together. 16→18 is a ~12% bump, noticeable without
+     looking oversized. */
+  body {
+    font-size: 18px;
+  }
+
+  /* Story body text — bigger leading too so lines don't feel
+     crammed at the larger size. */
+  .story-text {
+    font-size: 19px;
+    line-height: 1.7;
+  }
+  .story-text.story-text--young {
+    font-size: 26px;
+    line-height: 1.65;
+  }
+
+  /* Tap targets — 40px is iOS HIG minimum. 34px on phones is fine
+     because fingers hit smaller targets more accurately on a
+     handheld device; on an iPad held at arm's length or on a
+     desk, bigger is better. */
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  .kid-picker-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+  .header-btns .cl-avatarBox,
+  .header-btns .cl-userButtonAvatarBox,
+  .header-btns .cl-userButtonTrigger {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  /* Roomier header padding. */
+  .header {
+    padding: 24px 28px 16px;
+  }
+  .reader-header {
+    padding: 14px 20px;
+  }
+
+  /* Illustrations bigger. */
+  .ai-illustration {
+    max-width: 500px;
+  }
+  .ai-illustration.wide {
+    max-width: 640px;
+  }
+
+  /* Reader body — more breathing room around the page. */
+  .reader-body {
+    padding: 24px 36px calc(16px + env(safe-area-inset-bottom, 0px)) 52px;
+  }
+
+  /* Library grid — fewer but bigger cards reads better than many
+     cramped ones. */
+  .story-grid {
+    gap: 20px;
+  }
+
+  /* Modals a touch wider so forms don't feel cramped. */
+  .modal {
+    max-width: 560px;
+  }
+}
+
+/* ── iPad landscape — two-page reader spread ──────────────────────
+   Same structure as the iPhone-landscape spread (image column on
+   the left, text column on the right) but sized for iPad. Scoped
+   narrowly enough not to fire on large desktops where a full-width
+   split-spread would look weird.
+
+   min-width: 768 — tablets and up
+   orientation: landscape — obviously
+   min-height: 600 — differentiates from phone landscape (which uses
+     the existing spread rule) and also excludes short desktop
+     windows where a two-page spread might not be what the user
+     wants. iPad landscape heights are 744–1024, comfortably above. */
+@media (min-width: 768px) and (orientation: landscape) and (min-height: 600px) {
+  /* Let the spread fill the full viewport width. The 900px reader
+     cap from the iPad block above would otherwise center the
+     spread in an empty trough on wide tablets. */
+  .reader {
+    max-width: none;
+    margin: 0;
+  }
+
+  .reader-body {
+    flex-direction: row;
+    gap: 36px;
+    align-items: stretch;
+    /* Flat paper background — same choice as iPhone landscape,
+       no spine/stack treatment because the split itself does the
+       book-spread work. */
+    background: linear-gradient(to bottom, #fbf5e4 0%, #f6eed6 100%);
+    padding: 28px 44px calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+  .reader-image-fixed {
+    flex: 1 1 50%;
+    max-width: 50%;
+    min-width: 0;
+    min-height: 0;
+    padding: 16px 0 0;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  /* Also cover the .wide variant, same reason as the phone-landscape
+     rule: .ai-illustration.wide would otherwise reimpose its own
+     max-width and aspect-ratio from a later rule in source order. */
+  .reader-image-fixed .ai-illustration,
+  .reader-image-fixed .ai-illustration.wide {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+  .reader-image-fixed .ai-illustration img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .reader-text-scroll {
+    flex: 1 1 50%;
+    max-width: 50%;
+    min-width: 0;
+    padding: 16px 12px 0;
+  }
+
+  /* Bigger story-text for the bigger viewport. Overrides the
+     iPad-general bump above with even more for the reader spread. */
+  .reader-text-scroll .story-text {
+    font-size: 22px;
+    line-height: 1.75;
+  }
+  .reader-text-scroll .story-text.story-text--young {
+    font-size: 30px;
+  }
+
+  .reader-page-footer {
+    display: none;
+  }
+
+  /* Cozy variant — slate base, matching phone landscape. */
+  .reader.cozy .reader-body {
+    background: linear-gradient(to bottom, #3a4152 0%, #353c4c 100%);
+  }
+}
