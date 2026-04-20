@@ -4,6 +4,21 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { generateImagesSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
 
+/**
+ * Explicit serverless-function timeout. Each fal.ai image call takes
+ * ~30s (sometimes 45s+ when fal is congested), and this route batches
+ * up to 3 pages in parallel via Promise.allSettled. Without this
+ * export, Vercel applies its platform default — 10s on Hobby,
+ * 60s on Pro — and a Hobby-plan deploy would silently time out on
+ * every image request.
+ *
+ * 60s gives enough headroom for slow fal responses while staying
+ * within the Hobby-plan cap. Pro could go higher (up to 300s) if
+ * we need it later for very long stories, but the in-reader batch
+ * size of 3 means 60s has been plenty in practice.
+ */
+export const maxDuration = 60;
+
 export async function POST(req: Request) {
   try {
     const clerk = await requireClerkUser();
