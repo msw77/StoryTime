@@ -13,6 +13,8 @@ import { ReaderScreen } from "@/components/reader/ReaderScreen";
 import { BuilderScreen } from "@/components/builder/BuilderScreen";
 import { LoadingScreen } from "@/components/builder/LoadingScreen";
 import { ParentSettingsModal } from "@/components/shared/ParentSettingsModal";
+import { ParentGate } from "@/components/shared/ParentGate";
+import { useParentGate } from "@/hooks/useParentGate";
 import { ProfileSelector } from "@/components/shared/ProfileSelector";
 import { ManageKidsScreen } from "@/components/shared/ManageKidsScreen";
 import { ParentDashboardScreen } from "@/components/parents/ParentDashboardScreen";
@@ -66,6 +68,23 @@ export default function Home() {
   const [cur, setCur] = useState<Story | null>(null);
   const [stories, setStories] = useState<Story[]>(ALL_STORIES);
   const [showSettings, setShowSettings] = useState(false);
+  // Parent gate — tapping the gear requires solving a simple math
+  // challenge the first time per session (5-min grace period after
+  // solving). Guards against toddlers accidentally tapping into
+  // narration voice, subscription, or (post-refactor) sign-out.
+  const parentGate = useParentGate();
+  const [gateOpen, setGateOpen] = useState(false);
+  // Any screen that wants to open Parent Settings goes through this
+  // wrapper instead of calling setShowSettings directly. If the gate
+  // is already solved (within the 5-min window), it opens immediately;
+  // otherwise it opens the math challenge first.
+  const requestOpenSettings = () => {
+    if (parentGate.isUnlocked) {
+      setShowSettings(true);
+    } else {
+      setGateOpen(true);
+    }
+  };
   const [effectsEnabled, setEffectsEnabled] = useEffectsPref();
   const [comprehensionEnabled, setComprehensionEnabled] = useComprehensionPref();
   const [loaded, setLoaded] = useState(false);
@@ -653,7 +672,17 @@ export default function Home() {
           onSelect={handleSelect}
           onCreateNew={() => setScreen("builder")}
           onDeleteStory={handleDeleteStory}
-          setShowSettings={setShowSettings}
+          /* Route the gear click through requestOpenSettings so the
+             math gate fires if the parent hasn't unlocked this
+             session. LibraryScreen still treats this as "open
+             settings"; it doesn't need to know about the gate. The
+             setter signature (show: boolean) => void is preserved
+             by ignoring the `show` argument — the gear only ever
+             calls it with `true`. */
+          setShowSettings={(show) => {
+            if (show) requestOpenSettings();
+            else setShowSettings(false);
+          }}
           isPremium={isPremium}
           freeStoryLimit={FREE_STORY_LIMIT}
           activeProfile={activeProfile}
@@ -734,6 +763,15 @@ export default function Home() {
           {toast}
         </div>
       )}
+      <ParentGate
+        show={gateOpen}
+        onSolve={() => {
+          parentGate.unlock();
+          setGateOpen(false);
+          setShowSettings(true);
+        }}
+        onClose={() => setGateOpen(false)}
+      />
       <ParentSettingsModal
         show={showSettings}
         onClose={() => setShowSettings(false)}

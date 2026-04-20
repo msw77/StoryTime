@@ -3486,6 +3486,109 @@ body > * {
   font-size: 22px;
   margin-bottom: 16px;
 }
+
+/* ── Parent gate (math challenge) modal ──────────────────────────────
+   Variant on the base .modal for the simple arithmetic challenge that
+   guards Parent Settings. Centered on the viewport (not bottom-sheet
+   style) so it reads as a pause / check rather than a normal option
+   panel. Keeps the same rounded-card visual but smaller and more
+   intentional. */
+.parent-gate-modal {
+  border-radius: 24px;
+  max-width: 360px;
+  margin: auto;
+  padding: 28px 24px 24px;
+  text-align: center;
+  animation: parent-gate-fade-in 0.25s ease-out;
+}
+.modal-overlay:has(.parent-gate-modal) {
+  align-items: center;
+}
+@keyframes parent-gate-fade-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.parent-gate-shake {
+  animation: parent-gate-shake-anim 0.4s ease-out;
+}
+@keyframes parent-gate-shake-anim {
+  0%, 100% { transform: translateX(0); }
+  15%  { transform: translateX(-6px); }
+  30%  { transform: translateX(6px); }
+  45%  { transform: translateX(-5px); }
+  60%  { transform: translateX(4px); }
+  75%  { transform: translateX(-2px); }
+}
+.parent-gate-heading {
+  margin-bottom: 16px;
+}
+.parent-gate-emoji {
+  font-size: 34px;
+  margin-bottom: 4px;
+}
+.parent-gate-modal h3 {
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+.parent-gate-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.parent-gate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.parent-gate-problem {
+  font-family: var(--font-head, Georgia), serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #2a2722;
+  letter-spacing: 0.04em;
+  padding: 6px 0;
+}
+.parent-gate-op {
+  color: var(--muted);
+  margin: 0 6px;
+}
+.parent-gate-input {
+  width: 100%;
+  max-width: 180px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  color: #2a2722;
+  /* Kill the iOS/desktop default number-input spinners so the field
+     reads clean like a password field — we only accept numbers anyway. */
+  -moz-appearance: textfield;
+}
+.parent-gate-input::-webkit-outer-spin-button,
+.parent-gate-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.parent-gate-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(228, 147, 58, 0.18);
+}
+.parent-gate-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 4px;
+}
+.parent-gate-actions .pill-btn {
+  flex: 1 1 auto;
+  max-width: 140px;
+}
+
 .voice-mode-toggle {
   display: flex;
   gap: 0;
