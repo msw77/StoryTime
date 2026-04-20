@@ -780,8 +780,6 @@ export default function Home() {
         setComprehensionEnabled={setComprehensionEnabled}
         aiVoice={speech.aiVoice}
         setAiVoice={speech.setAiVoice}
-        aiSpeed={speech.aiSpeed}
-        setAiSpeed={speech.setAiSpeed}
         onOpenDashboard={() => setScreen("parent-dashboard")}
       />
     </div>

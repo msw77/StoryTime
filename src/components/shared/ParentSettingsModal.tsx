@@ -99,15 +99,17 @@ interface ParentSettingsModalProps {
    *  bedtime reads. */
   comprehensionEnabled: boolean;
   setComprehensionEnabled: (enabled: boolean) => void;
-  /** Narration voice + speed settings, lifted from useSpeech. Classic
-   *  stories ignore these at playback (they have their own character
-   *  voices), so we intentionally don't surface a "locked" state here
-   *  — the parent can still choose their preferred voice for AI
-   *  narration on non-classic stories. */
+  /** Narration voice preference — applies to AI-generated stories.
+   *  Classic stories ignore this at playback because they have
+   *  baked-in character voices. Speed is intentionally NOT controlled
+   *  here: the reader sets a smart age-based default on every story
+   *  open (2-4 → 0.9×, 4-7 → 1.0×, 8+ → 1.1×) and exposes a speed
+   *  chip in its header for per-session tweaks. Putting a speed
+   *  slider here would pretend to be a persistent default that the
+   *  reader silently overrides — the kind of control that erodes
+   *  trust. */
   aiVoice: AIVoiceName;
   setAiVoice: (v: AIVoiceName) => void;
-  aiSpeed: number;
-  setAiSpeed: (s: number) => void;
   /** Open the parent dashboard. Settings modal closes first, then the
    *  dashboard screen takes over. Provided by the parent component so
    *  the modal stays agnostic of the app-level screen state machine. */
@@ -123,8 +125,6 @@ export function ParentSettingsModal({
   setComprehensionEnabled,
   aiVoice,
   setAiVoice,
-  aiSpeed,
-  setAiSpeed,
   onOpenDashboard,
 }: ParentSettingsModalProps) {
   if (!show) return null;
@@ -155,8 +155,6 @@ export function ParentSettingsModal({
         <NarrationSection
           aiVoice={aiVoice}
           setAiVoice={setAiVoice}
-          aiSpeed={aiSpeed}
-          setAiSpeed={setAiSpeed}
         />
 
         {/* Reading-experience section header. "View reading progress"
@@ -306,13 +304,9 @@ export function ParentSettingsModal({
 function NarrationSection({
   aiVoice,
   setAiVoice,
-  aiSpeed,
-  setAiSpeed,
 }: {
   aiVoice: AIVoiceName;
   setAiVoice: (v: AIVoiceName) => void;
-  aiSpeed: number;
-  setAiSpeed: (s: number) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const currentVoice =
@@ -366,19 +360,14 @@ function NarrationSection({
         </span>
       </div>
 
-      {/* Speed slider is always visible — adjusts more often than voice */}
-      <div className="speed-section" style={{ marginTop: 10 }}>
-        <label>Speed: {aiSpeed.toFixed(2)}x</label>
-        <input
-          type="range"
-          className="speed-slider"
-          min="0.7"
-          max="1.4"
-          step="0.05"
-          value={aiSpeed}
-          onChange={(e) => setAiSpeed(+e.target.value)}
-        />
-      </div>
+      {/* Speed slider used to live here. Removed because the reader
+          already overrides speed on every story open based on the
+          kid's age (2-4 → 0.9x, 4-7 → 1.0x, 8+ → 1.1x) — so any
+          value set here was silently reset the moment the parent
+          opened a story. The reader-header speed chip (1.0× button)
+          is the real per-session control, which is the right
+          granularity: tweak for this read, don't promise a persistent
+          default the app won't honor. */}
 
       {/* Expanded: full voice list with previews */}
       {expanded && (
@@ -400,7 +389,10 @@ function NarrationSection({
                 className="preview-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  void previewVoice(v.id, aiSpeed);
+                  // Voice preview always plays at 1.0x — neutral speed
+                  // for comparison purposes. Actual reading speed is
+                  // set by the reader based on age, not previewed here.
+                  void previewVoice(v.id, 1.0);
                 }}
               >
                 ▶ Preview
