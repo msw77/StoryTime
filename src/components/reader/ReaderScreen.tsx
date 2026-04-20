@@ -305,20 +305,34 @@ export function ReaderScreen({
 
     const run = async () => {
       try {
-        // Load remaining pages in batches of 3
-        for (let i = 0; i < needsImage.length; i += 3) {
+        // One image per request, not batched. fal.ai takes ~30-45s
+        // per image; when we bundled 3 into one /api/generate-images
+        // call, any single slow image dragged the whole batch past
+        // Vercel's serverless function timeout (confirmed from logs:
+        // 504 "Vercel Runtime Timeout Error" at ~15s on batched calls,
+        // while single-image requests complete in ~4s). Making each
+        // image its own request keeps every call well under the
+        // timeout at the cost of slightly longer total wall-clock
+        // time for fully reloading a story's images — which is fine
+        // because it all happens in the background as the reader
+        // opens.
+        for (const pageIdx of needsImage) {
           if (cancelled) return;
-          const batch = needsImage.slice(i, i + 3);
-          const results = await fetchImages(batch, story.fullPages!, charDesc);
-          if (cancelled) return;
-
-          setAiImages((prev) => {
-            const next = [...prev];
-            for (const img of results) {
-              if (img.url) next[img.index] = img.url;
-            }
-            return next;
-          });
+          try {
+            const results = await fetchImages([pageIdx], story.fullPages!, charDesc);
+            if (cancelled) return;
+            setAiImages((prev) => {
+              const next = [...prev];
+              for (const img of results) {
+                if (img.url) next[img.index] = img.url;
+              }
+              return next;
+            });
+          } catch (err) {
+            // One page failing doesn't block the others. The image
+            // slot stays null → emoji fallback for that page only.
+            console.warn(`Image gen failed for page ${pageIdx}:`, err);
+          }
         }
       } catch (err) {
         console.warn("Image generation error:", err);
