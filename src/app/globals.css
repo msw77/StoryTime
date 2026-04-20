@@ -2130,8 +2130,43 @@ body > * {
   flex-direction: column;
   align-items: stretch;
   gap: 20px;
-  min-height: 100%;
+  /* max-height + overflow-y lets the content scroll if the viewport
+     can't fit all three options (phone landscape). Without this, the
+     third option drops below the fold with no way to reach it. */
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: comprehension-fade-in 0.45s ease-out;
+}
+
+/* Phone-landscape — compress padding, font sizes, and option min-height
+   so all 3 options fit without scrolling whenever possible. Scope
+   matches the reader landscape rule above. */
+@media (max-height: 600px) and (orientation: landscape) {
+  .comprehension-screen {
+    padding: 16px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+    gap: 10px;
+  }
+  .comprehension-question {
+    font-size: 17px;
+    line-height: 1.3;
+    margin: 0 0 4px;
+  }
+  .comprehension-options {
+    gap: 6px;
+  }
+  .comprehension-option {
+    padding: 10px 14px;
+    min-height: 40px;
+    font-size: 14px;
+    gap: 10px;
+  }
+  .comprehension-option-emoji {
+    font-size: 22px;
+  }
+  .comprehension-intro {
+    font-size: 12px;
+  }
 }
 @keyframes comprehension-fade-in {
   from { opacity: 0; transform: translateY(8px); }
