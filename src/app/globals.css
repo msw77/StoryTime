@@ -179,10 +179,30 @@ body > * {
   align-items: flex-start;
 }
 
-/* Icon button */
+/* Force Clerk's UserButton avatar to match the kid-picker avatar's
+   34×34 size exactly. Clerk defaults to 32×32, which makes the two
+   circles visibly different sizes side-by-side — reads as
+   unintentional. !important is needed because Clerk's internal
+   styles have higher cascade weight.
+
+   If Clerk ever renames these classes in a major SDK update, this
+   rule silently stops applying and Clerk's 32px default returns.
+   Tracked in the image-consistency comment of the header-btns rule. */
+.header-btns .cl-avatarBox,
+.header-btns .cl-userButtonAvatarBox,
+.header-btns .cl-userButtonTrigger {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+/* Icon button
+   Sized to 34×34 to match the kid-picker avatar and the Clerk
+   user-button avatar in the header — all four circles (search,
+   settings gear, kid-picker, user-button) line up as a visual set.
+   Was 40×40; the 6px difference read as inconsistent sizing. */
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   /* Prevent the flex parent from squeezing the button into an oval
      when the sibling title is long. Without flex-shrink: 0 a story
      title like "The Story of American Independence" visually
