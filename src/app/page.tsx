@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
-import { SignInButton, UserButton } from "@/components/shared/ClerkSafe";
+import { SignInButton } from "@/components/shared/ClerkSafe";
 import { Story } from "@/types/story";
 import { ALL_STORIES } from "@/data/stories";
 import { GENRES } from "@/data/genres";
@@ -647,12 +647,11 @@ export default function Home() {
   if (screen === "profiles" && !activeProfile) {
     return (
       <div className="app">
-        <div className="header">
-          <div />
-          <div className="header-btns">
-            <UserButton />
-          </div>
-        </div>
+        {/* Header left intentionally empty. UserButton (sign out,
+            manage account) moved into Parent Settings on the library
+            screen, behind the math gate. Rare edge case: if a parent
+            needs to sign out before picking any profile, they pick
+            any profile → library → gear → gate → sign out. */}
         <ProfileSelector
           profiles={profiles}
           onSelect={handleSelectProfile}

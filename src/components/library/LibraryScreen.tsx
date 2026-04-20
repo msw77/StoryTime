@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UserButton } from "@/components/shared/ClerkSafe";
 import { Story, ChildProfile } from "@/types/story";
 import { GENRES, AGE_GROUPS } from "@/data/genres";
 import { PaywallCard } from "@/components/shared/PaywallCard";
@@ -443,9 +442,10 @@ export function LibraryScreen({
             ←
           </button>
           <h1 className="subview-title">My Stories</h1>
-          <div className="header-btns">
-            <UserButton />
-          </div>
+          {/* Empty spacer keeps the title visually centered in the
+              flex-between header. UserButton moved into Parent
+              Settings — behind the math gate on the main library. */}
+          <div className="header-btns" />
         </div>
 
         <div className="library-search-wrap">
@@ -509,9 +509,7 @@ export function LibraryScreen({
             ←
           </button>
           <h1 className="subview-title">Recently Read</h1>
-          <div className="header-btns">
-            <UserButton />
-          </div>
+          <div className="header-btns" />
         </div>
 
         {uniqueHistory.length === 0 ? (
@@ -559,9 +557,7 @@ export function LibraryScreen({
             ←
           </button>
           <h1 className="subview-title">All Stories</h1>
-          <div className="header-btns">
-            <UserButton />
-          </div>
+          <div className="header-btns" />
         </div>
 
         <div className="library-search-wrap">
@@ -727,7 +723,10 @@ export function LibraryScreen({
               <span className="kid-picker-name">{activeProfile.name}</span>
             </button>
           ) : null}
-          <UserButton />
+          {/* UserButton moved into Parent Settings (Account section),
+              behind the math gate. Header is now just search · gear ·
+              kid-picker — four matching 34px circles, no sign-out within
+              a kid's accidental reach. */}
         </div>
       </div>
 

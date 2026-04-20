@@ -179,21 +179,11 @@ body > * {
   align-items: flex-start;
 }
 
-/* Force Clerk's UserButton avatar to match the kid-picker avatar's
-   34×34 size exactly. Clerk defaults to 32×32, which makes the two
-   circles visibly different sizes side-by-side — reads as
-   unintentional. !important is needed because Clerk's internal
-   styles have higher cascade weight.
-
-   If Clerk ever renames these classes in a major SDK update, this
-   rule silently stops applying and Clerk's 32px default returns.
-   Tracked in the image-consistency comment of the header-btns rule. */
-.header-btns .cl-avatarBox,
-.header-btns .cl-userButtonAvatarBox,
-.header-btns .cl-userButtonTrigger {
-  width: 34px !important;
-  height: 34px !important;
-}
+/* UserButton header overrides were removed when Clerk's UserButton
+   was relocated into Parent Settings (Account section) — the header
+   no longer renders any Clerk avatars, so the 34×34 size override
+   became dead CSS. Sign-out and account management now sit behind
+   the math gate. */
 
 /* Icon button
    Sized to 34×34 to match the kid-picker avatar and the Clerk
@@ -3587,6 +3577,46 @@ body > * {
 .parent-gate-actions .pill-btn {
   flex: 1 1 auto;
   max-width: 140px;
+}
+
+/* ── Account section (inside Parent Settings) ──────────────────────
+   Container for Clerk account UI that was previously in the header
+   (sign out, manage account, current email). Sits at the bottom of
+   Parent Settings, visually offset from the preferences above with a
+   subtle divider so it doesn't read as just another toggle row. */
+.account-section {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.account-email {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.account-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.account-actions .pill-btn {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+/* Sign-out gets a subtle caution color so it doesn't read as the
+   same priority as "Manage account." Not alarming-red — parents do
+   sometimes legitimately sign out — just visually distinguishable. */
+.account-actions .account-signout {
+  color: #c25e45;
+  border-color: rgba(194, 94, 69, 0.35);
+}
+.account-actions .account-signout:hover {
+  background: rgba(194, 94, 69, 0.06);
+  border-color: rgba(194, 94, 69, 0.5);
 }
 
 .voice-mode-toggle {

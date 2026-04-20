@@ -16,7 +16,9 @@
  */
 
 import { useState } from "react";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { AIVoiceName, AI_VOICES } from "@/types/story";
+import { DEV_AUTH_BYPASS } from "@/lib/devBypass";
 
 // Preview a voice's narration with a canned sentence. Fire-and-forget;
 // we don't cache or manage the Audio element beyond the single play —
@@ -245,6 +247,15 @@ export function ParentSettingsModal({
           </div>
         )}
 
+        {/* Account section — previously the Clerk UserButton sat in the
+            header. Moving it behind the parent gate keeps toddlers from
+            accidentally triggering Manage Account / Sign Out, and
+            cleans up the header to just [search · gear · kid-picker].
+            Rendered only outside dev-auth-bypass mode so the bypassed
+            preview doesn't crash trying to call Clerk without a
+            provider. */}
+        {!DEV_AUTH_BYPASS && <AccountSection onClose={onClose} />}
+
         {/* Feedback link. Shown only when configured so non-beta users
             don't see a stranger button. Prefers a hosted form
             (Tally/Typeform) via NEXT_PUBLIC_FEEDBACK_URL; falls back to
@@ -375,6 +386,76 @@ function NarrationSection({
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Account section ───────────────────────────────────────────────────
+// Replaces the Clerk <UserButton /> that used to sit in the library
+// header. Shows the current signed-in email, opens Clerk's account
+// management page, and signs the parent out. All three require the
+// math-challenge gate to open Parent Settings first, so a toddler
+// can't accidentally trigger sign-out by tapping the wrong icon.
+//
+// Only rendered when Clerk is actually available (not in
+// DEV_AUTH_BYPASS mode). The parent gates this via the conditional
+// render in ParentSettingsModal above — this component always calls
+// the Clerk hooks.
+function AccountSection({ onClose }: { onClose: () => void }) {
+  const { user, isLoaded } = useUser();
+  const { openUserProfile, signOut } = useClerk();
+
+  if (!isLoaded) return null;
+
+  const email =
+    user?.primaryEmailAddress?.emailAddress ??
+    user?.emailAddresses?.[0]?.emailAddress ??
+    "";
+
+  const handleSignOut = async () => {
+    // Close the modal FIRST so the user sees immediate feedback, then
+    // kick off sign-out. Clerk's signOut triggers a re-render at the
+    // app root where useAuthState flips to signed-out, which routes
+    // the app back to the landing/sign-in view.
+    onClose();
+    await signOut();
+  };
+
+  return (
+    <div className="account-section">
+      <div
+        style={{
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "var(--muted)",
+          marginBottom: 8,
+        }}
+      >
+        Account
+      </div>
+      {email && (
+        <div className="account-email" title={email}>
+          {email}
+        </div>
+      )}
+      <div className="account-actions">
+        <button
+          type="button"
+          className="pill-btn secondary"
+          onClick={() => openUserProfile()}
+        >
+          Manage account
+        </button>
+        <button
+          type="button"
+          className="pill-btn secondary account-signout"
+          onClick={handleSignOut}
+        >
+          Sign out
+        </button>
+      </div>
     </div>
   );
 }
