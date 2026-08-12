@@ -13,9 +13,12 @@ import { NextResponse } from "next/server";
  * keep the project alive.
  *
  * This endpoint runs on a Vercel Cron once every 24 hours (see
- * vercel.json). It performs one trivial read from the database
- * — a HEAD count of one small table — which counts as activity and
- * resets Supabase's inactivity timer.
+ * vercel.json). It performs one trivial WRITE to the database — it
+ * overwrites the timestamp on a single row in a dedicated `keep_alive`
+ * table. A write (not a read) is what reliably resets Supabase's
+ * inactivity timer; an earlier read-only version of this cron ran
+ * successfully every day but the project still kept auto-pausing.
+ * Run scripts/migration-keep-alive.sql once to create the table.
  *
  * Auth: protected by CRON_SECRET env var. Vercel automatically
  * attaches `Authorization: Bearer $CRON_SECRET` to cron-triggered
@@ -45,26 +48,23 @@ export async function GET(req: Request) {
 
   try {
     const supabase = createServiceClient();
-    // Cheapest possible query that still counts as "database activity"
-    // for the pause-detection heuristic. HEAD count on a tiny table
-    // (child_profiles is much smaller than stories or api_usage).
-    const { count, error } = await supabase
-      .from("child_profiles")
-      .select("*", { count: "exact", head: true });
+    // A WRITE is what reliably resets Supabase's auto-pause timer, so we
+    // overwrite the timestamp on the single row of the dedicated
+    // `keep_alive` table. This never touches real user data.
+    const timestamp = new Date().toISOString();
+    const { error } = await supabase
+      .from("keep_alive")
+      .upsert({ id: 1, last_ping: timestamp }, { onConflict: "id" });
 
     if (error) {
-      console.error("[cron/keep-alive] Supabase query failed:", error);
+      console.error("[cron/keep-alive] Supabase write failed:", error);
       return NextResponse.json(
         { ok: false, error: error.message },
         { status: 500 },
       );
     }
 
-    return NextResponse.json({
-      ok: true,
-      timestamp: new Date().toISOString(),
-      profileCount: count ?? 0,
-    });
+    return NextResponse.json({ ok: true, timestamp });
   } catch (err) {
     console.error("[cron/keep-alive] Unexpected error:", err);
     const message = err instanceof Error ? err.message : "Unknown error";
