@@ -452,6 +452,15 @@ export function useSpeech(): SpeechControls {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
+  // Single, persistent <audio> element used for ALL AI-voice playback.
+  // iOS/Safari only allow programmatic play() (no fresh tap) on an
+  // element that a user gesture has already unlocked. The old code
+  // created a NEW element per page and played it on auto-advance from a
+  // setTimeout — Safari blocked that, and the browser-voice fallback is
+  // gesture-gated too, so the page went silent until the user tapped
+  // again. Routing every page through this one element (unlocked by the
+  // first ▶ tap) lets auto-advance play on every subsequent page.
+  const playerRef = useRef<HTMLAudioElement | null>(null);
 
   // Live-update playbackRate when aiSpeed changes mid-playback. Without
   // this, the reader's in-page speed control wouldn't take effect until
@@ -651,13 +660,33 @@ export function useSpeech(): SpeechControls {
     //      tick is enough for the browser to latch the new seek
     //      target; combined with the pause() above it reliably
     //      starts playback from the beginning.
-    const audio = cached.audio;
+    // Play through the ONE persistent, gesture-unlocked element (see
+    // playerRef) rather than cached.audio. A per-page element is not
+    // autoplay-unlocked and Safari blocks it on auto-advance — the exact
+    // "audio doesn't start on auto, works if you tap again" bug. The
+    // cached per-page element is kept only to prefetch/validate the bytes
+    // and hand us its source URL (the data is already in the browser's
+    // blob/HTTP cache, so pointing the shared element at the same URL
+    // starts almost instantly).
+    if (!playerRef.current) {
+      const p = new Audio();
+      p.preload = "auto";
+      playerRef.current = p;
+    }
+    const audio = playerRef.current;
+    const srcUrl = cached.audio.currentSrc || cached.audio.src;
     // Clear any old event listeners by replacing with fresh ones below
     audio.onplay = null;
     audio.onended = null;
     audio.onpause = null;
     audio.onerror = null;
     try { audio.pause(); } catch { /* ignore */ }
+    // Only reload when the page actually changed — replaying the same
+    // page keeps the buffered source for an instant restart.
+    if (audio.src !== srcUrl) {
+      audio.src = srcUrl;
+      try { audio.load(); } catch { /* ignore */ }
+    }
     audio.currentTime = 0;
     audio.playbackRate = aiSpeed;
     audioRef.current = audio;
