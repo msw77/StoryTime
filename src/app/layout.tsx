@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fraunces, Caveat } from "next/font/google";
+import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
@@ -9,31 +9,38 @@ import "./globals.css";
 // "--font-nunito" for historical reasons — renaming it would ripple
 // through every component style, so we kept the variable and swapped
 // what it points at.
-const inter = Inter({
+// SELF-HOSTED (was next/font/google). Google Fonts' build-time download
+// intermittently 404'd on Vercel and failed the whole deploy, which blocked
+// every fix from going live. These woff2 files are committed to the repo
+// (src/app/fonts), so builds no longer depend on Google's servers. Variable
+// fonts: one file per family covers the whole weight range.
+const inter = localFont({
+  src: "./fonts/inter.woff2",
   variable: "--font-nunito",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: "400 800",
+  display: "swap",
 });
 
 // Display typeface: Fraunces. A warm, modern serif with real editorial
 // weight. Paired with Inter it gives the app a Coterie/Huckleberry feel
 // where the headline type carries most of the "premium" signal. Variable
 // font so we get full weight and optical-size control without a penalty.
-const fraunces = Fraunces({
+const fraunces = localFont({
+  src: "./fonts/fraunces.woff2",
   variable: "--font-heading",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  style: ["normal"],
+  weight: "500 700",
+  display: "swap",
 });
 
 // Handwriting typeface: Caveat. Used ONLY by the word-fx-handwritten
 // effect to render quoted notes, letters, and signs inside stories as
 // if they're physical handwritten objects the character is reading.
 // Loaded once here so the font swap is instant when the moment fires.
-const caveat = Caveat({
+const caveat = localFont({
+  src: "./fonts/caveat.woff2",
   variable: "--font-handwritten",
-  subsets: ["latin"],
-  weight: ["500", "700"],
+  weight: "500 700",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
