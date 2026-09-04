@@ -17,6 +17,8 @@ export type Provider = "anthropic" | "openai" | "fal";
 // 1M input tokens at $15 = 1500 cents → 0.0015 cents/token.
 // We store the rate per-1M so integer math is easier.
 export const ANTHROPIC_PRICING: Record<string, { inputPer1M: number; outputPer1M: number }> = {
+  "claude-opus-5":          { inputPer1M: 500,  outputPer1M: 2500 },
+  "claude-sonnet-5":        { inputPer1M: 200,  outputPer1M: 1000 },
   "claude-opus-4-7":        { inputPer1M: 1500, outputPer1M: 7500 },
   "claude-opus-4":          { inputPer1M: 1500, outputPer1M: 7500 },
   "claude-sonnet-4-7":      { inputPer1M: 300,  outputPer1M: 1500 },

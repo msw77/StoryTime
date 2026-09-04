@@ -299,9 +299,22 @@ Return valid JSON only, no other text:
 }`;
 
   const anthropic = getClient();
-  const model = "claude-sonnet-4-20250514";
+  // claude-sonnet-4-20250514 was RETIRED by Anthropic — the API returns
+  // 404 "model: claude-sonnet-4-20250514". That made EVERY custom-story
+  // request fail and silently fall back to the simple offline story
+  // engine (see generateStory.ts), which produces a plain templated story
+  // with no illustration scenes. Symptom parents saw: stories suddenly
+  // got "simple" and images turned into emojis. claude-sonnet-5 is the
+  // current Sonnet: better writing AND cheaper ($2/$10 vs the old $3/$15
+  // per 1M tokens).
+  const model = "claude-sonnet-5";
   const response = await anthropic.messages.create({
     model,
+    // Thinking off: keeps generation fast and reserves the whole
+    // max_tokens budget for the story JSON. Adaptive thinking (Sonnet 5's
+    // default when `thinking` is omitted) would consume part of that
+    // budget and risk truncating the JSON mid-string.
+    thinking: { type: "disabled" },
     // Bumped from 8192 → 16384 on 2026-04-20 after a production
     // failure: SyntaxError "Unterminated string in JSON at position
     // 31165" on a long custom story. 31k characters ≈ 8k tokens, so
