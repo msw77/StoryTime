@@ -123,7 +123,29 @@ export async function enforceRateLimit(
   if (!limiters) return { ok: true };
 
   const limiter = limiters[name];
-  const { success, limit, remaining, reset } = await limiter.limit(userId);
+
+  // FAIL OPEN when the limiter's backing store is unreachable. Upstash's
+  // free Redis databases are deleted after inactivity; when that happens the
+  // REST host stops resolving (getaddrinfo ENOTFOUND) and `limiter.limit()`
+  // THROWS. Without this guard that throw propagated up and 500'd the whole
+  // request BEFORE the real AI call — which silently turned every custom
+  // story into the simple offline fallback and every illustration into an
+  // emoji, and broke audio. A rate limiter is a cost guardrail, not a
+  // dependency worth taking the app down for: if it can't be reached, log
+  // loudly and let the request through. (Missing env vars already short-
+  // circuit to "allow" above; this extends the same intent to a dead store.)
+  let result: Awaited<ReturnType<typeof limiter.limit>>;
+  try {
+    result = await limiter.limit(userId);
+  } catch (err) {
+    console.error(
+      `[rate-limit] "${name}" limiter unreachable — allowing request (fail-open):`,
+      err instanceof Error ? err.message : err,
+    );
+    return { ok: true };
+  }
+
+  const { success, limit, remaining, reset } = result;
 
   if (success) return { ok: true };
 
