@@ -1,103 +1,33 @@
-import { Redis } from "@upstash/redis";
-import { Ratelimit } from "@upstash/ratelimit";
 import { NextResponse } from "next/server";
+import { createServiceClient } from "@/lib/supabase";
 
 /**
- * Per-user rate limiting on paid AI endpoints.
+ * Per-user rate limiting on paid AI endpoints, backed by Supabase.
  *
- * Why this exists: every one of the endpoints below costs real money per
- * request (Anthropic, OpenAI, fal.ai). Without a cap, a single malicious or
- * runaway client could drain our API budget in minutes. Clerk auth already
- * blocks anonymous traffic, but an authenticated user who flips a script on
- * can still do damage — this caps them at a sane per-account ceiling.
+ * Why this exists: every endpoint below costs real money per request
+ * (Anthropic, OpenAI, fal.ai). Clerk auth blocks anonymous traffic, but an
+ * authenticated user running a script could still drain our API budget —
+ * this caps them at a sane per-account ceiling.
  *
- * Keyed by Clerk user id (NOT IP) because IPs are shared (coffee shops,
- * corporate NAT, mobile carriers) and trivially rotated. User id is the
- * actual billing unit we care about.
+ * Why Supabase (not Upstash Redis): we used Upstash, but its free Redis
+ * databases are DELETED after ~14 days of inactivity. When ours vanished,
+ * the limiter's connection threw and — because it runs before the real AI
+ * call — it 500'd every paid endpoint, silently breaking stories, images,
+ * and audio. Supabase already holds our real data and is kept awake by the
+ * daily keep-alive cron, so the counter lives here now: one fewer service
+ * that can disappear. Run scripts/migration-rate-limits.sql once to create
+ * the table.
  *
- * If Upstash env vars are missing (local dev without Redis), the limiter
- * short-circuits to "allow" so we don't break the dev loop. Production
- * deploys on Vercel MUST have these env vars set — see README.
+ * How it works: each request inserts one row into `rate_limit_events`
+ * tagged with a bucket ("<action>:<userId>"). To check a limit we count the
+ * user's rows for that action inside the time window. It's a simple sliding
+ * window; a tiny race under concurrent bursts can let a couple extra
+ * requests through, which is fine for a cost guardrail. Old rows are purged
+ * daily by the keep-alive cron.
+ *
+ * FAIL OPEN: if Supabase is unreachable, we allow the request rather than
+ * break the app. A rate limiter is a cost guardrail, not a hard dependency.
  */
-
-const hasRedis =
-  !!process.env.UPSTASH_REDIS_REST_URL && !!process.env.UPSTASH_REDIS_REST_TOKEN;
-
-// Singleton Redis client. Recreated on cold start of a serverless function,
-// reused across warm invocations, which keeps command count low.
-const redis = hasRedis
-  ? new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-    })
-  : null;
-
-/**
- * Limiter definitions. Each endpoint gets its own namespace so bursts on
- * one surface don't starve the others. Windows are sliding so a user can't
- * game a fixed bucket by queuing requests at the reset boundary.
- *
- * Tuning rationale:
- * - generate-story: heaviest single-shot cost (Claude long-form). 20/day is
- *   ~4× a power user's realistic load; beyond that it's probably a script.
- * - generate-images: called during reader playback too, not just authoring.
- *   60/hour ≈ 1 image/minute sustained — fine for real use, stops runaway
- *   loops fast.
- * - tts: one request per page preview. 200/hour covers a parent previewing
- *   ~10 stories back-to-back without hitting the cap.
- * - save-story: the POST body triggers TTS for every page. Cap at 10/hour
- *   so a user can't spam "save" and burn through TTS credits that way.
- *
- * All caps are intentionally generous for real humans and intentionally
- * tight for scripts. We'd rather an abuser see a 429 than see our bill.
- */
-export const limiters = hasRedis
-  ? {
-      generateStory: new Ratelimit({
-        redis: redis!,
-        limiter: Ratelimit.slidingWindow(20, "1 d"),
-        analytics: true,
-        prefix: "rl:generate-story",
-      }),
-      generateImages: new Ratelimit({
-        redis: redis!,
-        limiter: Ratelimit.slidingWindow(60, "1 h"),
-        analytics: true,
-        prefix: "rl:generate-images",
-      }),
-      tts: new Ratelimit({
-        redis: redis!,
-        limiter: Ratelimit.slidingWindow(200, "1 h"),
-        analytics: true,
-        prefix: "rl:tts",
-      }),
-      saveStory: new Ratelimit({
-        redis: redis!,
-        limiter: Ratelimit.slidingWindow(10, "1 h"),
-        analytics: true,
-        prefix: "rl:save-story",
-      }),
-      // Analytics-write endpoints (no paid AI cost per call, but they
-      // hit Supabase on every invocation). Caps are intentionally loose
-      // vs the AI limiters — a kid tapping vocab words during active
-      // reading can realistically hit 50–100 in a single story. The
-      // purpose is abuse prevention and DB-cost ceiling, not throttling
-      // real use. A scripted abuser would burn through these caps
-      // before doing meaningful damage.
-      vocabulary: new Ratelimit({
-        redis: redis!,
-        limiter: Ratelimit.slidingWindow(2000, "1 h"),
-        analytics: true,
-        prefix: "rl:vocabulary",
-      }),
-      comprehension: new Ratelimit({
-        redis: redis!,
-        limiter: Ratelimit.slidingWindow(200, "1 h"),
-        analytics: true,
-        prefix: "rl:comprehension",
-      }),
-    }
-  : null;
 
 export type LimiterName =
   | "generateStory"
@@ -107,67 +37,83 @@ export type LimiterName =
   | "vocabulary"
   | "comprehension";
 
+// Per-endpoint limits. Windows in seconds. Tuning rationale (unchanged from
+// the Upstash setup):
+//  - generateStory: heaviest single-shot cost (Claude long-form). 20/day is
+//    ~4x a power user's realistic load.
+//  - generateImages: also fires during reader playback. 60/hour ≈ 1/min.
+//  - tts: one request per page preview. 200/hour covers heavy previewing.
+//  - saveStory: triggers TTS for every page. 10/hour stops save-spam.
+//  - vocabulary/comprehension: analytics writes, no paid AI cost — loose
+//    caps just to bound DB abuse (a kid can tap many vocab words per story).
+const RULES: Record<LimiterName, { limit: number; windowSeconds: number }> = {
+  generateStory: { limit: 20, windowSeconds: 24 * 60 * 60 },
+  generateImages: { limit: 60, windowSeconds: 60 * 60 },
+  tts: { limit: 200, windowSeconds: 60 * 60 },
+  saveStory: { limit: 10, windowSeconds: 60 * 60 },
+  vocabulary: { limit: 2000, windowSeconds: 60 * 60 },
+  comprehension: { limit: 200, windowSeconds: 60 * 60 },
+};
+
 /**
  * Check a limiter for the given user. Returns { ok: true } to proceed, or
- * { ok: false, response } with a 429 NextResponse the caller should return.
- *
- * Shape matches the HelperResult pattern in api-helpers.ts so routes can
- * write `if (!rl.ok) return rl.response;` and move on.
+ * { ok: false, response } with a 429 the caller should return. Matches the
+ * HelperResult shape so routes can write `if (!rl.ok) return rl.response;`.
  */
 export async function enforceRateLimit(
   name: LimiterName,
   userId: string,
 ): Promise<{ ok: true } | { ok: false; response: NextResponse }> {
-  // Dev-mode fallback: no Redis configured, allow everything. This keeps
-  // local dev friction-free; production is required to have env vars.
-  if (!limiters) return { ok: true };
+  const rule = RULES[name];
+  const bucket = `${name}:${userId}`;
+  const windowStart = new Date(Date.now() - rule.windowSeconds * 1000).toISOString();
 
-  const limiter = limiters[name];
-
-  // FAIL OPEN when the limiter's backing store is unreachable. Upstash's
-  // free Redis databases are deleted after inactivity; when that happens the
-  // REST host stops resolving (getaddrinfo ENOTFOUND) and `limiter.limit()`
-  // THROWS. Without this guard that throw propagated up and 500'd the whole
-  // request BEFORE the real AI call — which silently turned every custom
-  // story into the simple offline fallback and every illustration into an
-  // emoji, and broke audio. A rate limiter is a cost guardrail, not a
-  // dependency worth taking the app down for: if it can't be reached, log
-  // loudly and let the request through. (Missing env vars already short-
-  // circuit to "allow" above; this extends the same intent to a dead store.)
-  let result: Awaited<ReturnType<typeof limiter.limit>>;
   try {
-    result = await limiter.limit(userId);
+    const supabase = createServiceClient();
+
+    // Count this user's requests for this action inside the window.
+    const { count, error: countError } = await supabase
+      .from("rate_limit_events")
+      .select("*", { count: "exact", head: true })
+      .eq("bucket", bucket)
+      .gte("created_at", windowStart);
+
+    if (countError) throw countError;
+
+    if ((count ?? 0) >= rule.limit) {
+      const retryAfterSeconds = rule.windowSeconds; // conservative upper bound
+      const response = NextResponse.json(
+        {
+          error: "Rate limit exceeded",
+          message:
+            "You've hit the usage limit for this feature. Please wait a bit and try again.",
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(retryAfterSeconds),
+            "X-RateLimit-Limit": String(rule.limit),
+            "X-RateLimit-Remaining": "0",
+          },
+        },
+      );
+      return { ok: false, response };
+    }
+
+    // Record this request. Not awaited-critical, but we await so the count
+    // stays honest for the user's very next request.
+    const { error: insertError } = await supabase
+      .from("rate_limit_events")
+      .insert({ bucket });
+    if (insertError) throw insertError;
+
+    return { ok: true };
   } catch (err) {
+    // FAIL OPEN — a down/misconfigured store must never take the app down.
     console.error(
-      `[rate-limit] "${name}" limiter unreachable — allowing request (fail-open):`,
+      `[rate-limit] "${name}" check failed — allowing request (fail-open):`,
       err instanceof Error ? err.message : err,
     );
     return { ok: true };
   }
-
-  const { success, limit, remaining, reset } = result;
-
-  if (success) return { ok: true };
-
-  // Build a 429 with standard rate-limit headers so clients (and any
-  // future CDN) can back off intelligently. The body message is phrased
-  // for end users — the reader will surface it verbatim.
-  const retryAfterSeconds = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
-  const response = NextResponse.json(
-    {
-      error: "Rate limit exceeded",
-      message:
-        "You've hit the usage limit for this feature. Please wait a bit and try again.",
-    },
-    {
-      status: 429,
-      headers: {
-        "Retry-After": String(retryAfterSeconds),
-        "X-RateLimit-Limit": String(limit),
-        "X-RateLimit-Remaining": String(remaining),
-        "X-RateLimit-Reset": String(reset),
-      },
-    },
-  );
-  return { ok: false, response };
 }

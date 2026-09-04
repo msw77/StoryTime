@@ -64,6 +64,18 @@ export async function GET(req: Request) {
       );
     }
 
+    // Housekeeping: purge rate-limit rows older than the longest window
+    // (24h for generate-story) plus a margin. Non-fatal — a cleanup miss
+    // just leaves a few extra tiny rows until tomorrow's run.
+    const cutoff = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
+    const { error: purgeError } = await supabase
+      .from("rate_limit_events")
+      .delete()
+      .lt("created_at", cutoff);
+    if (purgeError) {
+      console.warn("[cron/keep-alive] rate_limit_events purge failed:", purgeError.message);
+    }
+
     return NextResponse.json({ ok: true, timestamp });
   } catch (err) {
     console.error("[cron/keep-alive] Unexpected error:", err);
