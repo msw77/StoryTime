@@ -68,16 +68,25 @@ export async function generatePageImage(
 
   const prompt = `${STYLE_PREFIX}${charBlock}${subjectBlock}\n\nScene: ${sanitized}\nMood: ${mood}\n\n${TEXTLESS_SUFFIX}`;
 
-  // Imagen 4 Fast: ~5s/image vs ~48s on nano-banana-2, better prompt adherence,
-  // and better character consistency across pages. Revert to "fal-ai/nano-banana-2"
-  // if we ever want the softer watercolor look back.
-  const model = "fal-ai/imagen4/preview/fast";
+  // Nano Banana 2 (Google's Gemini image model, via fal). We previously
+  // used "fal-ai/imagen4/preview/fast", but fal RETIRED that endpoint —
+  // it now returns 404 "Application 'imagen4' not found", which silently
+  // broke every illustration and made the reader fall back to emojis.
+  // Nano Banana 2 is fal's current best model for character consistency
+  // across pages (~10s/image). For a cheaper/faster (~4s, ~$0.05 vs
+  // ~$0.08) option, swap in "google/nano-banana-2-lite" — same params.
+  const model = "fal-ai/nano-banana-2";
   const result = await fal.subscribe(model, {
     input: {
       prompt,
       aspect_ratio: "16:9",
       num_images: 1,
       output_format: "png",
+      // Children's app: strict content moderation. Scale is 1 (most
+      // strict, blocks most) .. 6 (least strict); default is 4. We use 2
+      // — tight, but not so aggressive it rejects benign fairy-tale
+      // content (dragons, witches, mild peril in classic stories).
+      safety_tolerance: "2",
     },
   });
 
