@@ -68,14 +68,16 @@ export async function generatePageImage(
 
   const prompt = `${STYLE_PREFIX}${charBlock}${subjectBlock}\n\nScene: ${sanitized}\nMood: ${mood}\n\n${TEXTLESS_SUFFIX}`;
 
-  // Nano Banana 2 (Google's Gemini image model, via fal). We previously
-  // used "fal-ai/imagen4/preview/fast", but fal RETIRED that endpoint —
-  // it now returns 404 "Application 'imagen4' not found", which silently
-  // broke every illustration and made the reader fall back to emojis.
-  // Nano Banana 2 is fal's current best model for character consistency
-  // across pages (~10s/image). For a cheaper/faster (~4s, ~$0.05 vs
-  // ~$0.08) option, swap in "google/nano-banana-2-lite" — same params.
-  const model = "fal-ai/nano-banana-2";
+  // Nano Banana 2 Lite (Google's Gemini image model, via fal). History:
+  // we used "fal-ai/imagen4/preview/fast" until fal RETIRED it (404
+  // "Application 'imagen4' not found"), which silently broke every
+  // illustration → emoji fallback. We then moved to full "fal-ai/nano-
+  // banana-2" (~15s/image), but that was noticeably slow in the reader,
+  // which generates one image per page. Lite renders in ~5s (3x faster)
+  // and cheaper (~$0.05 vs ~$0.08/image) with excellent watercolor
+  // quality for our style. Swap back to "fal-ai/nano-banana-2" if we
+  // ever want the marginally higher-fidelity full model.
+  const model = "google/nano-banana-2-lite";
   const result = await fal.subscribe(model, {
     input: {
       prompt,

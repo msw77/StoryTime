@@ -46,6 +46,7 @@ export const FAL_PRICING: Record<string, { perImageCents: number }> = {
   "fal-ai/imagen4/preview":        { perImageCents: 8  },
   "fal-ai/nano-banana-2":          { perImageCents: 8  },
   "fal-ai/nano-banana-2/edit":     { perImageCents: 8  },
+  "google/nano-banana-2-lite":     { perImageCents: 5  },
   "fal-ai/flux/schnell":           { perImageCents: 1  },
   "fal-ai/flux/pro":               { perImageCents: 5  },
 };
